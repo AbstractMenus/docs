@@ -22,12 +22,13 @@ export default defineConfig({
         { icon: "discord", label: "Discord", href: "https://discord.gg/4VGP3Gv" },
         { icon: "github", label: "GitHub", href: "https://github.com/AbstractMenus" },
       ],
-      defaultLocale: "en",
+      defaultLocale: "root",
       locales: {
-        // Default locale. To add Russian later, drop `ru` files into
-        // src/content/docs/ru/ and uncomment the entry below.
+        // English lives at /docs/ (the root locale).
         root: { label: "English", lang: "en" },
-        // ru: { label: "Русский", lang: "ru" },
+        // Russian lives at /docs/ru/. Pages without a Russian translation
+        // fall back to the English version with a "translate this page" note.
+        ru: { label: "Русский", lang: "ru" },
       },
       customCss: ["./src/styles/brand.css"],
       expressiveCode: {
