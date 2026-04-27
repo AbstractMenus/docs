@@ -1,0 +1,19 @@
+/* AbstractMenus brand palette layered on top of Starlight defaults.
+   Source brand colour: #F05454 (kept from the old RTD theme). */
+
+:root {
+  --sl-color-accent-low: #5a1a1a;
+  --sl-color-accent: #f05454;
+  --sl-color-accent-high: #ffd1d1;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #ffd1d1;
+  --sl-color-accent: #d63b3b;
+  --sl-color-accent-high: #5a1a1a;
+}
+
+/* Header tint matches the original red header bar. */
+header.header {
+  border-bottom: 1px solid color-mix(in srgb, #f05454 30%, transparent);
+}

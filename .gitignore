@@ -1,1 +1,15 @@
-_build
+# Astro / Node build output
+dist/
+.astro/
+node_modules/
+
+# Editor / OS
+.idea/
+.DS_Store
+.vscode/
+*.log
+
+# Env
+.env
+.env.*
+!.env.example

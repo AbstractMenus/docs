@@ -1,0 +1,79 @@
+---
+title: AbstractMenus
+description: HOCON-driven GUI menus for Paper / Folia Minecraft servers.
+template: splash
+hero:
+  tagline: HOCON-driven, declarative GUI menus for Paper and Folia. Activators, rules, actions, item properties, animations, and pagination - all from config.
+  actions:
+    - text: Get started
+      link: /docs/start/how-to/
+      icon: right-arrow
+      variant: primary
+    - text: View on SpigotMC
+      link: https://www.spigotmc.org/resources/75107
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+## What is AbstractMenus
+
+AbstractMenus is a Spigot/Paper/Folia plugin for building interactive inventory menus. The big differences from typical GUI plugins: a wide surface for customisation, performance tuning baked in, and enough composable primitives that one config can replace several single-purpose plugins.
+
+<CardGrid stagger>
+  <Card title="HOCON-first" icon="seti:config">
+    Menus are described in HOCON, which is JSON plus comments, includes, substitutions, and templates. See [HOCON format](/docs/start/hocon/).
+  </Card>
+  <Card title="Activators" icon="seti:lightning">
+    Open menus from commands, item interactions, joins, region enter/leave, NPCs, and more. Read the [activators reference](/docs/general/activators/).
+  </Card>
+  <Card title="Rules and actions" icon="approve-check">
+    A menu is a chain of conditions and effects. Money, permissions, JS, regions, items - all composable. See [rules](/docs/general/rules/) and [actions](/docs/general/actions/).
+  </Card>
+  <Card title="Animations and generation" icon="seti:image">
+    Frame-based [animations](/docs/advanced/animations/) and dynamic [paginated menus](/docs/advanced/generation/) for catalogues, lists, and shops.
+  </Card>
+</CardGrid>
+
+## Concepts at a glance
+
+- **Menu file** - a `.conf` file inside `plugins/AbstractMenus/menus`. Each file describes one or more menus.
+- **Activator** - what opens a menu (a command, a chat phrase, an item-use event, a region enter, an NPC click, ...).
+- **Rule** - a condition checked before opening a menu, before showing an item, or before executing an action chain.
+- **Action** - something the plugin does (give an item, take money, run a command, send a message, open another menu).
+- **Item** - a button drawn in the inventory or an object referenced from a rule/action.
+- **Bindings** - rule-gated overrides that flip an item's properties at runtime.
+- **Variable** - a named string or number persisted in the plugin's database, accessed via placeholders.
+- **Template** - any block extracted to a named definition and inserted via reference.
+- **Animation frame** - one keyframe of an [animated menu](/docs/advanced/animations/).
+- **Catalog** - a dynamic collection feeding [generated menus](/docs/advanced/generation/).
+- **Value extractor** - a function that pulls a property out of a context object (block, entity, item, region, world).
+
+## Commands
+
+```
+/am open <menu_name>                  Open a menu without an activator
+/am open <menu_name> <player>         Open a menu for another player
+/am reload                            Reload all menu files
+/am serve                             Watch the menus folder and reload on change
+/var get|set|rem|inc|dec|mul|div ...  Manage global variables
+/varp get|set|rem|inc|dec|mul|div ... Manage personal (per-player) variables
+```
+
+The `am.admin` permission grants access to all commands above.
+
+## External plugin support
+
+AbstractMenus integrates with these plugins as soft dependencies:
+
+- [Vault](https://www.spigotmc.org/resources/34315/) - economy backend for money rules and actions
+- [PlaceholderAPI](https://www.spigotmc.org/resources/6245/) - extra placeholder providers
+- [LuckPerms](https://www.spigotmc.org/resources/28140/) - permission and group rules/actions
+- [WorldGuard](https://dev.bukkit.org/projects/worldguard) - region-based activators and rules
+- [Citizens](https://dev.bukkit.org/projects/citizens) - NPC activators
+- [HeadDatabase](https://www.spigotmc.org/resources/14280/) - custom heads as items
+- [MMOItems](https://www.spigotmc.org/resources/39267/) - take items from the MMOItems registry
+- [SkinsRestorer](https://www.spigotmc.org/resources/2124/) - change/reset player skins
+- [ItemsAdder](https://www.spigotmc.org/resources/73355/) - custom items by namespaced id
+- [Oraxen](https://www.spigotmc.org/resources/72448/) - custom items by Oraxen id
