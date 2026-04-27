@@ -41,11 +41,11 @@ Optional argument.
 
 | Placeholder | Description | Example |
 |----|----|----|
-| `%var_:<variable_name>[:<default_value>]%` | Get global variable value | `%var_:myvar%` `%var_:myvar:No%` |
-| `%varp_:<variable_name>[:<default_value>]%` | Get personal variable value of player who opened menu | `%varp_:myvar%` `%varp_:myvar:No%` |
-| `%var_:<player>.<variable_name>[:<default_value>]%` | Get personal variable value by player name | `%var_:Notch.myvar%` `%var_:Notch.myvar:No%` |
-| `%vart_:<variable_name>%` | Get the lifetime of the global temporal variable. If variable is not temporal it will return 0 seconds | `%vart_:myvar%` `%vart_:another_var%` |
-| `%varpt_:<variable_name>%` | Get the lifetime of the personal temporal variable. If variable is not temporal it will return 0 seconds | `%varpt_:myvar%` `%varpt_:another_var%` |
+| %var_:\<variable_name\>[:\<default_value\>]% | Get global variable value | `%var_:myvar%` `%var_:myvar:No%` |
+| %varp_:\<variable_name\>[:\<default_value\>]% | Get personal variable value of player who opened menu | `%varp_:myvar%` `%varp_:myvar:No%` |
+| %var_:\<player\>.\<variable_name\>[:\<default_value\>]% | Get personal variable value by player name | `%var_:Notch.myvar%` `%var_:Notch.myvar:No%` |
+| %vart_:\<variable_name\>% | Get the lifetime of the global temporal variable. If variable is not temporal it will return 0 seconds | `%vart_:myvar%` `%vart_:another_var%` |
+| %varpt_:\<variable_name\>% | Get the lifetime of the personal temporal variable. If variable is not temporal it will return 0 seconds | `%varpt_:myvar%` `%varpt_:another_var%` |
 
 </div>
 

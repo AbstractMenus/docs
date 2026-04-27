@@ -189,16 +189,16 @@ Here we compare placeholder with some value. Modern `if` has no math expressions
 
 | Operator | Example | Means | Priority |
 |----|----|----|----|
-| > | `%player_level% > 5` | More | 3 |
-| < | `%player_level% < 8` | Less | 3 |
-| >= | `%player_level% >= 5` | More or equals | 3 |
-| <= | `%player_level% <= 8` | More or equals | 3 |
+| > | %player_level% \> 5 | More | 3 |
+| < | %player_level% \< 8 | Less | 3 |
+| >= | %player_level% \>= 5 | More or equals | 3 |
+| <= | %player_level% \<= 8 | More or equals | 3 |
 | == | `%player_level% == 9` | Equals | 2 |
 | != | `%player_level% != 9` | Not equals | 2 |
 | === | `%player_name% === nOtCh` | Equals ignore case | 2 |
 | !== | `%player_name% !== nOtCh` | Not equals ignore case | 2 |
-| && | `%player_level% > 5 && %player_name% == Notch` | And | 1 |
-| \|\| | `%player_level% > 5 || %player_name% == Notch` | Or | 0 |
+| && | %player_level% \> 5 && %player_name% == Notch | And | 1 |
+| \|\| | %player_level% \> 5 || %player_name% == Notch | Or | 0 |
 
 Unlike `js` rule, inside `if` you don't need to use quotes (`''`, `""`) to define strings. There are also logical brackets `()` to define logical groups and increase priority of some operations. Example:
 

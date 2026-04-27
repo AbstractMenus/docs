@@ -17,7 +17,7 @@ An item can be specified not only as a button in a menu. This [object](hocon-obj
 | skullOwner | String | See example `prop-skull-owner` | Set player's skin on head |
 | hdb | String | `hdb: "2853"` | Set the head by the identifier from the [HeadDatabase](https://www.spigotmc.org/resources/14280/) |
 | mmoitem | String | `mmoitem: "WEAPON:MY_SWORD"` | Take an item by type and id from the [MMOItems](https://www.spigotmc.org/resources/39267/) |
-| itemsAdder | String | `itemsAdder: "<namespaced id>"` | Take a custom stack defined in [ItemsAdder](https://www.spigotmc.org/resources/73355/) registry by their namespaced id |
+| itemsAdder | String | itemsAdder: "\<namespaced id\>" | Take a custom stack defined in [ItemsAdder](https://www.spigotmc.org/resources/73355/) registry by their namespaced id |
 | oraxen | String | `oraxen: "my_sword"` | Take a custom stack defined in [Oraxen](https://www.spigotmc.org/resources/72448/) plugin |
 | equipItem | String or Object | See example `prop-equip-item` | Take item from player's inventory. See all slot types |
 | serialized | String | See example `prop-serialized` | Deserialize item from base64 string |
