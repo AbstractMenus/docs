@@ -13,43 +13,43 @@ There are default built in AM and third-party (PlaceholderAPI) placeholders.
 
 ## Built-in placeholders
 
-| Placeholder | Type | Description |
-|----|----|----|
-| **Player placeholders** |  |  |
-| %player_name% | String | Player name |
-| %player_display_name% | String | Display name (with colors) |
-| %player_level% | Number | Player level |
-| %player_xp% | Number | Player XP |
-| %player_location% | String | Player location |
-| %player_world% | String | Player world |
-| %player_uuid% | String | UUID of player |
-| %player_gm% | String | Bukkit's gamemode name |
-| **Server placeholders** |  |  |
-| %server_players% | Number | Amount of players |
-| %server_players\_\<world\>% | Number | Amount of players in specified world |
-| %server_name% | String | Name of server |
-| %server_ip% | String | IP address of server |
-| %server_port% | Number | Server port |
-| %server_max_players% | String | Max players slots |
-| %server_version% | String | Version of server |
-| **BungeeCord placeholders** |  |  |
-| %bungee_online% | Number | The total count of players on all BungeeCord network |
-| %bungee_players\_\<server\>% | Number | Count of players on a specific BungeeCord servers |
-| **Special placeholders** |  |  |
-| %hanim\_:\<animation_name\>:\<unique_id\>% | String | Returns next frame of the head animation from `animated_heads.conf` file |
-| %ctg_page% | Number | Current page index |
-| %ctg_pages% | Number | Total amount of menu pages |
-| %ctg_page_next% | Number | Next page index |
-| %ctg_page_prev% | Number | Previous page index |
-| %ctg_elements% | Number | Total amount of catalog objects |
-| %ctg\_\<extractor placeholder\>% | Depends on Extractor | Get value by some extractor from Catalog context |
-| %activator_name% | String | Name of activator which opened menu |
-| %activator\_\<extractor placeholder\>% | Depends on Extractor | Get value by some extractor from Activator context |
-| %placed\_\<item_extractor_placeholder\>% | Depends on Extractor | Get info about last placed item |
-| %placed_slot% | Number | Get slot index in which last item was placed |
-| %taken\_\<item_extractor_placeholder\>% | Depends on Extractor | Get info about last taken item |
-| %taken_slot% | Number | Get slot index from which last item was taken |
-| %changed\_\<item_extractor_placeholder\>% | Depends on Extractor | Get info about final item after placing/taking |
+| Placeholder                                | Type                 | Description                                                              |
+|--------------------------------------------|----------------------|--------------------------------------------------------------------------|
+| **Player placeholders**                    |                      |                                                                          |
+| %player_name%                              | String               | Player name                                                              |
+| %player_display_name%                      | String               | Display name (with colors)                                               |
+| %player_level%                             | Number               | Player level                                                             |
+| %player_xp%                                | Number               | Player XP                                                                |
+| %player_location%                          | String               | Player location                                                          |
+| %player_world%                             | String               | Player world                                                             |
+| %player_uuid%                              | String               | UUID of player                                                           |
+| %player_gm%                                | String               | Bukkit's gamemode name                                                   |
+| **Server placeholders**                    |                      |                                                                          |
+| %server_players%                           | Number               | Amount of players                                                        |
+| `%server_players_<world>%`                | Number               | Amount of players in specified world                                     |
+| %server_name%                              | String               | Name of server                                                           |
+| %server_ip%                                | String               | IP address of server                                                     |
+| %server_port%                              | Number               | Server port                                                              |
+| %server_max_players%                       | String               | Max players slots                                                        |
+| %server_version%                           | String               | Version of server                                                        |
+| **BungeeCord placeholders**                |                      |                                                                          |
+| %bungee_online%                            | Number               | The total count of players on all BungeeCord network                     |
+| `%bungee_players_<server>%`               | Number               | Count of players on a specific BungeeCord servers                        |
+| **Special placeholders**                   |                      |                                                                          |
+| `%hanim_:<animation_name>:<unique_id>%` | String               | Returns next frame of the head animation from `animated_heads.conf` file |
+| %ctg_page%                                 | Number               | Current page index                                                       |
+| %ctg_pages%                                | Number               | Total amount of menu pages                                               |
+| %ctg_page_next%                            | Number               | Next page index                                                          |
+| %ctg_page_prev%                            | Number               | Previous page index                                                      |
+| %ctg_elements%                             | Number               | Total amount of catalog objects                                          |
+| `%ctg_<extractor placeholder>%`           | Depends on Extractor | Get value by some extractor from Catalog context                         |
+| %activator_name%                           | String               | Name of activator which opened menu                                      |
+| `%activator_<extractor placeholder>%`     | Depends on Extractor | Get value by some extractor from Activator context                       |
+| `%placed_<item_extractor_placeholder>%`   | Depends on Extractor | Get info about last placed item                                          |
+| %placed_slot%                              | Number               | Get slot index in which last item was placed                             |
+| `%taken_<item_extractor_placeholder>%`    | Depends on Extractor | Get info about last taken item                                           |
+| %taken_slot%                               | Number               | Get slot index from which last item was taken                            |
+| `%changed_<item_extractor_placeholder>%`  | Depends on Extractor | Get info about final item after placing/taking                           |
 
 If you have installed [PlaceholderAPI](https://www.spigotmc.org/resources/6245/), some of this placeholder won't work and will be replaced by big variety of placeholders from third party plugin instead. **Special placeholders** always works both with PAPI and without it.
 
@@ -188,7 +188,7 @@ Get data from Citizens NPC.
 | npc_id                               | Numeric NPC id                                        |
 | npc_name                             | General name                                          |
 | npc_full_name                        | Full name                                             |
-| [npc_entity]()\<entity placeholder\> | Get value from NPC's entity by Entity Value extractor |
+| `npc_entity_<entity placeholder>` | Get value from NPC's entity by Entity Value extractor |
 
 For example, you need to get NPC's entity type. According to [Entity extractor format](extractor-entity), your placeholders will looks like this:
 
@@ -204,8 +204,8 @@ Get data from parsed command (currently used by activators only).
 |----------------------------------|------------------------------------------------------------------|
 | cmd_name                         | Base name of the command                                         |
 | cmd_args                         | Amount of arguments                                              |
-| cmd_arg:\<argument key>          | Value of parsed argument by key                                  |
-| \<argument key\>:\<placeholder\> | Get value with regular placeholder by player, entered in command |
+| cmd_arg:<argument key>          | Value of parsed argument by key                                  |
+| <argument key>:<placeholder> | Get value with regular placeholder by player, entered in command |
 
 For example, you specified argument with key `username` by some activator. Then, to get value which user entered, you need to use placeholder like this:
 

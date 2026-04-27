@@ -236,7 +236,7 @@ items: [
 
 ## Inventory type
 
-You can use other types of inventorym not only chest. For this use `type` property of menu. This property accepts type name of inventory. All type names you can find <span class="title-ref">here \<https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html\></span> (for latest Spigot version).
+You can use other types of inventory, not only chest. For this use the `type` property of the menu. This property accepts an inventory type name. All type names are listed [in the Bukkit Javadoc](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html) (for the latest Spigot version).
 
 If you use custom inventory type, you can omit a `slot` property.
 

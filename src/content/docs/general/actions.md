@@ -99,17 +99,17 @@ message {
 
 This block has many parameters that can be used separately.
 
-| Name | Data type | Description |
-|----|----|----|
-| chat | Strings list | Send personal message to chat |
-| actionbar | String | Send text to player's action bar |
-| json | String | Send personal JSON message to chat. Works on MC 1.9+ |
-| **Title parameters** |  |  |
-| title | String | Send title |
-| subtitle | String | Send subtitle |
-| fadeIn | Number | Fade in time in ticks |
-| stay | Number | Stay time in ticks |
-| fadeOut | Number | Fade out time in ticks |
+| Name                 | Data type    | Description                                          |
+|----------------------|--------------|------------------------------------------------------|
+| chat                 | Strings list | Send personal message to chat                        |
+| actionbar            | String       | Send text to player's action bar                     |
+| json                 | String       | Send personal JSON message to chat. Works on MC 1.9+ |
+| **Title parameters** |              |                                                      |
+| title                | String       | Send title                                           |
+| subtitle             | String       | Send subtitle                                        |
+| fadeIn               | Number       | Fade in time in ticks                                |
+| stay                 | Number       | Stay time in ticks                                   |
+| fadeOut              | Number       | Fade out time in ticks                               |
 
 You can also use the message block as a simple text parameter. Then this action will send chat message to the player.
 
@@ -367,16 +367,16 @@ setVar: "<var_name>::<value>::<time>::<replace>"
 
 Where:
 
-\<var_name\>  
+`<var_name>`  
 Name of the variable
 
-\<value\>  
+`<value>`  
 Any value of variable. String or numeric.
 
-\<time\>  
+`<time>`  
 Optional. Variable lifetime.
 
-\<replace\>  
+`<replace>`  
 Optional. If `false` and variable with this name exists then it won't be replaced with new value. By default is `true`
 
 Simple example:

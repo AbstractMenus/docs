@@ -3,7 +3,7 @@ title: HOCON format
 description: "To configure menus, AbstactMenus uses **HOCON** (.conf files) instead of **YAML** (.yml files).…"
 ---
 
-To configure menus, AbstactMenus uses **HOCON** (<span class="title-ref">.conf</span> files) instead of **YAML** (<span class="title-ref">.yml</span> files). This format may seem complicated for you, but later you will understand why this format is ideal for really flexible menus.
+To configure menus, AbstactMenus uses **HOCON** (`.conf` files) instead of **YAML** (`.yml` files). This format may seem complicated for you, but later you will understand why this format is ideal for really flexible menus.
 
 :::note
 More information about HOCON format you can find [here](https://github.com/lightbend/config/blob/master/HOCON.md).
@@ -23,10 +23,10 @@ All data in HOCON has this format:
 
 where:
 
-\<key\>  
+`<key>`  
 Just unique key name, like in YAML
 
-\<value\>  
+`<value>`  
 Some value. Value may be one of the described below data type.
 
 A few examples:

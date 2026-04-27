@@ -3,7 +3,7 @@ title: Logical structures
 description: "In general, all logical structures in AbstractMenus works as **if -> then -> else**. These structures can be nested."
 ---
 
-In general, all logical structures in AbstractMenus works as **if -\> then -\> else**. These structures can be nested.
+In general, all logical structures in AbstractMenus works as **if -> then -> else**. These structures can be nested.
 
 ## Actions block
 

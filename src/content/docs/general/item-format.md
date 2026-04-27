@@ -235,10 +235,10 @@ lore: [
 
 Enchantments has format `<enchantment>: <level>` where:
 
-\<enchantment\>  
+`<enchantment>`  
 Bukkit's enchantment name. You can find it [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html)
 
-\<level\>  
+`<level>`  
 Level of the enchantment. Minimal level is `1`.
 
 Example:

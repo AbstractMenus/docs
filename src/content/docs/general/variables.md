@@ -31,7 +31,7 @@ Also you can get a remain lifetime of the variable. For this you have to use spe
 
 To get value of variable you need to use a `../general/placeholders`. You can use it even without PlaceholderAPI, but we recommend you to use it. The list of variable placeholders [below](vars-pls-table).
 
-\< \>  
+`< >`  
 Required argument.
 
 \[ \]  
