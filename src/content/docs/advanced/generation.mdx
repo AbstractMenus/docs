@@ -1,16 +1,25 @@
 ---
 title: Menu generator
-description: "Generated menu can be created in few steps:"
+description: Build a menu from a dynamic catalog of objects (players, online users, items) with pagination and templates.
 ---
+
+import { Steps } from "@astrojs/starlight/components";
 
 ## Basics
 
-Generated menu can be created in few steps:
+A generated menu is built from four pieces:
 
-1.  Specify the catalog of objects. It can contain additional parameters for filtering objects, etc.
-2.  Create a matrix of cells, into which items from the catalog will be placed according to the template. The matrix should have as many rows as the menu itself.
-3.  Specify item templates. It is these items that the necessary placeholders from the catalog are indicated.
-4.  The generated menu might have several pages. Special actions can be used to navigate between them.
+<Steps>
+
+1. **Catalog** - the source of objects (players online, custom items, regions, ...). Optional filters narrow the list.
+
+2. **Matrix** - a grid of cells where items get placed. The matrix must have as many rows as the menu itself.
+
+3. **Item templates** - the appearance of catalog entries. Templates use catalog placeholders like `%ctg_player_name%`.
+
+4. **Pagination** - generated menus can span multiple pages; navigation actions move between them.
+
+</Steps>
 
 All catalogs are listed in the end of this page. Here we will show you how to create a simple generated menu. For example we will use the `PLAYERS` catalog, that generates a list of all players on the server.
 
@@ -110,7 +119,9 @@ During menu generation, placeholders are generated for each catalog's object and
 
 Catalog placeholders looks like this:
 
-    %ctg_<placeholder>%
+```text
+%ctg_<placeholder>%
+```
 
 Here `ctg_` is a prefix, short for `catalog`. The `<placeholder>` is a specific placeholder from value extractor which catalog uses, or one of the common catalog's placeholders, which described in table below.
 

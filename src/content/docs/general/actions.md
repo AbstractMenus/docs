@@ -688,18 +688,9 @@ setSkin {
 }
 ```
 
-<div class="attention">
-
-<div class="title">
-
-Attention
-
-</div>
-
+:::caution
 Before this action, you need to set the `closeMenu` action, because when the skin is changed, player respawning. If the menu is opened, it may cause a critical error for the client.
-
-</div>
-
+:::
 ## Add recipe
 
 Action to add recipe to player. This is a [list of objects](hocon-list-obj) where each object is a recipe.

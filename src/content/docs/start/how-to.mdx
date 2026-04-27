@@ -1,0 +1,228 @@
+---
+title: How to create a menu
+description: A short tour of AbstractMenus - build a header, add an activator, place a button, and gate it behind rules.
+---
+
+import { Steps, FileTree, Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+A short tour through the basic features. By the end of this page you'll have a working menu opened by a command, with a button that takes money and gives an item.
+
+<Aside type="tip">
+Use a real text editor (Sublime Text, VS Code, IntelliJ) for `.conf` files - any of them with HOCON-aware syntax highlighting works. Notepad-style editors lose curly braces and quotes constantly.
+</Aside>
+
+## Where menus live
+
+All menu files sit under `plugins/AbstractMenus/menus/`. The plugin walks the folder recursively, so nesting subfolders for organisation is fine - the file *name* (without extension) becomes the menu's unique id.
+
+<FileTree>
+
+- plugins/AbstractMenus
+  - config.conf the global plugin config
+  - menus
+    - menu.conf created on first run
+    - shop.conf
+    - casino
+      - blackjack.conf nested folders are fine
+      - slots.conf
+  - variables.db **SQLite, do not edit by hand**
+
+</FileTree>
+
+## Step by step: your first menu
+
+<Steps>
+
+1. **Create the file**
+
+   Make `plugins/AbstractMenus/menus/menu.conf`. The two required keys are `title` and `size`.
+
+   ```hocon title="menus/menu.conf"
+   title: "My first menu"
+   size: 6
+   ```
+
+   - `title` - shown at the top of the inventory.
+   - `size` - number of inventory rows (1 to 6).
+
+   Run `/am reload`. The console prints:
+
+   ```text
+   [AbstractMenus] Loaded 1 menus
+   ```
+
+2. **Add an activator so players can open it**
+
+   An activator is anything that opens the menu - a command, an item interaction, joining the server, walking into a region, and so on. The simplest is `command`:
+
+   ```hocon title="menus/menu.conf" ins={4-6}
+   title: "My first menu"
+   size: 6
+
+   activators {
+     command: "mymenu"
+   }
+   ```
+
+   `/am reload`, then in chat: `/mymenu`. An empty menu opens.
+
+   ![Empty menu we created](/docs/img/howto_empty.png)
+
+3. **Place a button**
+
+   Buttons are entries in an `items: [...]` list. Each entry lives at a `slot` and has a `material`.
+
+   ```hocon title="menus/menu.conf" ins={8-14}
+   title: "My first menu"
+   size: 6
+
+   activators {
+     command: "mymenu"
+   }
+
+   items: [
+     {
+       slot: 0
+       material: DIAMOND_SWORD
+       name: "&6Excalibur"
+     }
+   ]
+   ```
+
+   ![Menu with the Excalibur button](/docs/img/howto_excalibur.png)
+
+   - `slot` - cell index, starting at 0. [Other slot formats](/docs/general/item-format/#prop-slot) include ranges and matrices.
+   - `material` - Bukkit material name. [Full list on the Spigot Javadoc](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html).
+   - `name` - display name. Supports `&` colour codes and placeholders.
+
+4. **Make the button do something on click**
+
+   The `click` block is a list of actions. Start with `closeMenu`:
+
+   ```hocon title="menus/menu.conf" {12-14}
+   title: "My first menu"
+   size: 6
+
+   activators {
+     command: "mymenu"
+   }
+
+   items: [
+     {
+       slot: 0
+       material: DIAMOND_SWORD
+       name: "&6Excalibur"
+       click {
+         closeMenu: true
+       }
+     }
+   ]
+   ```
+
+   Reload, click the sword, the menu closes. Different mouse buttons can run different actions - see [click types](/docs/general/menu-structure/) for the full list.
+
+</Steps>
+
+## Variations
+
+### Show different buttons to different players
+
+Add a `rules` block to an item. Items in the same slot are stacked - the *last* item whose rules match wins:
+
+```hocon {7-12}
+items: [
+  {
+    slot: 0
+    material: IRON_SWORD
+    name: "&6Excalibur"
+  },
+  {
+    slot: 0
+    material: DIAMOND_SWORD
+    name: "&6Excalibur"
+    rules { level: 10 }
+  }
+]
+```
+
+Player at level 9 sees the iron sword. Player at level 10+ sees the diamond one.
+
+<Aside>
+When several items share a slot, the player sees the **last** one whose rules they match. Order matters.
+</Aside>
+
+### Charge money on click
+
+`click` accepts both `rules` (a check) and `actions` / `denyActions` branches:
+
+```hocon "100"
+items: [
+  {
+    slot: 0
+    material: DIAMOND_SWORD
+    name: "&6Excalibur"
+    lore: "&7Cost: 100 coins"
+    click {
+      rules { money: 100 }
+      actions {
+        itemAdd { material: DIAMOND_SWORD, name: "&6Excalibur" }
+        takeMoney: 100
+      }
+      denyActions {
+        sound: ENTITY_VILLAGER_NO
+      }
+    }
+  }
+]
+```
+
+What happens on click:
+
+1. The player's balance is checked for 100 coins.
+2. If they have enough, an Excalibur is added to inventory and 100 coins are taken.
+3. If not, a no-villager sound plays.
+
+See [logical structures](/docs/advanced/logical/) for nested rule trees and inversion.
+
+### Gate the whole menu
+
+Rules at the menu root run *before* the menu opens:
+
+```hocon ins={3-5,6-8}
+title: "Admin only"
+size: 6
+rules {
+  permission: "i.am.admin"
+}
+denyActions {
+  message: "&cYou do not have permission to do this!"
+}
+activators { command: "adminmenu" }
+```
+
+Players without `i.am.admin` get the message instead of the menu.
+
+## Where to next
+
+<CardGrid>
+  <LinkCard
+    title="Item format"
+    href="/docs/general/item-format/"
+    description="Every property an item can carry, with HOCON examples."
+  />
+  <LinkCard
+    title="Activators"
+    href="/docs/general/activators/"
+    description="All the events that can open a menu."
+  />
+  <LinkCard
+    title="Rules"
+    href="/docs/general/rules/"
+    description="Conditions for opening menus, showing items, running actions."
+  />
+  <LinkCard
+    title="Actions"
+    href="/docs/general/actions/"
+    description="Everything a click or a rule check can trigger."
+  />
+</CardGrid>

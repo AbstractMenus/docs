@@ -63,18 +63,9 @@ Then, if `templates` block placed in file's root (doesn't has parent blocks), pl
 ${templates.items.closeButton}
 ```
 
-<div class="hint">
-
-<div class="title">
-
-Hint
-
-</div>
-
+:::tip
 Path to template contains all parent blocks names start from first and must be separated by dots.
-
-</div>
-
+:::
 The main feature of templates if that you can use them multiple times. But our button template has static slot. To change slot we need to override it in place where we include it.
 
 ## Expand or override template

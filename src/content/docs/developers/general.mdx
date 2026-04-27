@@ -1,0 +1,116 @@
+---
+title: Plugin API
+description: How to depend on AbstractMenus from another plugin and access its services.
+---
+
+import { Steps, Tabs, TabItem, Aside, Badge } from "@astrojs/starlight/components";
+
+Other plugins can talk to AbstractMenus through its public API: open menus, register custom actions/rules/item properties, read or write variables, watch for menu lifecycle events.
+
+Javadocs: [abstractmenus.github.io/api](https://abstractmenus.github.io/api/).
+
+## Add the API to your build
+
+<Aside type="note">
+The API version doesn't always match the plugin's release version - some plugin releases reuse the same API version. Check the [latest tag](https://github.com/AbstractMenus/api/tags) before pinning.
+</Aside>
+
+<Steps>
+
+1. **Add the JitPack repository and the API artifact**
+
+   <Tabs syncKey="build-tool">
+     <TabItem label="Gradle (Kotlin DSL)" icon="seti:gradle">
+       ```kotlin title="build.gradle.kts"
+       repositories {
+           maven("https://jitpack.io")
+       }
+
+       dependencies {
+           compileOnly("com.github.AbstractMenus:api:1.16")
+       }
+       ```
+     </TabItem>
+     <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+       ```groovy title="build.gradle"
+       repositories {
+           maven { url 'https://jitpack.io' }
+       }
+
+       dependencies {
+           compileOnly 'com.github.AbstractMenus:api:1.16'
+       }
+       ```
+     </TabItem>
+     <TabItem label="Maven" icon="seti:maven">
+       ```xml title="pom.xml"
+       <repositories>
+         <repository>
+           <id>jitpack</id>
+           <url>https://jitpack.io</url>
+         </repository>
+       </repositories>
+
+       <dependencies>
+         <dependency>
+           <groupId>com.github.AbstractMenus</groupId>
+           <artifactId>api</artifactId>
+           <version>1.16</version>
+           <scope>provided</scope>
+         </dependency>
+       </dependencies>
+       ```
+     </TabItem>
+     <TabItem label="No build system" icon="seti:default">
+       Drop the `AbstractMenus.jar` from your server's `plugins/` folder into your IDE's classpath as a "provided" / "compile-only" dependency.
+     </TabItem>
+   </Tabs>
+
+2. **Declare the dependency in `plugin.yml`**
+
+   ```yaml title="plugin.yml" ins={3-4}
+   name: MyPlugin
+   version: 1.0.0
+   depend:
+     - AbstractMenus
+   ```
+
+   Use `softdepend:` instead of `depend:` if your plugin should still load when AbstractMenus isn't installed - then guard API calls with a `Bukkit.getPluginManager().getPlugin("AbstractMenus") != null` check.
+
+</Steps>
+
+## Get the plugin instance
+
+The entry point is [`AbstractMenusPlugin`](https://abstractmenus.github.io/api/ru/abstractmenus/api/AbstractMenusPlugin.html). Two ways to obtain it:
+
+<Aside type="caution">
+Even though the plugin instance exists in your `onLoad`, services like `VariableManager` are initialised in `onEnable`. Don't touch services from `onLoad`.
+</Aside>
+
+<Tabs syncKey="api-access">
+  <TabItem label="Static provider" icon="seti:default">
+    Skip the services manager and call the static helper:
+
+    ```java
+    import ru.abstractmenus.api.AbstractMenusPlugin;
+    import ru.abstractmenus.api.AbstractMenusProvider;
+
+    AbstractMenusPlugin plugin = AbstractMenusProvider.get();
+    ```
+
+    Returns `null` if AbstractMenus isn't loaded yet - safe to call from `onEnable` after declaring the depend.
+  </TabItem>
+  <TabItem label="Bukkit services manager" icon="seti:default">
+    AbstractMenus registers itself as a Bukkit service. Pull it the standard way:
+
+    ```java
+    import ru.abstractmenus.api.AbstractMenusPlugin;
+    import org.bukkit.plugin.RegisteredServiceProvider;
+
+    RegisteredServiceProvider<AbstractMenusPlugin> rsp =
+        getServer().getServicesManager().getRegistration(AbstractMenusPlugin.class);
+
+    AbstractMenusPlugin plugin = rsp != null ? rsp.getProvider() : null;
+    ```
+  </TabItem>
+</Tabs>

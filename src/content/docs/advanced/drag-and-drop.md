@@ -9,18 +9,9 @@ Drag-and-drop (futher DnD) is a feature that allows players to place and take it
 This feature currently is experimental and has some constraints. For example, you cannot use some DnD actions like placing item by shift-click.
 :::
 
-<div class="hint">
-
-<div class="title">
-
-Hint
-
-</div>
-
+:::tip
 Drag-and-drop feature used in some [advanced examples](examples-advanced).
-
-</div>
-
+:::
 ## Adding DnD ability
 
 To allow players place and take items, add `draggable` property to menu root:
@@ -70,18 +61,9 @@ These events will be called every time player changed item in draggable slot, ev
 
 Event `onDragItem` useful for cases when you need to check draggable slot every time player do sometning in menu.
 
-<div class="hint">
-
-<div class="title">
-
-Hint
-
-</div>
-
+:::tip
 If player closed menu while some items placed in menu, they will be dropped to the ground.
-
-</div>
-
+:::
 ## DnD placeholders
 
 There is special placeholders to check properties of dragged item and other related data. These placeholders uses `extractor-item` to provide information about dragged item.
@@ -195,18 +177,9 @@ items: [
 
 In this example, if player placed at least 32 cobblestone in slot 2, then coal ore appears in slot 15. Otherwise, remove placed item from slot 15 if exists.
 
-<div class="hint">
-
-<div class="title">
-
-Hint
-
-</div>
-
+:::tip
 You can't place item with this action into non-draggable slot.
-
-</div>
-
+:::
 :::note
 Events like `onPlaceItem` and other won't be called if using this action.
 :::

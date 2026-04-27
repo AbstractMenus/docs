@@ -1,9 +1,11 @@
 ---
 title: User input
-description: "This article is about how you can save some user input and use it inside your menus."
+description: Capture context from activators (commands, clicks, regions) and feed it into menus via context placeholders.
 ---
 
-This article is about how you can save some user input and use it inside your menus.
+import { Steps } from "@astrojs/starlight/components";
+
+How to save user input and reuse it inside menus.
 
 ## Activator context
 
@@ -25,24 +27,33 @@ Each activator uses one of the predefined extractors to provide placeholders for
 
 To get access to activator context's placeholders, you can use placeholder in next format:
 
-    %activator_<extractor placeholder>%
+```text
+%activator_<extractor placeholder>%
+```
 
 Each activator's placeholder start with `activator_` prefix. The `<extractor placeholder>` is a placeholder which [defined](extractor-block) for specific extractor.
 
-### How to use context placeholer of activator
+### How to use a context placeholder
 
-The algorithm of using context placeholder for activators is simple:
+<Steps>
 
-1.  Go to `../general/activators` page.
-2.  Find required activator.
-3.  Under each activator you can find extractor which this activator uses. This is a link which refers to table of placeholders of this extractor.
+1. Open the [activators reference](/docs/general/activators/).
 
-![Extractor type which activator uses](/docs/img/input_extractor_place.png)
+2. Find the activator you're using.
 
-4.  Go to table of placeholders of this extractor.
-5.  Select required placeholder.
-6.  Add `activator_` prefix to this placeholder.
-7.  Use the resulting value as a placeholder in your menu.
+3. Below each activator there's a link to the **extractor** it provides. The extractor's name doubles as a link to its placeholder table.
+
+   ![Extractor type which activator uses](/docs/img/input_extractor_place.png)
+
+4. Click through to the extractor's placeholder table.
+
+5. Pick the placeholder you need.
+
+6. Prefix it with `activator_`.
+
+7. Drop the resulting `%activator_*%` placeholder into any string in your menu.
+
+</Steps>
 
 ### Example 1. Using context placeholders
 
@@ -126,18 +137,9 @@ Now, if some player will shift-click other player, our menu will be opened:
 
 More complex examples of context placeholders usage, see in `../general/examples` topic.
 
-<div class="hint">
-
-<div class="title">
-
-Hint
-
-</div>
-
+:::tip
 In this example we used PlaceholderAPI with `Player` and `Statistic` expansions.
-
-</div>
-
+:::
 ## Commands building
 
 AbstractMenus has powerful system to build commands and use entered arguments in menus.
@@ -188,7 +190,9 @@ command {
 
 After reloading, AbstractMenus will expect that player will enter command in format:
 
-    /mycmd <myarg1> <myarg2>
+```text
+/mycmd <myarg1> <myarg2>
+```
 
 When player entered command and all arguments specified, menu will be opened. Otherwise player receives error message.
 

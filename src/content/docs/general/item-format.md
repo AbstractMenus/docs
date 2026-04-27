@@ -124,18 +124,9 @@ And menu will looks like this:
 The slots counting in cells matrix always starts from top-left.
 :::
 
-<div class="attention">
-
-<div class="title">
-
-Attention
-
-</div>
-
+:::caution
 Items placed by ranged slots and cells matrix doesn't cloning. This mean that if you change property of some item, changes will apply to other items placed by this slot. So you shouldn't use this slot format for unique items.
-
-</div>
-
+:::
 ## Skull Owner
 
 This property can be used to get player's head. It takes player name as argument. For example:
@@ -279,12 +270,9 @@ Use a native Spigot color names.
 color: WHITE
 ```
 
-<div class="seealso">
-
+:::note[See also]
 You can find list of colors [here](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Color.html)
-
-</div>
-
+:::
 ### Way 1. HEX
 
 Hexadecimal format like in CSS.
@@ -469,18 +457,9 @@ Each element of this list is a banner's pattern. Each pattern has this parameter
 
 ## NBT tags
 
-<div class="attention">
-
-<div class="title">
-
-Attention
-
-</div>
-
+:::caution
 To use this property, you need to install [NBT_API](https://spigotmc.org/resources/7939) plugin first.
-
-</div>
-
+:::
 Using NBT, you can add properties for items that has not yet been added to the plugin. NBT tags can be specified here using HOCON or a regular string. For example, you can add a name to an item via NBT tag. Example:
 
 ```hocon

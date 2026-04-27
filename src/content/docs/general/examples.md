@@ -14,18 +14,9 @@ Menus with using some not so difficult features, like variables, or more complex
 Advanced menus  
 Menus with advanced features using, like templates, animations, drag-and-drop, etc.
 
-<div class="attention">
-
-<div class="title">
-
-Attention
-
-</div>
-
+:::caution
 Some material names, used in these examples can not work on your Spigot version. We used materials for MC 1.13.
-
-</div>
-
+:::
 ## Simple menus
 
 | Name | Depends | Preview |
