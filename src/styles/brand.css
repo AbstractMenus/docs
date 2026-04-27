@@ -17,3 +17,19 @@
 header.header {
   border-bottom: 1px solid color-mix(in srgb, #f05454 30%, transparent);
 }
+
+/* Layout: give code-heavy docs more room.
+   Default --sl-content-width is 45rem (720px). The right "On this page"
+   column is computed as the remainder, so widening content automatically
+   narrows the TOC. */
+:root {
+  --sl-content-width: 56rem;
+}
+
+/* On viewports between 1152px (Starlight's TOC breakpoint) and 1280px
+   the wider content + TOC starts to crowd. Tighten the TOC there. */
+@media (min-width: 72rem) and (max-width: 80rem) {
+  .right-sidebar-container {
+    width: 14rem !important;
+  }
+}

@@ -109,17 +109,17 @@ Get data from Minecraft's block.
 
 Get data from some world.
 
-| Name | Note |
-|----|----|
-| world_name | Name of the world |
-| world_difficulty | World difficulty (peaceful, normal, etc.) |
-| world_max_height | Max height of building |
-| world_pvp | Is PVP allowed |
-| world_seed | Seed value of world |
-| world_time | The relative in-game time of this world. Analogous to hours \* 1000 |
-| world_type | World type name (default, flat, etc.) |
-| world_entities | Amount of entities (include players) in world |
-| world_players | Amount of players in world |
+| Name             | Note                                                                |
+|------------------|---------------------------------------------------------------------|
+| world_name       | Name of the world                                                   |
+| world_difficulty | World difficulty (peaceful, normal, etc.)                           |
+| world_max_height | Max height of building                                              |
+| world_pvp        | Is PVP allowed                                                      |
+| world_seed       | Seed value of world                                                 |
+| world_time       | The relative in-game time of this world. Analogous to hours \* 1000 |
+| world_type       | World type name (default, flat, etc.)                               |
+| world_entities   | Amount of entities (include players) in world                       |
+| world_players    | Amount of players in world                                          |
 
 ### Entity extractor
 
@@ -154,16 +154,16 @@ If you sure, that entity is a Player, you can use any placeholder (PAPI or bundl
 
 Get data from ItemStack.
 
-| Name | Note |
-|----|----|
-| item_type | Item material |
-| item_data | Item data (MC 1.12-) |
-| item_amount | Amount in stack |
-| item_max_stack | Max possible stack size |
-| item_display_name | Formatted name |
-| item_localized_name | Localized name |
-| item_model | Custom model data (MC 1.14+) |
-| item_serialized | The whole item serialized into base64 string. Can be used with [serialized](prop-serialized) item property |
+| Name                | Note                                                                                                       |
+|---------------------|------------------------------------------------------------------------------------------------------------|
+| item_type           | Item material                                                                                              |
+| item_data           | Item data (MC 1.12-)                                                                                       |
+| item_amount         | Amount in stack                                                                                            |
+| item_max_stack      | Max possible stack size                                                                                    |
+| item_display_name   | Formatted name                                                                                             |
+| item_localized_name | Localized name                                                                                             |
+| item_model          | Custom model data (MC 1.14+)                                                                               |
+| item_serialized     | The whole item serialized into base64 string. Can be used with [serialized](prop-serialized) item property |
 
 ### Region extractor
 
@@ -183,11 +183,11 @@ Get data from WorldGuard region.
 
 Get data from Citizens NPC.
 
-| Name | Note |
-|----|----|
-| npc_id | Numeric NPC id |
-| npc_name | General name |
-| npc_full_name | Full name |
+| Name                                 | Note                                                  |
+|--------------------------------------|-------------------------------------------------------|
+| npc_id                               | Numeric NPC id                                        |
+| npc_name                             | General name                                          |
+| npc_full_name                        | Full name                                             |
 | [npc_entity]()\<entity placeholder\> | Get value from NPC's entity by Entity Value extractor |
 
 For example, you need to get NPC's entity type. According to [Entity extractor format](extractor-entity), your placeholders will looks like this:
@@ -200,11 +200,11 @@ The only difference is an `npc_` prefix.
 
 Get data from parsed command (currently used by activators only).
 
-| Name | Note |
-|----|----|
-| cmd_name | Base name of the command |
-| cmd_args | Amount of arguments |
-| [cmd_arg]()\<argument key\> | Value of parsed argument by key |
+| Name                             | Note                                                             |
+|----------------------------------|------------------------------------------------------------------|
+| cmd_name                         | Base name of the command                                         |
+| cmd_args                         | Amount of arguments                                              |
+| cmd_arg:\<argument key>          | Value of parsed argument by key                                  |
 | \<argument key\>:\<placeholder\> | Get value with regular placeholder by player, entered in command |
 
 For example, you specified argument with key `username` by some activator. Then, to get value which user entered, you need to use placeholder like this:
