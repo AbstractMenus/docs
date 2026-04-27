@@ -204,8 +204,8 @@ Get data from parsed command (currently used by activators only).
 |----------------------------------|------------------------------------------------------------------|
 | cmd_name                         | Base name of the command                                         |
 | cmd_args                         | Amount of arguments                                              |
-| cmd_arg:<argument key>          | Value of parsed argument by key                                  |
-| <argument key>:<placeholder> | Get value with regular placeholder by player, entered in command |
+| cmd_arg:\<argument key\>          | Value of parsed argument by key                                  |
+| \<argument key\>:\<placeholder\> | Get value with regular placeholder by player, entered in command |
 
 For example, you specified argument with key `username` by some activator. Then, to get value which user entered, you need to use placeholder like this:
 
