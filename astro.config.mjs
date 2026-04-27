@@ -84,6 +84,16 @@ export default defineConfig({
             { slug: "developers/utils" },
           ],
         },
+        {
+          label: "Demo",
+          collapsed: true,
+          items: [{ slug: "demo/components" }],
+        },
+        {
+          label: "Changelog",
+          link: "/changelog/",
+          attrs: { "data-changelog-link": "true" },
+        },
       ],
       lastUpdated: true,
       pagination: true,

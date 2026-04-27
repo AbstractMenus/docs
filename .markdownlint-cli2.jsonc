@@ -1,0 +1,30 @@
+{
+  "config": {
+    "default": true,
+
+    // Long descriptive text and tables read better without a hard wrap.
+    "MD013": false,
+
+    // Inline HTML is required for Starlight components and admonitions.
+    "MD033": false,
+
+    // First line is frontmatter, not H1.
+    "MD041": false,
+
+    // Multiple blank lines occasionally help separate component blocks.
+    "MD012": { "maximum": 2 },
+
+    // Allow ordered lists that don't restart at 1 - common inside <Steps>.
+    "MD029": { "style": "ordered" },
+
+    // Bare URLs are fine in code-like contexts; we use real links elsewhere.
+    "MD034": false
+  },
+  "ignores": [
+    "node_modules",
+    "dist",
+    ".astro",
+    "src/grammars",
+    "src/content/docs/demo/**"
+  ]
+}
