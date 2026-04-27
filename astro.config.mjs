@@ -17,7 +17,7 @@ export default defineConfig({
       title: "AbstractMenus",
       description: "Documentation for the AbstractMenus Paper/Folia GUI plugin.",
       favicon: "/favicon.ico",
-      logo: { src: "./src/assets/favicon.ico", alt: "AbstractMenus" },
+      logo: { src: "./src/assets/logo.png", alt: "AbstractMenus" },
       social: [
         { icon: "discord", label: "Discord", href: "https://discord.gg/4VGP3Gv" },
         { icon: "github", label: "GitHub", href: "https://github.com/AbstractMenus" },
