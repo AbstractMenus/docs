@@ -130,7 +130,7 @@ someItem {
 
 In the game, it looks like this:
 
-![Simple animation result](/img/animations_first_example.gif)
+![Simple animation result](/docs/img/animations_first_example.gif)
 
 Here, our `someItem` item was placed in 9 different frames. In each next frame, we've set the item position to the next slot. Since the `clear` parameter was set to `true` by default, the inventory clears before each frame.
 
@@ -179,7 +179,7 @@ Head animations will only work if the menu has the `updateInterval` parameter. E
 
 Each frame of the head animation is a separate head. To create an animation, you first need to generate each head (frame) for the animation. It is best to use the [MineSkin](https://mineskin.org) service for this. After generation, you need to copy the link to the texture. The texture field is located as shown in the screenshot below.
 
-![Texture field to copy](/img/anim_tex_upload.png)
+![Texture field to copy](/docs/img/anim_tex_upload.png)
 
 We need only the hash of the skin, without the address `http://textures.minecraft.net/texture/`.
 
@@ -203,6 +203,6 @@ items: [
 
 Here, in the `texture parameter`, instead of a static texture, we added a special placeholder. It will be replaced with the texture of a specific frame during the menu update through `updateInterval` parameter. You can see an example of the animation below.
 
-![Head animation example](/img/animations_eye.gif)
+![Head animation example](/docs/img/animations_eye.gif)
 
 The number `1`, that was specified after the name of the animation, is necessary to identify this particular button. In one menu, each item with the same animation should have different identifiers. You can use any text, but we used just a number. If several buttons on the same menu and with one animation have the same identifier, a frames of the animation will not be displayed correctly.

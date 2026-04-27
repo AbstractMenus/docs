@@ -261,7 +261,7 @@ items: []
 
 Result:
 
-![Hopper inventory](/img/struct_hopper.png)
+![Hopper inventory](/docs/img/struct_hopper.png)
 
 ### Dispenser
 
@@ -278,7 +278,7 @@ items: []
 
 Result:
 
-![Dispenser inventory](/img/struct_dispenser.png)
+![Dispenser inventory](/docs/img/struct_dispenser.png)
 
 ## Binding button properties to rules
 

@@ -30,23 +30,23 @@ Some material names, used in these examples can not work on your Spigot version.
 
 | Name | Depends | Preview |
 |----|----|----|
-| [Player stats](https://github.com/AbstractMenus/examples/blob/main/simple/stats.conf) | PlaceholderAPI with Player and Statistic expansions | ![preview-stats](/img/examples/stats.gif) |
-| [BungeeCord servers selector](https://github.com/AbstractMenus/examples/blob/main/simple/servers.conf) | BungeeCord, PlaceholderAPI with Player and Bungee expansions | ![preview-servers](/img/examples/servers.gif) |
-| [Cake shop](https://github.com/AbstractMenus/examples/blob/main/simple/cake_shop.conf) | Vault and any Economy plugin | ![preview-cakes](/img/examples/cakes.gif) |
+| [Player stats](https://github.com/AbstractMenus/examples/blob/main/simple/stats.conf) | PlaceholderAPI with Player and Statistic expansions | ![preview-stats](/docs/img/examples/stats.gif) |
+| [BungeeCord servers selector](https://github.com/AbstractMenus/examples/blob/main/simple/servers.conf) | BungeeCord, PlaceholderAPI with Player and Bungee expansions | ![preview-servers](/docs/img/examples/servers.gif) |
+| [Cake shop](https://github.com/AbstractMenus/examples/blob/main/simple/cake_shop.conf) | Vault and any Economy plugin | ![preview-cakes](/docs/img/examples/cakes.gif) |
 
 ## Medium menus
 
 | Name | Depends | Preview |
 |----|----|----|
-| [Daily kits](https://github.com/AbstractMenus/examples/blob/main/medium/kits.conf) | LuckPerms | ![preview-kits](/img/examples/kits.gif) |
-| [Crafting](https://github.com/AbstractMenus/examples/blob/main/medium/craft.conf) | Nothing | ![preview-craft](/img/examples/craft.gif) |
-| [Shop](https://github.com/AbstractMenus/examples/blob/main/medium/shop.conf) | Vault and any Economy plugin | ![preview-shop](/img/examples/shop.gif) |
+| [Daily kits](https://github.com/AbstractMenus/examples/blob/main/medium/kits.conf) | LuckPerms | ![preview-kits](/docs/img/examples/kits.gif) |
+| [Crafting](https://github.com/AbstractMenus/examples/blob/main/medium/craft.conf) | Nothing | ![preview-craft](/docs/img/examples/craft.gif) |
+| [Shop](https://github.com/AbstractMenus/examples/blob/main/medium/shop.conf) | Vault and any Economy plugin | ![preview-shop](/docs/img/examples/shop.gif) |
 
 ## Advanced menus
 
 | Name | Depends | Preview |
 |----|----|----|
-| [Casino](https://github.com/AbstractMenus/examples/blob/main/advanced/casino) | Vault and any Economy plugin | ![preview-casino](/img/examples/casino.gif) |
-| [Admin panel](https://github.com/AbstractMenus/examples/blob/main/advanced/admin) | Essentials, but you can use any plugin to kick/ban/mute players | ![preview-admin](/img/examples/padmin.gif) |
-| [Item enhancer](https://github.com/AbstractMenus/examples/blob/main/advanced/enhancer.conf) | Nothing | ![preview-enhancer](/img/examples/enhancer.gif) |
-| [Random enchanter](https://github.com/AbstractMenus/examples/blob/main/advanced/enchanter.conf) | Nothing | ![preview-enchant](/img/examples/enchant.gif) |
+| [Casino](https://github.com/AbstractMenus/examples/blob/main/advanced/casino) | Vault and any Economy plugin | ![preview-casino](/docs/img/examples/casino.gif) |
+| [Admin panel](https://github.com/AbstractMenus/examples/blob/main/advanced/admin) | Essentials, but you can use any plugin to kick/ban/mute players | ![preview-admin](/docs/img/examples/padmin.gif) |
+| [Item enhancer](https://github.com/AbstractMenus/examples/blob/main/advanced/enhancer.conf) | Nothing | ![preview-enhancer](/docs/img/examples/enhancer.gif) |
+| [Random enchanter](https://github.com/AbstractMenus/examples/blob/main/advanced/enchanter.conf) | Nothing | ![preview-enchant](/docs/img/examples/enchant.gif) |

@@ -17,7 +17,7 @@ Each actions block is a complex object that can contains rules and other actions
 
 You can imagine this block as infinite tree where every branch is a rule or actions block.
 
-![Actions block structure](/img/logical_actions.jpg)
+![Actions block structure](/docs/img/logical_actions.jpg)
 
 Below is an example of using actions block with more complex structure:
 

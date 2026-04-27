@@ -62,7 +62,7 @@ activators {
 
 After plugin reloading (`/am reload`), try to enter the `/mymenu` command in the chat. You will see an empty menu with a given size and **My first menu** title.
 
-![Empty menu we created](/img/howto_empty.png)
+![Empty menu we created](/docs/img/howto_empty.png)
 
 If all works for you, that’s great! Now we have an empty menu that does nothing. Let's add some simple functionality.
 
@@ -108,7 +108,7 @@ So we've added a new button in our menu. We'll briefly describe the parameters u
 
 Okay, we have a button. If you reload the plugin and open the menu, you will see the created button inside.
 
-![Menu with button we created](/img/howto_excalibur.png)
+![Menu with button we created](/docs/img/howto_excalibur.png)
 
 Now it does nothing if we click it. Let's add some action for our button.
 

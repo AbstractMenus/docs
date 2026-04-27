@@ -37,7 +37,7 @@ The algorithm of using context placeholder for activators is simple:
 2.  Find required activator.
 3.  Under each activator you can find extractor which this activator uses. This is a link which refers to table of placeholders of this extractor.
 
-![Extractor type which activator uses](/img/input_extractor_place.png)
+![Extractor type which activator uses](/docs/img/input_extractor_place.png)
 
 4.  Go to table of placeholders of this extractor.
 5.  Select required placeholder.
@@ -120,7 +120,7 @@ We used regular placeholders, because Entity Extractor can accept them, if entit
 
 Now, if some player will shift-click other player, our menu will be opened:
 
-![Player&#39;s profile menu example](/img/input_profile.png)
+![Player&#39;s profile menu example](/docs/img/input_profile.png)
 
 *Player's profile menu example*
 
@@ -384,7 +384,7 @@ items: [
 
 We also changed placeholders to fit format, described for Command Extractor. Result you can see below.
 
-![How commands work](/img/input_example.gif)
+![How commands work](/docs/img/input_example.gif)
 
 ### Command overriding
 
@@ -457,11 +457,11 @@ click {
 
 Result:
 
-![Waiting for input](/img/input_chat_1.png)
+![Waiting for input](/docs/img/input_chat_1.png)
 
 Here, when player entered something in the chat, all players will see `Hello, <text>!` where `<text>` is a text, entered by player.
 
-![Input completed](/img/input_chat_2.png)
+![Input completed](/docs/img/input_chat_2.png)
 
 :::note
 After performing `inputChat`, menu will be closed automatically. **Do not** close it manually by `closeMenu` action.
@@ -493,7 +493,7 @@ click {
 
 Here we also added `onCancel` block to send message to player if input cancelled. If player entered `cancel` in the chat, plugin will not wait for input anymore, and performs action inside `onCancel` if it specified.
 
-![Input cancelled by stop-word](/img/input_chat_3.png)
+![Input cancelled by stop-word](/docs/img/input_chat_3.png)
 
 ### Restrictions
 

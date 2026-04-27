@@ -48,7 +48,7 @@ Here we have created a menu with 4 rows. Once we have specified the `catalog` pa
 
 As a result, with enough players on the server, we will get menu looks like this:
 
-![Example of generated menu](/img/gen_players.png)
+![Example of generated menu](/docs/img/gen_players.png)
 
 ## Switch pages
 

@@ -34,6 +34,16 @@ public/                   files served at the root (favicon, /img/*)
 astro.config.mjs          Astro + Starlight configuration (sidebar, locales, theme)
 ```
 
+## Image paths
+
+`base` is set to `/docs/` because the site lives at `https://abstractmenus.github.io/docs/`. Astro does not auto-prefix `base` for raw URLs inside Markdown. Reference public assets with the base included:
+
+```md
+![alt text](/docs/img/howto_empty.png)
+```
+
+If `base` ever changes, do a project-wide find/replace `/docs/img/` -> `/<new-base>/img/`.
+
 ## Adding a page
 
 1. Drop a new `.md` (or `.mdx`) file under `src/content/docs/<section>/`.

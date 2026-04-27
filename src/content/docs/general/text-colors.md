@@ -13,7 +13,7 @@ message: "&aSome &etext"
 
 You can use this cheat sheet to get required color code.
 
-![Default color codes](/img/colors.png)
+![Default color codes](/docs/img/colors.png)
 
 ## RGB colors
 
@@ -63,6 +63,6 @@ Example of using MiniMessage in item's name and lore:
 }
 ```
 
-![MiniMessage in item](/img/minimessage_item.png)
+![MiniMessage in item](/docs/img/minimessage_item.png)
 
 *Result*

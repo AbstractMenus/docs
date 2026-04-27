@@ -737,7 +737,7 @@ There is several required parameters:
 
 As a result, in order to craft our item, you need to put the corresponding items in the desired cells, as shown in the picture.
 
-![Workbench content](/img/actions_recipe.png)
+![Workbench content](/docs/img/actions_recipe.png)
 
 ## Set item property
 

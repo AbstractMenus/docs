@@ -60,7 +60,7 @@ slot: "4,3" // x,y
 
 In this example, `x` and `y` means the horizontal and vertical position of the item, respectively. The countdown starts from 1. The image below can be useful to understanding this.
 
-![How XY slots works](/img/items_slots_xy.png)
+![How XY slots works](/docs/img/items_slots_xy.png)
 
 ### Way 2. Index
 
@@ -70,7 +70,7 @@ slot: 0
 
 You can specify slot just by a real index. To find out the number of the desired slot, you can use this cheat sheet:
 
-![Slots indexes](/img/items_slots_id.png)
+![Slots indexes](/docs/img/items_slots_id.png)
 
 ### Way 3. Range
 
@@ -100,7 +100,7 @@ items: [
 
 If you need more complex positioning, you can specify slot as cells matrix. For example, you need set a border for your menu. You can make something like above. Then this will look like this:
 
-![Result of using cells matrix](/img/items_slots_matrix_1.png)
+![Result of using cells matrix](/docs/img/items_slots_matrix_1.png)
 
 Every char of this matrix is a some slot.
 
@@ -118,7 +118,7 @@ slot: [
 
 And menu will looks like this:
 
-![Result of using lesser cells matrix](/img/items_slots_matrix_2.png)
+![Result of using lesser cells matrix](/docs/img/items_slots_matrix_2.png)
 
 :::note
 The slots counting in cells matrix always starts from top-left.
