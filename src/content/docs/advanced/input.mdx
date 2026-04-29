@@ -198,7 +198,7 @@ After reloading, AbstractMenus will expect that player will enter command in for
 
 When player entered command and all arguments specified, menu will be opened. Otherwise player receives error message.
 
-To get values which player entered, you need to use context placeholders, as described [above](input-ctx-placeholder). Just see which placehodlers provides [example](/docs/advanced/input/) and add `activator_` prefix in begin. Example:
+To get values which player entered, you need to use context placeholders, as described [above](/docs/advanced/input/). Just see which placeholders the activator provides and add the `activator_` prefix in begin. Example:
 
 ```hocon
 message: "You entered %activator_cmd_arg_myarg1% and %activator_cmd_arg_myarg2%"
@@ -349,7 +349,7 @@ Currently, AbstractMenus has some resctiction for optional arguments. You can ma
 
 ### Final example. Open profile menu by command
 
-Let's modify our example, which we made [before](input-prof-ex). We will replace `shiftClickEntity` activator to `command` and make command take player name:
+Let's modify our example, which we made [before](/docs/advanced/input/). We will replace `shiftClickEntity` activator to `command` and make command take player name:
 
 ```hocon
 title: "%activator_user:player_name%'s profile"

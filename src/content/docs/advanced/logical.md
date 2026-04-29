@@ -186,7 +186,7 @@ rules {
 
 In example above, rule `and` will return `true` if player have permission `group.vip` **AND** gamemode CREATIVE.
 
-Another example with using wrapper as list of rules groups. This format similar to format described [above](logical-rules-list)
+Another example with using wrapper as list of rules groups. This format similar to format described [above](/docs/advanced/logical/)
 
 ```hocon
 rules {

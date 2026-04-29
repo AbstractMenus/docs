@@ -243,7 +243,7 @@ If you save such string into variable and then use it after server update or dow
 
 ## Lore
 
-The lore is a [list of strings](hocon-list-str). Each new line in the list is a line in the item's lore. For example:
+The lore is a [list of strings](/docs/start/hocon/). Each new line in the list is a line in the item's lore. For example:
 
 ```hocon
 lore: [
@@ -309,7 +309,7 @@ Colors can be used only for painting leather armor, potions and other materials 
 
 ## Flag
 
-Flags are used to add new properties to item. The list of flags is a [strings list](hocon-list-str) like `lore`. For example:
+Flags are used to add new properties to item. The list of flags is a [strings list](/docs/start/hocon/) like `lore`. For example:
 
 ```hocon
 flags: [
@@ -436,7 +436,7 @@ This property has several parameters:
 
 - **`title`** - The displayed book's title.
 
-- **`pages`** - The [list of strings](hocon-list-str). Each new line is a new page content.
+- **`pages`** - The [list of strings](/docs/start/hocon/). Each new line is a new page content.
 
 :::note
 The `bookData` property will only work for `WRITTEN_BOOK` material.

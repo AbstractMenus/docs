@@ -79,7 +79,7 @@ Has `placed_` prefix, and contains data about last **placed** item. For example:
 - `%placed_item_type%` - return type of last placed item.
 - `%placed_item_amount%` - return amount of last placed item.
 
-And so on. See the [reference](/docs/advanced/input/) placeholders for more information.
+And so on — see [`extractor-item`](/docs/advanced/input/) placeholders for the full set.
 
 It also has special placeholder `placed_slot` which returns slot index where item was placed in.
 

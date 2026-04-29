@@ -187,7 +187,7 @@ We need only the hash of the skin, without the address `http://textures.minecraf
 
 After we created frames, and saved all head textures, they can be added to the `animated_heads.conf` file, which is located in the plugin folder. Initially, this file already contains one animation that you can try just now. It is called `anim_eye`.
 
-To add your animation, create a [list of strings](hocon-list-str) anywhere in the config, similar to the `anim_eye` block. Each next element in the list is the next frame. Head animation always looped. You should know it when you creating animation frames. After you've added all frames to the file, save it. The animation is created, now it needs to be added to the item.
+To add your animation, create a [list of strings](/docs/start/hocon/) anywhere in the config, similar to the `anim_eye` block. Each next element in the list is the next frame. Head animation always looped. You should know it when you creating animation frames. After you've added all frames to the file, save it. The animation is created, now it needs to be added to the item.
 
 ### Using added animation
 

@@ -9,75 +9,75 @@ Action is something that happens after specific event (for example item click or
 
 ## All actions
 
-| Name | Data type | Example | Description |
-|----|----|----|----|
-| openMenu | String | `openMenu: "my_super_menu"` | Open a menu with the specified name |
-| openMenuCtx | String | `openMenuCtx: "my_super_menu"` | Same as `openMenu` but forwards [context](input-ctx-main) from activator of previous menu |
-| closeMenu | Boolean or Number | `closeMenu: true` `closeMenu: 30` | Close current menu. If there is number instead of boolean, menu will be closed after delay in specified ticks |
-| refreshMenu | Boolean or Number | `refreshMenu: true` `refreshMenu: 20` | Update all menu content except the title. If there is number instead of boolean, menu will be updated after delay in specified ticks |
-| message | Object or String | See example `action-msg` | Send message to player. There is ability to send simple text, JSON text, title, etc. |
-| broadcast | Object or String | See example `action-msg` | Send message to all players on server. Format similar to `message` action |
-| miniMessage | String | See example `mini-message` | **(Deprecated. MiniMessage now supported by default message actions)** Send message with `mini-message` |
-| playerChat | Strings list | `playerChat: "Hello!"` | Send a message on behalf of the player who opened the menu |
-| print | String | `print: "Hello world!"` | Print message in console. Useful for debugging |
-| command | Object | See example `action-cmd` | Execute a list of commands on behalf of a player or server |
-| inputChat | Object | See example `action-input-chat` | Request player for enter text in chat and save result in variable |
-| teleport | Object | See example `action-tp` | Teleport player to location |
-| itemAdd | Objects list | See example `action-itemadd` | Add any items to player |
-| itemRemove | Objects list | See example `action-itemrem` | Remove items from player's inventory. Items will be compared by specified properties or could be just removed by slot number |
-| itemClear | Objects list | Same as `action-itemrem` | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
-| inventoryClear | Boolean | `inventoryClear: true` | Fully clear player's inventory |
-| bungeeConnect | String | `bungeeConnect: "lobby"` | Connect player to another BungeeCord server |
-| giveMoney | Number | `giveMoney: 100` | Gives money for player. **Vault** required |
-| takeMoney | Number | `takeMoney: 15.4` | Takes money from player. **Vault** required |
-| givePermission | Strings list | `givePermission: "some.perm"` | Give permission for player. **LuckPerms** required for correct working |
-| removePermission | Strings list | `removePermission: "some.perm"` | Remove player's permission. **LuckPerms** required for correct working |
-| addGroup | String | `addGroup: "vip"` | Add player to permission group. **LuckPerms** required |
-| removeGroup | String | `removeGroup: "admin"` | Remove player from permission group. **LuckPerms** required |
-| setGamemode | String | `setGamemode: CREATIVE` | Set new game mode for player. All available modes names can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/GameMode.html) |
-| setHealth | Number | `setHealth: 20` | Set player health level |
-| setFoodLevel | Number | `setFoodLevel: 20` | Set player food level |
-| giveXp | Number | `giveXp: 1000` | Give XP points for player |
-| takeXp | Number | `takeXp: 500` | Take player's XP points |
-| giveLevel | Number | `giveLevel: 1` | Increase level for player on specified value |
-| takeLevel | Number | `takeLevel: 3` | Decrease player's level on specified value |
-| sound | Object | See example `action-sound` | Play sound |
-| customSound | Object | See example `action-custom-sound` | Play custom sound from resource pack |
-| potionEffect | Objects list | See example `action-potion` | Give potion effect to player |
-| removePotionEffect | Strings list | See example `action-rempotion` | Remove potion effect from player |
-| openBook | Object | See example `action-book` | Create and open a written book for player |
-| setProperty | Object | See example `action-setprop` | Set new or overwrite existing properties for the menu item |
-| remProperty | Objects list | See example `action-remprop` | Remove specified properties from the menu item |
-| refreshItem | Multiple | See example `action-refreshitem` | Update only one menu item, without updating the entire menu |
-| setSkin | Object | See example `action-setskin` | Set skin for player using the **SkinsRestorer** plugin |
-| resetSkin | Boolean | `resetSkin: true` | Reset player’s skin using the **SkinsRestorer** plugin |
-| addRecipe | Objects list | See example `action-recipe` | Add new custom recipes for crafting |
-| setButton | Objects list | See example `action-setbtn` | Set the new button to displayed menu |
-| removeButton | [example](/docs/general/item-format/#slot) | See an [example](/docs/general/actions/) | Remove button from displayed menu |
-| placeItem | Objects list | See example `action-place-item` | For drag-and-drop. Place draggable item into draggable slot |
-| removePlaced | [example](/docs/general/item-format/#slot) or Object | See an [example](/docs/general/actions/) | Remove draggable item from displayed menu |
-| **Global variables** |  |  |  |
-| setVar | Objects list, Strings list | See example `action-var-glob-set` | Create or replace global variable |
-| removeVar | Objects list, Strings list | See example `action-var-glob-rem` | Remove global variable |
-| incVar | Objects list, Strings list | See example `action-var-glob-math` | Increment global numeric variable |
-| decVar | Objects list, Strings list | See example `action-var-glob-math` | Decrement global numeric variable |
-| mulVar | Objects list, Strings list | See example `action-var-glob-math` | Multiply global numeric variable |
-| divVar | Objects list, Strings list | See example `action-var-glob-math` | Divide global numeric variable |
-| **Personal variables** |  |  |  |
-| setVarp | Objects list, Strings list | See example `action-var-pers-set` | Create or replace personal variable |
-| removeVarp | Objects list, Strings list | See example `action-var-pers-rem` | Remove personal variable |
-| incVarp | Objects list, Strings list | See example `action-var-pers-math` | Increment personal numeric variable |
-| decVarp | Objects list, Strings list | See example `action-var-pers-math` | Decrement personal numeric variable |
-| mulVarp | Objects list, Strings list | See example `action-var-pers-math` | Multiply personal numeric variable |
-| divVarp | Objects list, Strings list | See example `action-var-pers-math` | Divide personal numeric variable |
-| **Special actions** |  |  |  |
-| delay | Object | See example `action-delay` | Wrap actions block to perform they after some delay |
-| bulk | Objects list | See example `action-bulk` | Perform many actions, even of one type |
-| randActions | Objects list | See example `action-randactions` | Perform random actions block from the list |
-| playerScope | Object | See example `action-player-scope` | Perform actions for other player |
-| **For generated menus** |  |  |  |
-| pagePrev | Number | `pagePrev: 1` | Switch to one of the previous page. Works only with generated menus |
-| pageNext | Number | `pageNext: 1` | Switch to one of the next page. Works only with generated menus |
+| Name | Data type | Description |
+|----|----|----|
+| openMenu | String | Open a menu with the specified name |
+| openMenuCtx | String | Same as `openMenu` but forwards [context](/docs/advanced/input/) from activator of previous menu |
+| closeMenu | Boolean or Number | Close current menu. If there is number instead of boolean, menu will be closed after delay in specified ticks |
+| refreshMenu | Boolean or Number | Update all menu content except the title. If there is number instead of boolean, menu will be updated after delay in specified ticks |
+| message | Object or String | Send message to player. There is ability to send simple text, JSON text, title, etc. |
+| broadcast | Object or String | Send message to all players on server. Format similar to `message` action |
+| miniMessage | String | **(Deprecated. MiniMessage now supported by default message actions)** Send message with `mini-message` |
+| playerChat | Strings list | Send a message on behalf of the player who opened the menu |
+| print | String | Print message in console. Useful for debugging |
+| command | Object | Execute a list of commands on behalf of a player or server |
+| inputChat | Object | Request player for enter text in chat and save result in variable |
+| teleport | Object | Teleport player to location |
+| itemAdd | Objects list | Add any items to player |
+| itemRemove | Objects list | Remove items from player's inventory. Items will be compared by specified properties or could be just removed by slot number |
+| itemClear | Objects list | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
+| inventoryClear | Boolean | Fully clear player's inventory |
+| bungeeConnect | String | Connect player to another BungeeCord server |
+| giveMoney | Number | Gives money for player. **Vault** required |
+| takeMoney | Number | Takes money from player. **Vault** required |
+| givePermission | Strings list | Give permission for player. **LuckPerms** required for correct working |
+| removePermission | Strings list | Remove player's permission. **LuckPerms** required for correct working |
+| addGroup | String | Add player to permission group. **LuckPerms** required |
+| removeGroup | String | Remove player from permission group. **LuckPerms** required |
+| setGamemode | String | Set new game mode for player. All available modes names can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/GameMode.html) |
+| setHealth | Number | Set player health level |
+| setFoodLevel | Number | Set player food level |
+| giveXp | Number | Give XP points for player |
+| takeXp | Number | Take player's XP points |
+| giveLevel | Number | Increase level for player on specified value |
+| takeLevel | Number | Decrease player's level on specified value |
+| sound | Object | Play sound |
+| customSound | Object | Play custom sound from resource pack |
+| potionEffect | Objects list | Give potion effect to player |
+| removePotionEffect | Strings list | Remove potion effect from player |
+| openBook | Object | Create and open a written book for player |
+| setProperty | Object | Set new or overwrite existing properties for the menu item |
+| remProperty | Objects list | Remove specified properties from the menu item |
+| refreshItem | Multiple | Update only one menu item, without updating the entire menu |
+| setSkin | Object | Set skin for player using the **SkinsRestorer** plugin |
+| resetSkin | Boolean | Reset player’s skin using the **SkinsRestorer** plugin |
+| addRecipe | Objects list | Add new custom recipes for crafting |
+| setButton | Objects list | Set the new button to displayed menu |
+| removeButton | Slot (number, range, matrix) | Remove button from displayed menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
+| placeItem | Objects list | For drag-and-drop. Place draggable item into draggable slot |
+| removePlaced | Slot or Object | Remove a draggable item from the menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
+| **Global variables** |  |  |
+| setVar | Objects list, Strings list | Create or replace global variable |
+| removeVar | Objects list, Strings list | Remove global variable |
+| incVar | Objects list, Strings list | Increment global numeric variable |
+| decVar | Objects list, Strings list | Decrement global numeric variable |
+| mulVar | Objects list, Strings list | Multiply global numeric variable |
+| divVar | Objects list, Strings list | Divide global numeric variable |
+| **Personal variables** |  |  |
+| setVarp | Objects list, Strings list | Create or replace personal variable |
+| removeVarp | Objects list, Strings list | Remove personal variable |
+| incVarp | Objects list, Strings list | Increment personal numeric variable |
+| decVarp | Objects list, Strings list | Decrement personal numeric variable |
+| mulVarp | Objects list, Strings list | Multiply personal numeric variable |
+| divVarp | Objects list, Strings list | Divide personal numeric variable |
+| **Special actions** |  |  |
+| delay | Object | Wrap actions block to perform they after some delay |
+| bulk | Objects list | Perform many actions, even of one type |
+| randActions | Objects list | Perform random actions block from the list |
+| playerScope | Object | Perform actions for other player |
+| **For generated menus** |  |  |
+| pagePrev | Number | Switch to one of the previous page. Works only with generated menus |
+| pageNext | Number | Switch to one of the next page. Works only with generated menus |
 
 ## Message
 
@@ -311,7 +311,7 @@ potionEffect: [
 ]
 ```
 
-The format of this action is similar to [example](/docs/general/item-format/) item property.
+The format of this action is similar to the [`potionData` item property](/docs/general/item-format/).
 
 ## Remove potion effect
 
@@ -328,7 +328,7 @@ Action above will remove two potion effects from player.
 
 ## Open book
 
-Action to open written book. Format of this action similar to [example](/docs/general/item-format/) item property.
+Action to open a written book. The format mirrors the [`bookData` item property](/docs/general/item-format/).
 
 ```hocon
 openBook {

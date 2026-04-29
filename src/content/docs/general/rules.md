@@ -29,40 +29,40 @@ In this example, we check a player for permission "some.perm", a group "default"
 
 ## All rules
 
-| Name | Data type | Example | Description |
-|----|----|----|----|
-| permission | Strings list | `permission: "some.perm"` | Does the player has a permission |
-| world | String | `world: "world"` | Does the player in specified world |
-| gamemode | String | `gamemode: SURVIVAL` | Compare player's gamemode with specified |
-| group | Strings list | `group: "default"` | Does the player is a member of all of specified **LuckPerms** groups |
-| money | Number | `money: 2` | Does the player has enough money. **Vault** required |
-| level | Number | `level: 1` | Does the player has required level |
-| xp | Number | `xp: 20` | Does the player has required XP |
-| health | Number | `health: 15` | Does the player has required HP |
-| foodLevel | Number | `foodLevel: 5` | Does the player has required food level |
-| chance | Number | `chance: 50` | A random chance to complete this rule in percentages |
-| online | Number | `online: 17` | Is there required players count on the server |
-| playerIsOnline | String | `playerIsOnline: "Notch"` | Chck is required player on the server |
-| inventoryItems | Objects list | See an [example](/docs/general/rules/#inventory-items) | Does player has a items, specified in the list |
-| heldItem | Object | See an [example](/docs/general/rules/#held-item) | Does the item in the player's main hand match the specified item |
-| freeSlot | Number | `freeSlot: -1` `freeSlot: 3` | Checks player inventory for free slot. If number is greater that `-1` it will check specified slot. If number lesser than `0` it will check inventory for any free slot |
-| freeSlotCount | Number | `freeSlotCount: 2` | Checks player inventory for specify free slots count. If player has a same or more free slots it will return true |
-| existVar | String, Object | See an [example](/docs/general/rules/#var-existing) | Check is there exists global variable |
-| existVarp | String | See an [example](/docs/general/rules/#var-existing) | Check is there exists personal variable |
-| placedItem | Object | See an [example](/docs/general/rules/) | For drag-and-drop. Check is there placed some item in menu by player |
-| **WorldGuard** |  |  |  |
-| region | Strings list | `region: "myregion"` | Checks player is in one of the specified **WorldGuard** regions |
-| **BungeeCord** |  |  |  |
-| bungeeOnline | Object | See an [example](/docs/general/rules/#bungeecord-online) | Does bungee server has enough players count |
-| bungeeIsOnline | String | `bungeeIsOnline: "lobby"` | Checks the specified **BunegeCord** server is online |
-| **Complex rules** |  |  |  |
-| if | Objects list | See an [example](/docs/general/rules/#if-rule) | Checks some text and numeric parameters |
-| js | String | See an [example](/docs/general/rules/#javascript) | Execute JavaScript script and check the result |
-| **Special rules** |  |  |  |
-| and | Objects list | See example [here](/docs/advanced/logical/) | Logical wrapper for rules implemented with 'AND' operator |
-| or | Objects list | See example [here](/docs/advanced/logical/) | Logical wrapper for rules implemented with 'OR' operator |
-| oneof | Objects list | See example [here](/docs/advanced/logical/) | Works as `and` wrapper but will be stopped if some rule in the list will be `true` |
-| playerScope | Object | See example [here](/docs/advanced/logical/) | Rules wrapper to check another player found by name |
+| Name | Data type | Description |
+|----|----|----|
+| permission | Strings list | Player has a permission node |
+| world | String | Player is in the named world |
+| gamemode | String | Player's gamemode matches |
+| group | Strings list | Player is in a LuckPerms group |
+| money | Number | Player has at least N currency (Vault or configured provider) |
+| level | Number | Player has at least N levels |
+| xp | Number | Player has at least N XP points |
+| health | Number | Player has at least N HP |
+| foodLevel | Number | Player has at least N food level |
+| chance | Number | Random check at N percent |
+| online | Number | At least N players online |
+| playerIsOnline | String | A specific player is online |
+| [inventoryItems](#inventory-items) | Objects list | Player has the listed items in inventory |
+| [heldItem](#held-item) | Object | Item in main hand matches |
+| freeSlot | Number | Inventory has a free slot (or specific slot is free) |
+| freeSlotCount | Number | Inventory has at least N free slots |
+| [existVar](#var-existing) | String or Object | A global variable exists |
+| [existVarp](#var-existing) | String | A per-player variable exists |
+| placedItem | Object | A drag-and-drop slot has the expected item |
+| **WorldGuard** |  |  |
+| region | Strings list | Player is inside a WorldGuard region |
+| **BungeeCord** |  |  |
+| [bungeeOnline](#bungeecord-online) | Object | A BungeeCord server has enough players |
+| bungeeIsOnline | String | A BungeeCord server is online |
+| **Complex rules** |  |  |
+| [if](#if-rule) | Objects list | Compare placeholders with text or numeric values |
+| [js](#javascript) | String | Run a JavaScript expression and use its result |
+| **Special rules** |  |  |
+| [and](/docs/advanced/logical/) | Objects list | Logical AND wrapper |
+| [or](/docs/advanced/logical/) | Objects list | Logical OR wrapper |
+| [oneof](/docs/advanced/logical/) | Objects list | Stops on the first matching rule |
+| [playerScope](/docs/advanced/logical/) | Object | Re-evaluate rules against a different player |
 
 ## Inventory items
 

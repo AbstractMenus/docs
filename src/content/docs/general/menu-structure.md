@@ -307,12 +307,12 @@ The `bindings` block has next format:
 
 - **`rules`** - Regular rules to check player
 
-Inside `props` block you can specify one or multiple [item properties](prop-all), as you do it just inside item. All these properties will be added to item only if player matches rules, specified inside `rules` block.
+Inside `props` block you can specify one or multiple [item properties](/docs/general/item-format/), as you do it just inside item. All these properties will be added to item only if player matches rules, specified inside `rules` block.
 
 Inside `rules` block you can specify any rules, like in any other `rules` block.
 
 :::note
-Item must have a default [material installer](prop-all). If you use bindings with material installer property, you just owerwrite it.
+Item must have a default [material installer](/docs/general/item-format/). If you use bindings with material installer property, you just owerwrite it.
 :::
 
 :::caution

@@ -22,34 +22,34 @@ activators {
 In this example, the menu will be opened when you joined to the server, or if you enter `/menu` or `/game` command.
 
 :::tip
-Many activators, such a `command` saves their state to get values and use them in menu. More about this cool feature read in `../advanced/input` article.
+Many activators, such as `command`, save their state so you can read it from the opened menu. See [activator input](/docs/advanced/input/).
 :::
 
 ## All activators
 
-| Name | Data type | Example | Description |
-|----|----|----|----|
-| command | Multiple types | See an [example](/docs/general/activators/) | Open menu when command entered |
-| chat | Strings list | See an [example](/docs/general/activators/) | Open menu when entered some chat message |
-| containsChat | Strings list | See an [example](/docs/general/activators/) | Open menu when chat message contains some word |
-| join | Boolean | `join: true` | Open when player join the server |
-| regionJoin | Strings list | See an [example](/docs/general/activators/) | Open menu when player joined some WG region |
-| regionLeave | Strings list | See an [example](/docs/general/activators/) | Open menu when player leaved some WG region |
-| clickItem | Objects list | See an [example](/docs/general/activators/) | Open menu when RMB click on the item in the hand |
-| clickNPC | Numbers list | See an [example](/docs/general/activators/) | Open menu when RMB click on NPC (from Citizens) |
-| clickEntity | Objects list | See an [example](/docs/general/activators/) | Open menu when RMB click on entity |
-| shiftClickEntity | Objects list | See an [example](/docs/general/activators/) | Open menu when Shift-RMB click on entity |
-| clickBlock | Objects list | See an [example](/docs/general/activators/) | Open menu when some block in specified location clicked |
-| clickBlockType | Strings list | See an [example](/docs/general/activators/) | Open menu when some block of specified type clicked |
-| button | Objects list | See an [example](/docs/general/activators/) | Open menu when button clicked |
-| lever | Objects list | See an [example](/docs/general/activators/) | Open menu when lever shifted |
-| plate | Objects list | See an [example](/docs/general/activators/) | Open menu when plate activated |
-| table | Strings list | See an [example](/docs/general/activators/) | Open menu when sign with some text clicked |
-| swapItems | None | See an [example](/docs/general/activators/) | Open menu when player swaps item. By default it's 'F' key |
+| Name | Data type | Description |
+|----|----|----|
+| [command](#activator-command) | Multiple types | Open menu when command entered |
+| [chat](#activator-chat) | Strings list | Open menu when entered some chat message |
+| [containsChat](#activator-chat) | Strings list | Open menu when chat message contains some word |
+| join | Boolean | Open when player joins the server |
+| [regionJoin](#activator-regionjoin) | Strings list | Open menu when player joined some WG region |
+| [regionLeave](#activator-regionleave) | Strings list | Open menu when player leaved some WG region |
+| [clickItem](#activator-clickitem) | Objects list | Open menu when RMB click on the item in the hand |
+| [clickNPC](#activator-clicknpc) | Numbers list | Open menu when RMB click on NPC (from Citizens) |
+| [clickEntity](#activator-clickentity) | Objects list | Open menu when RMB click on entity |
+| [shiftClickEntity](#activator-shiftclickentity) | Objects list | Open menu when Shift-RMB click on entity |
+| [clickBlock](#activator-clickblock) | Objects list | Open menu when some block in specified location clicked |
+| [clickBlockType](#activator-clickblocktype) | Strings list | Open menu when some block of specified type clicked |
+| [button](#activators-button-lever-plate) | Objects list | Open menu when button clicked |
+| [lever](#activators-button-lever-plate) | Objects list | Open menu when lever shifted |
+| [plate](#activators-button-lever-plate) | Objects list | Open menu when plate activated |
+| [table](#activator-table-sign) | Strings list | Open menu when sign with some text clicked |
+| [swapItems](#activator-swapitems) | None | Open menu when player swaps item. By default it's 'F' key |
 
 ## Activator `command`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-cmd`
 
 Open menu if player entered command. This activator has several formats which described below.
 
@@ -80,7 +80,7 @@ When you enter `/menu` or `/game` command, menu will be opened.
 
 ### Command with arguments
 
-This activator has other, more complex formats. You can build own commands with arguments. See the [reference](/docs/advanced/input/) topic to know how to do this.
+This activator has other, more complex formats — you can build your own commands with arguments. See [activator input](/docs/advanced/input/).
 
 ## Activator `chat`
 
@@ -113,7 +113,7 @@ In this example, if player's message contains `hey`, `menu` or `or` symbols toge
 
 ## WorldGuard regions
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-region`
 
 These activators require the [WorldGuard](https://dev.bukkit.org/projects/worldguard) plugin and `useWorldGuard: true` in `config.conf`.
 
@@ -145,7 +145,7 @@ In this example, the menu will be opened if you leave from `spawn` or `otherRegi
 
 ## Activator `clickItem`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-item`
 
 You can add activator to open menu when some item clicked by right click in player's hand.
 
@@ -162,7 +162,7 @@ Make sure that you specified all item properties. If some property missing, plug
 
 ## Activator `clickNPC`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-npc`
 
 Here listed NPC id which will open the menu when click NPC. Example:
 
@@ -189,7 +189,7 @@ All entity types can be found [here](https://hub.spigotmc.org/javadocs/bukkit/or
 
 ### Activator `clickEntity`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-entity`
 
 The `clickEntity` activator is a [list of objects](/docs/start/hocon/). Each object is a simple entity data. Example:
 
@@ -224,9 +224,9 @@ In this example we specified `PLAYER` entity and `ZOMBIE` entity with `&eZombie`
 
 ### Activator `shiftClickEntity`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-entity`
 
-This activator format similar to [example](/docs/general/activators/). The only difference is that this activator will open menu only if player sneaking (usually by `Shift` key) while click on entity. Example:
+Same shape as [`clickEntity`](#activator-clickentity) above. The only difference: this one fires only when the player is sneaking (Shift held) at the moment of the click. Example:
 
 ```hocon
 shiftClickEntity {
@@ -254,7 +254,7 @@ Block click activators handles clocking on block (right and left click). THere a
 
 ### Activator `clickBlock`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-block`
 
 In this code block you can specify location of some world's block. If player click on this block, menu will be opened.
 
@@ -292,7 +292,7 @@ clickBlock: [
 
 ### Activator `clickBlockType`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-block`
 
 In this code block you can specify type of some world's block. If player click on block of specified type, menu will be opened. Example:
 
@@ -311,7 +311,7 @@ clickBlockType: [
 
 ## Activators `button`, `lever`, `plate`
 
-**Extractor type**: [example](/docs/advanced/input/)
+**Extractor type**: `extractor-block`
 
 A `button`, `lever` and `plate` activators has same format. Below is example for buttons:
 
@@ -345,7 +345,7 @@ plate: [
 
 **Extractor type**: *None*
 
-The `table` activator is a [strings list](hocon-list-str)
+The `table` activator is a [strings list](/docs/start/hocon/)
 
 ```hocon
 table: [
