@@ -43,6 +43,7 @@ export default defineConfig({
           label: "Getting Started",
           items: [
             { slug: "start/installation" },
+            { slug: "start/config" },
             { slug: "start/how-to" },
             { slug: "start/hocon" },
             { slug: "start/faq" },

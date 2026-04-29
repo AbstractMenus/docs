@@ -28,19 +28,19 @@ Action is something that happens after specific event (for example item click or
 | [itemClear](#remove-item) | Objects list | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
 | inventoryClear | Boolean | Fully clear player's inventory |
 | bungeeConnect | String | Connect player to another BungeeCord server |
-| giveMoney | Number | Gives money for player. **Vault** required |
-| takeMoney | Number | Takes money from player. **Vault** required |
-| givePermission | Strings list | Give permission for player. **LuckPerms** required for correct working |
-| removePermission | Strings list | Remove player's permission. **LuckPerms** required for correct working |
-| addGroup | String | Add player to permission group. **LuckPerms** required |
-| removeGroup | String | Remove player from permission group. **LuckPerms** required |
+| [giveMoney](#provider-selection) | Number or Object | Add money to a player. Uses the configured economy provider (Vault by default). |
+| [takeMoney](#provider-selection) | Number or Object | Withdraw money from a player. Uses the configured economy provider (Vault by default). |
+| [givePermission](#provider-selection) | Strings list or Object | Grant a permission. Uses the configured permissions provider (LuckPerms by default). |
+| [removePermission](#provider-selection) | Strings list or Object | Revoke a permission. Uses the configured permissions provider. |
+| [addGroup](#provider-selection) | String or Object | Add the player to a permissions group. |
+| [removeGroup](#provider-selection) | String or Object | Remove the player from a permissions group. |
 | setGamemode | String | Set new game mode for player. All available modes names can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/GameMode.html) |
 | setHealth | Number | Set player health level |
 | setFoodLevel | Number | Set player food level |
-| giveXp | Number | Give XP points for player |
-| takeXp | Number | Take player's XP points |
-| giveLevel | Number | Increase level for player on specified value |
-| takeLevel | Number | Decrease player's level on specified value |
+| [giveXp](#provider-selection) | Number or Object | Give XP points to a player. Goes through the levels provider. |
+| [takeXp](#provider-selection) | Number or Object | Take XP points from a player. |
+| [giveLevel](#provider-selection) | Number or Object | Increase the player's level. |
+| [takeLevel](#provider-selection) | Number or Object | Decrease the player's level. |
 | [sound](#sound) | Object | Play sound |
 | [customSound](#custom-sound) | Object | Play custom sound from resource pack |
 | [potionEffect](#add-potion-effect) | Objects list | Give potion effect to player |
@@ -49,8 +49,8 @@ Action is something that happens after specific event (for example item click or
 | [setProperty](#set-item-property) | Object | Set new or overwrite existing properties for the menu item |
 | [remProperty](#remove-item-property) | Objects list | Remove specified properties from the menu item |
 | [refreshItem](#refresh-item) | Multiple | Update only one menu item, without updating the entire menu |
-| [setSkin](#set-skin) | Object | Set skin for player using the **SkinsRestorer** plugin |
-| [resetSkin](#set-skin) | Boolean | Reset player’s skin using the **SkinsRestorer** plugin |
+| [setSkin](#set-skin) | Object | Set the player's skin. Uses the configured skin provider (SkinsRestorer by default). |
+| [resetSkin](#set-skin) | Boolean | Reset the player's skin via the same provider. |
 | [addRecipe](#add-recipe) | Objects list | Add new custom recipes for crafting |
 | [setButton](#set-menu-button) | Objects list | Set the new button to displayed menu |
 | [removeButton](#remove-menu-button) | Slot (number, range, matrix) | Remove button from displayed menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
@@ -78,6 +78,55 @@ Action is something that happens after specific event (for example item click or
 | **For generated menus** |  |  |
 | pagePrev | Number | Switch to one of the previous page. Works only with generated menus |
 | pageNext | Number | Switch to one of the next page. Works only with generated menus |
+
+## Provider selection
+
+Money, level, permission, placeholder, and skin actions all go through AbstractMenus's pluggable provider system. Out of the box, [Vault](https://www.spigotmc.org/resources/vault.34315/) handles money/permissions and [LuckPerms](https://www.spigotmc.org/resources/28140/) handles permissions/groups. Drop in an addon like [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon) and you get a second economy provider on the same server.
+
+### Default backend (no `provider:` field)
+
+```hocon
+takeMoney: 100
+```
+
+Resolves through `config.conf providers.economy`. Set to `"auto"` (the default) to pick the highest-priority registered provider; pin a specific id like `"vault"` or `"playerpoints"` to override.
+
+### Per-action override
+
+Object form lets you name the provider explicitly. Useful when one menu mixes currencies — coins for buying items, points for the lottery:
+
+```hocon
+actions {
+  click: [
+    { type: takeMoney, amount: 100, provider: "vault"        }   // server economy
+    { type: giveMoney, amount: 5,   provider: "playerpoints" }   // donor tokens
+  ]
+}
+```
+
+### Server-wide default
+
+If every menu should use PlayerPoints, edit `plugins/AbstractMenus/config.conf`:
+
+```hocon
+providers {
+  economy = "playerpoints"
+}
+```
+
+Now the scalar form (`takeMoney: 100`) routes through PlayerPoints automatically.
+
+### Resolution order
+
+When AbstractMenus runs a money/level/permission action, it picks the handler in this order:
+
+1. **Per-action `provider: "..."`** — wins outright if present.
+2. **`config.conf providers.<section>`** — used if a non-`auto` value is set.
+3. **Priority-based auto-resolve** — highest registered priority wins. Built-in providers register at priority 50; addons typically at 100, so addon providers win unless you pin Vault explicitly.
+
+The same shape applies to `giveLevel`/`takeLevel` (levels), `givePermission`/`removePermission`/`addGroup`/`removeGroup` (permissions), and `setSkin`/`resetSkin` (skins). Just swap `economy` for the relevant section name in `config.conf`.
+
+For implementing your own provider, see [Provider handlers](/docs/developers/handlers/).
 
 ## Message
 

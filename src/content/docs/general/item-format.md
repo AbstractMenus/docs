@@ -18,7 +18,7 @@ The [Cheatsheet](/docs/general/cheatsheet/) groups every property in one ctrl-F'
 | Name | Data type | Example | Description |
 |----|----|----|----|
 | slot | Multiple | See [Slot](#slot) below | Where the item sits. Can be used only for menu items or in some actions and rules. |
-| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/start/installation/#configconf-reference) the floor wins; set `clickCooldown: 0` to bypass entirely. |
+| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/start/config/) the floor wins; set `clickCooldown: 0` to bypass entirely. |
 
 ### Material installers
 

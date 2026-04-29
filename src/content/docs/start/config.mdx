@@ -1,0 +1,169 @@
+---
+title: config.conf reference
+description: Every key in plugins/AbstractMenus/config.conf - what it does, default value, and when to change it.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-operator">Operator</span></div>
+
+`plugins/AbstractMenus/config.conf` is the global plugin configuration. It's HOCON (a superset of JSON — see [HOCON format](/docs/start/hocon/) for the syntax primer). Every key is optional; AbstractMenus generates the file on first run with the defaults shown below.
+
+After editing, run `/am reload` — no restart needed.
+
+## Full default config
+
+```hocon
+# Persist /var and /varp values between restarts.
+# SQLite, stored at plugins/AbstractMenus/variables.db.
+variables: true
+
+# Sync variables between BungeeCord servers. Only relevant on a
+# network where multiple backends share variable state.
+syncVariables: false
+
+# Register the BungeeCord plugin channel. Required for the
+# bungeeConnect action to actually send players to other servers.
+bungeecord: false
+
+# Ping configured BungeeCord servers periodically so the
+# bungeeOnline / bungeeIsOnline rules see fresh data.
+bungeePing: false
+
+# Enable region-based activators (regionJoin / regionLeave) and
+# the WorldGuard region rule. Requires the WorldGuard plugin.
+useWorldGuard: false
+
+# Parse MiniMessage tags (<red>, <click:...>, <hover:...>,
+# <gradient:...>, etc.) in messages and item text. Off by
+# default to skip the extra parse pass on every render.
+useMiniMessage: false
+
+# Path to the menu folder. "default" means
+# plugins/AbstractMenus/menus/. Override to an absolute path
+# if multiple servers should serve identical menus from a shared
+# NFS / SMB mount.
+menusFolder: "default"
+
+# Print every menu open to the server log. Useful while debugging
+# activator wiring; turn off in production.
+logOpenMenus: false
+
+# Path to the variables.db file. "default" puts it under the
+# plugin folder. Override to relocate (e.g. to an SSD volume).
+dbFolder: "default"
+
+# Time formatting suffixes for time-based placeholders.
+time {
+  day:    "d"
+  hour:   "h"
+  minute: "min"
+  second: "sec"
+}
+
+# Default provider per section. Possible values:
+#   - "auto"        — highest-priority registered provider wins
+#   - explicit id   — e.g. "vault", "playerpoints", "luckperms"
+#
+# Per-action overrides in menus (provider: "...") always win
+# over this.
+providers {
+  economy      = "auto"
+  permissions  = "auto"
+  levels       = "auto"
+  placeholders = "auto"
+  skins        = "auto"
+}
+
+# Click debounce floors, in milliseconds. Active only on items
+# with clickCooldown > 0; the per-item cooldown wins when it's
+# larger than the floor. Set clickCooldown: 0 on an item to
+# bypass entirely.
+#
+# Why this exists: the vanilla Minecraft client emits extra
+# packets per physical click during rapid input. There's no
+# way to tell them apart from real clicks server-side. The
+# floor caps the fire rate so one physical click stays one
+# action.
+clickDebounce {
+  default = 80    # LEFT / RIGHT / MIDDLE clicks
+  shift   = 250   # SHIFT_LEFT / SHIFT_RIGHT clicks
+}
+```
+
+## Key reference
+
+### Persistence and BungeeCord
+
+| Key | Default | What it does |
+|---|---|---|
+| `variables` | `true` | Persist `/var` and `/varp` values to `variables.db`. Set to `false` to make all variables in-memory only. |
+| `syncVariables` | `false` | On a BungeeCord network, propagate variable writes to all backends through the bungee channel. |
+| `bungeecord` | `false` | Register the BungeeCord plugin channel. Needed by the `bungeeConnect` action. |
+| `bungeePing` | `false` | Periodically ping configured backends so the `bungeeOnline` rules see fresh state. |
+
+### External integrations
+
+| Key | Default | What it does |
+|---|---|---|
+| `useWorldGuard` | `false` | Enable region activators / rules. Requires [WorldGuard](https://dev.bukkit.org/projects/worldguard) on the server. |
+| `useMiniMessage` | `false` | Parse [MiniMessage](https://docs.adventure.kyori.net/minimessage/format.html) tags in messages and item text. Off by default to skip per-render parsing on servers that don't use it. |
+
+### File paths
+
+| Key | Default | What it does |
+|---|---|---|
+| `menusFolder` | `"default"` | Where AbstractMenus reads `.conf` menus from. `"default"` resolves to `plugins/AbstractMenus/menus/`. Override with an absolute path for shared menu folders across servers. |
+| `dbFolder` | `"default"` | Where `variables.db` lives. `"default"` resolves to `plugins/AbstractMenus/`. |
+| `logOpenMenus` | `false` | Log every menu open to the server console. Useful while debugging. |
+
+### Time formatting
+
+The `time {}` block customises the suffixes used by time-related placeholders (e.g. cooldown displays):
+
+| Key | Default |
+|---|---|
+| `time.day` | `"d"` |
+| `time.hour` | `"h"` |
+| `time.minute` | `"min"` |
+| `time.second` | `"sec"` |
+
+### Providers
+
+The `providers {}` block sets the default backend for each pluggable section. Out of the box, AbstractMenus registers Vault for economy/permissions, LuckPerms for permissions, Bukkit XP for levels, PlaceholderAPI for placeholders, SkinsRestorer for skins. Addons can register additional providers.
+
+| Key | Default | Possible values |
+|---|---|---|
+| `providers.economy` | `"auto"` | `"auto"`, `"vault"`, `"playerpoints"` (with [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon)), or any other registered economy id. |
+| `providers.permissions` | `"auto"` | `"auto"`, `"vault"`, `"luckperms"`, etc. |
+| `providers.levels` | `"auto"` | `"auto"`, `"bukkit"`, etc. |
+| `providers.placeholders` | `"auto"` | `"auto"`, `"papi"`, `"internal"`. |
+| `providers.skins` | `"auto"` | `"auto"`, `"skinsrestorer"`, etc. |
+
+`"auto"` means "pick the highest-priority registered provider". Built-in providers register at priority 50; addons typically at 100 — so addons win unless you pin an explicit id here.
+
+Per-action overrides in HOCON (`provider: "..."` inside an action or rule) always beat the config default. See [Provider selection](/docs/general/actions/#provider-selection) for the resolution rules.
+
+### Click debounce
+
+The `clickDebounce {}` block sets server-wide minimum click cooldowns, in milliseconds. They only apply to items where the menu author set `clickCooldown` to a positive value.
+
+| Key | Default | Purpose |
+|---|---|---|
+| `clickDebounce.default` | `80` | Floor for LEFT / RIGHT / MIDDLE clicks. Catches the synthetic DOUBLE_CLICK packets the Minecraft client emits per physical click. |
+| `clickDebounce.shift` | `250` | Floor for SHIFT_LEFT / SHIFT_RIGHT clicks. Catches the ~3 extra QUICK_MOVE packets the client emits per shift-click. Raise if you still see duplicates; lower if it feels laggy. |
+
+<Aside type="tip">
+To bypass the floor entirely on a specific item, set `clickCooldown: 0`. Items with no `clickCooldown` set get a 1-tick default and the floor still applies.
+</Aside>
+
+## Reload behaviour
+
+`/am reload` re-parses `config.conf` and every menu file. Most keys take effect immediately. The exceptions:
+
+- `variables` — toggling persistence on/off requires a server restart (the SQLite file is opened on enable).
+- `bungeecord`, `bungeePing` — the channel registration runs only on enable; restart the server after toggling.
+- `dbFolder` — the database file is opened on enable; restart to relocate.
+- `useWorldGuard` — the region listener is wired up on enable; restart after toggling.
+
+Everything else (`menusFolder`, `useMiniMessage`, `time.*`, `providers.*`, `clickDebounce.*`, `logOpenMenus`) reloads cleanly.

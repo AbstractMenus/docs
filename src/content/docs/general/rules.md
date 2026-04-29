@@ -35,7 +35,7 @@ In this example, we check a player for permission "some.perm", a group "default"
 | world | String | Player is in the named world |
 | gamemode | String | Player's gamemode matches |
 | group | Strings list | Player is in a LuckPerms group |
-| money | Number | Player has at least N currency (Vault or configured provider) |
+| money | Number or Object | Player has at least N currency. Object form `{ amount, provider }` lets you pin a specific economy provider — see [Provider selection](/docs/general/actions/#provider-selection). |
 | level | Number | Player has at least N levels |
 | xp | Number | Player has at least N XP points |
 | health | Number | Player has at least N HP |

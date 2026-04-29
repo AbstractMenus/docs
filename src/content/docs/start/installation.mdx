@@ -38,70 +38,11 @@ AbstractMenus does not bundle Adventure — it relies on the copy Paper ships. P
 
 </Steps>
 
-## config.conf reference
+## Configuring
 
-`config.conf` is HOCON. Keys you'll touch most:
+`plugins/AbstractMenus/config.conf` holds every server-wide setting — provider defaults, click debounce floors, MiniMessage opt-in, BungeeCord, time formatting. Full key-by-key reference: [config.conf reference](/docs/start/config/).
 
-```hocon
-# Persist /var and /varp values between restarts. SQLite, ~plugins/AbstractMenus/variables.db.
-variables: true
-
-# Sync variables between BungeeCord servers (only if you actually run a network).
-syncVariables: false
-
-# Register the BungeeCord plugin channel so the bungeeConnect action works.
-bungeecord: false
-
-# Ping configured BungeeCord servers periodically so bungee online-rule queries are fresh.
-bungeePing: false
-
-# Enable region-based activators and rules. Requires the WorldGuard plugin.
-useWorldGuard: false
-
-# Parse MiniMessage tags (<red>, <click:...>, <hover:...>) in messages and item text.
-# Off by default to skip the extra parse step on every render.
-useMiniMessage: false
-
-# Path to the menu folder. Override to a shared NFS mount if multiple servers
-# should serve identical menus.
-menusFolder: "default"
-
-# Print menu opens to the server log. Useful while debugging activator wiring.
-logOpenMenus: false
-
-# Path to the variables.db file. "default" puts it under the plugin folder.
-dbFolder: "default"
-
-# Time formatting suffixes for time-based placeholders.
-time {
-  day:    "d"
-  hour:   "h"
-  minute: "min"
-  second: "sec"
-}
-
-# Default provider per section. Pin a specific id (e.g. "vault", "playerpoints")
-# or leave on "auto" for highest-priority registered. Per-action overrides in
-# menus (provider: "...") win over this.
-providers {
-  economy      = "auto"
-  permissions  = "auto"
-  levels       = "auto"
-  placeholders = "auto"
-  skins        = "auto"
-}
-
-# Click debounce floors in milliseconds. Active when an item has clickCooldown > 0.
-# - default: LEFT / RIGHT / MIDDLE clicks. 80ms catches the synthetic
-#   DOUBLE_CLICK packets the Minecraft client emits per physical click.
-# - shift: SHIFT_LEFT / SHIFT_RIGHT. 250ms catches the ~3 extra QUICK_MOVE
-#   packets the client emits per shift-click. Lower values trade safety for
-#   responsiveness; raise if you still see duplicates.
-clickDebounce {
-  default = 80
-  shift   = 250
-}
-```
+After editing, run `/am reload`.
 
 ## First-run files
 
