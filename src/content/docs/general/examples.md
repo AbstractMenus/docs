@@ -14,8 +14,8 @@ Menus with using some not so difficult features, like variables, or more complex
 Advanced menus  
 Menus with advanced features using, like templates, animations, drag-and-drop, etc.
 
-:::caution
-Some material names, used in these examples can not work on your Spigot version. We used materials for MC 1.13.
+:::note
+All examples target the MC 1.20.6+ material name set, matching the AbstractMenus 2.0 requirement.
 :::
 ## Simple menus
 

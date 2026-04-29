@@ -1,116 +1,194 @@
 ---
-title: Plugin API
-description: How to depend on AbstractMenus from another plugin and access its services.
+title: Getting started
+description: Pull AbstractMenus into your build, declare a dependency, and get a handle on the API.
 ---
 
-import { Steps, Tabs, TabItem, Aside, Badge } from "@astrojs/starlight/components";
+import { Steps, Tabs, TabItem, Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
 
-Other plugins can talk to AbstractMenus through its public API: open menus, register custom actions/rules/item properties, read or write variables, watch for menu lifecycle events.
+AbstractMenus 2.0 ships an SPI: addons register custom actions, rules, item properties, activators, catalogs, and provider handlers (economy, permissions, levels, placeholders, skins) at runtime. Same SPI the built-in types use.
 
-Javadocs: [abstractmenus.github.io/api](https://abstractmenus.github.io/api/).
+There are two ways to deliver an addon. Pick one:
+
+<CardGrid>
+  <LinkCard
+    title="Path 1 — plugin-as-addon"
+    href="/docs/developers/addons/#path-1"
+    description="A standard Bukkit plugin. Drops into plugins/, loaded by Bukkit."
+  />
+  <LinkCard
+    title="Path 2 — AM-loaded addon"
+    href="/docs/developers/addons/#path-2"
+    description="A jar with addon.conf. Drops into plugins/AbstractMenus/addons/, loaded by AbstractMenus."
+  />
+</CardGrid>
+
+The pages below cover the API surface itself. The [addons page](/docs/developers/addons/) covers delivery: which path to pick, manifest format, lifecycle.
 
 ## Add the API to your build
 
+The AbstractMenus API is published on [GitHub Packages](https://github.com/AbstractMenus/minecraft-plugin/packages) and built per release on [JitPack](https://jitpack.io/#AbstractMenus/minecraft-plugin).
+
 <Aside type="note">
-The API version doesn't always match the plugin's release version - some plugin releases reuse the same API version. Check the [latest tag](https://github.com/AbstractMenus/api/tags) before pinning.
+JitPack is anonymous-pull. GitHub Packages requires a Personal Access Token with the `read:packages` scope, even for public packages — that's a GitHub limitation, not ours. If you have a strong reason to use GH Packages (e.g. corporate proxy that allowlists `*.github.com`), see the auth setup at the bottom of this page. Otherwise, JitPack.
 </Aside>
 
-<Steps>
+<Tabs syncKey="build-tool">
+  <TabItem label="Gradle (Kotlin DSL)" icon="seti:gradle">
+    ```kotlin title="build.gradle.kts"
+    repositories {
+        maven("https://jitpack.io")
+    }
 
-1. **Add the JitPack repository and the API artifact**
-
-   <Tabs syncKey="build-tool">
-     <TabItem label="Gradle (Kotlin DSL)" icon="seti:gradle">
-       ```kotlin title="build.gradle.kts"
-       repositories {
-           maven("https://jitpack.io")
-       }
-
-       dependencies {
-           compileOnly("com.github.AbstractMenus:api:1.16")
-       }
-       ```
-     </TabItem>
-     <TabItem label="Gradle (Groovy)" icon="seti:gradle">
-       ```groovy title="build.gradle"
-       repositories {
-           maven { url 'https://jitpack.io' }
-       }
-
-       dependencies {
-           compileOnly 'com.github.AbstractMenus:api:1.16'
-       }
-       ```
-     </TabItem>
-     <TabItem label="Maven" icon="seti:maven">
-       ```xml title="pom.xml"
-       <repositories>
-         <repository>
-           <id>jitpack</id>
-           <url>https://jitpack.io</url>
-         </repository>
-       </repositories>
-
-       <dependencies>
-         <dependency>
-           <groupId>com.github.AbstractMenus</groupId>
-           <artifactId>api</artifactId>
-           <version>1.16</version>
-           <scope>provided</scope>
-         </dependency>
-       </dependencies>
-       ```
-     </TabItem>
-     <TabItem label="No build system" icon="seti:default">
-       Drop the `AbstractMenus.jar` from your server's `plugins/` folder into your IDE's classpath as a "provided" / "compile-only" dependency.
-     </TabItem>
-   </Tabs>
-
-2. **Declare the dependency in `plugin.yml`**
-
-   ```yaml title="plugin.yml" ins={3-4}
-   name: MyPlugin
-   version: 1.0.0
-   depend:
-     - AbstractMenus
-   ```
-
-   Use `softdepend:` instead of `depend:` if your plugin should still load when AbstractMenus isn't installed - then guard API calls with a `Bukkit.getPluginManager().getPlugin("AbstractMenus") != null` check.
-
-</Steps>
-
-## Get the plugin instance
-
-The entry point is [`AbstractMenusPlugin`](https://abstractmenus.github.io/api/ru/abstractmenus/api/AbstractMenusPlugin.html). Two ways to obtain it:
-
-<Aside type="caution">
-Even though the plugin instance exists in your `onLoad`, services like `VariableManager` are initialised in `onEnable`. Don't touch services from `onLoad`.
-</Aside>
-
-<Tabs syncKey="api-access">
-  <TabItem label="Static provider" icon="seti:default">
-    Skip the services manager and call the static helper:
-
-    ```java
-    import ru.abstractmenus.api.AbstractMenusPlugin;
-    import ru.abstractmenus.api.AbstractMenusProvider;
-
-    AbstractMenusPlugin plugin = AbstractMenusProvider.get();
+    dependencies {
+        compileOnly("com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2")
+    }
     ```
-
-    Returns `null` if AbstractMenus isn't loaded yet - safe to call from `onEnable` after declaring the depend.
   </TabItem>
-  <TabItem label="Bukkit services manager" icon="seti:default">
-    AbstractMenus registers itself as a Bukkit service. Pull it the standard way:
+  <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+    ```groovy title="build.gradle"
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 
-    ```java
-    import ru.abstractmenus.api.AbstractMenusPlugin;
-    import org.bukkit.plugin.RegisteredServiceProvider;
+    dependencies {
+        compileOnly 'com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2'
+    }
+    ```
+  </TabItem>
+  <TabItem label="Maven" icon="seti:maven">
+    ```xml title="pom.xml"
+    <repositories>
+      <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io</url>
+      </repository>
+    </repositories>
 
-    RegisteredServiceProvider<AbstractMenusPlugin> rsp =
-        getServer().getServicesManager().getRegistration(AbstractMenusPlugin.class);
-
-    AbstractMenusPlugin plugin = rsp != null ? rsp.getProvider() : null;
+    <dependencies>
+      <dependency>
+        <groupId>com.github.AbstractMenus</groupId>
+        <artifactId>minecraft-plugin</artifactId>
+        <version>2.0.0-alpha.2</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
     ```
   </TabItem>
 </Tabs>
+
+The artifactId is `minecraft-plugin` (the repo name). JitPack publishes multi-module Gradle projects under one root coord; the jar contents are the api module.
+
+<Aside type="caution">
+The API depends on Adventure (`net.kyori.adventure.text.*`). Paper bundles Adventure, so on Paper the dependency is satisfied automatically. On plain Spigot you'll need to shade or include Adventure yourself.
+</Aside>
+
+## Declare the dependency in plugin.yml (Path 1 only)
+
+Path 1 plugin-as-addons declare AbstractMenus as a hard dependency so Bukkit guarantees ordering — your `onEnable` runs after AbstractMenus is up.
+
+```yaml title="plugin.yml" ins={3-4}
+name: MyAddon
+version: 1.0.0
+depend:
+  - AbstractMenus
+```
+
+Use `softdepend:` if your plugin should still load when AbstractMenus is missing — then guard API calls with `Bukkit.getPluginManager().getPlugin("AbstractMenus") != null`.
+
+Path 2 addons don't have a `plugin.yml`. They use `addon.conf` instead, with a `pluginDependencies` field. See the [addons page](/docs/developers/addons/).
+
+## Get the API instance
+
+The entry point is [`AbstractMenusApi`](https://abstractmenus.github.io/api/ru/abstractmenus/api/AbstractMenusApi.html), looked up via the static `get()` method:
+
+```java
+import ru.abstractmenus.api.AbstractMenusApi;
+
+AbstractMenusApi api = AbstractMenusApi.get();
+```
+
+It returns `null` if AbstractMenus has not enabled yet. With `depend: [AbstractMenus]` declared, your `onEnable` will always see a non-null result.
+
+For Path 2 addons, you don't call `get()` at all — the API is passed as a parameter to the lifecycle methods:
+
+```java
+public final class MyAddon implements MenuExtension {
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        // api is already wired up
+    }
+}
+```
+
+## What the API exposes
+
+```java
+api.actions();         // TypeRegistry<Action>
+api.rules();           // TypeRegistry<Rule>
+api.activators();      // TypeRegistry<Activator>
+api.itemProperties();  // TypeRegistry<ItemProperty>
+api.catalogs();        // TypeRegistry<Catalog<?>>
+
+api.providers();       // ProviderRegistry — economy, permissions, levels, placeholders, skins
+api.serializers();     // shared HOCON NodeSerializers
+api.variables();       // VariableManager — read/write player and global variables
+
+api.openMenu(activator, ctx, player, menu);
+api.getOpenedMenu(player);
+api.loadMenus();
+
+api.apiVersion();      // version string for diagnostics
+api.getPlugin();       // raw Bukkit Plugin handle
+```
+
+Each registry, manager, and helper has its own page on this docs section.
+
+<CardGrid>
+  <LinkCard title="Addon delivery" href="/docs/developers/addons/" description="Path 1 vs Path 2, MenuExtension lifecycle, addon.conf manifest." />
+  <LinkCard title="Custom types" href="/docs/developers/own-types/" description="Define and register your own actions, rules, item properties, activators, catalogs." />
+  <LinkCard title="Provider handlers" href="/docs/developers/handlers/" description="Plug in a custom economy / permissions / placeholder / skin / level backend." />
+  <LinkCard title="Serializers" href="/docs/developers/serializers/" description="HOCON deserialization for your own types." />
+  <LinkCard title="Variables API" href="/docs/developers/variables/" description="Read and write player and global variables programmatically." />
+  <LinkCard title="Utilities" href="/docs/developers/utils/" description="Color helpers, placeholder replacement, scheduling." />
+  <LinkCard title="Migration 1.x → 2.0" href="/docs/developers/migration/" description="Map old API calls (Types, Handlers, AbstractMenusProvider) to the new ones." />
+</CardGrid>
+
+## Optional: GitHub Packages instead of JitPack
+
+If you must use GitHub Packages (e.g. CI policy):
+
+<Steps>
+
+1. Generate a [Personal Access Token (classic)](https://github.com/settings/tokens) with the `read:packages` scope.
+
+2. Put credentials in `~/.gradle/gradle.properties`:
+
+   ```properties title="~/.gradle/gradle.properties"
+   gpr.user=your-github-username
+   gpr.token=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
+
+3. Add the repository and switch the coord to the native `ru.abstractmenus:api`:
+
+   ```groovy title="build.gradle"
+   repositories {
+       maven {
+           url = uri('https://maven.pkg.github.com/AbstractMenus/minecraft-plugin')
+           credentials {
+               username = providers.gradleProperty('gpr.user')
+                       .orElse(providers.environmentVariable('GITHUB_ACTOR')).getOrNull()
+               password = providers.gradleProperty('gpr.token')
+                       .orElse(providers.environmentVariable('GITHUB_TOKEN')).getOrNull()
+           }
+       }
+       // JitPack is still required for the api's transitive
+       // com.github.AbstractMenus:hocon dep:
+       maven { url 'https://jitpack.io' }
+   }
+
+   dependencies {
+       compileOnly 'ru.abstractmenus:api:2.0.0-alpha.2'
+   }
+   ```
+
+</Steps>

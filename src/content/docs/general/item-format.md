@@ -10,9 +10,9 @@ An item can be specified not only as a button in a menu. This [object](hocon-obj
 | Name | Data type | Example | Description |
 |----|----|----|----|
 | slot | Multiple | See example `prop-slot` | Set slot for item. Not a regular item's property. Can be used only for menu items or in some actions and rules |
-| clickCooldown | Number | `clickCooldown: 20` | Set click cooldown in ticks (1 second = 20 ticks). Will be reset after menu closed or refreshed with `refreshMenu` action |
+| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/start/installation/#configconf-reference) the floor wins; set `clickCooldown: 0` to bypass entirely |
 | **Material installers** |  |  |  |
-| material | String | `material: "DIAMOND_SWORD"` | Set the item material by name. On MC `1.12` and lower, numerical ids are supported |
+| material | String | `material: "DIAMOND_SWORD"` | Set the item material by name. |
 | texture | String | See example `prop-texture` | Using custom head texture by texture id, url, or base64 encoded. You can find many heads on the <https://minecraft-heads.com> |
 | skullOwner | String | See example `prop-skull-owner` | Set player's skin on head |
 | hdb | String | `hdb: "2853"` | Set the head by the identifier from the [HeadDatabase](https://www.spigotmc.org/resources/14280/) |
@@ -23,7 +23,6 @@ An item can be specified not only as a button in a menu. This [object](hocon-obj
 | serialized | String | See example `prop-serialized` | Deserialize item from base64 string |
 | **Other properties** |  |  |  |
 | name | String | `name: "Peter Piper"` | Set display name |
-| data | Number | `data: 2` | Material data (deprecated since MC `1.13`, full material names are used instead) |
 | count | Number | `count: 64` | Amount of item stack |
 | damage | Number | `damage: 100` | Set damage (bar under item) for damageable items. The higher the number, the lower the durability of the item |
 | lore | Strings list | See example `prop-lore` | Set item lore (text under name) |
@@ -31,14 +30,14 @@ An item can be specified not only as a button in a menu. This [object](hocon-obj
 | enchantments | Object | See example `prop-ench` | Add enchantment to item |
 | color | String | See example | Colorize armor or potion |
 | flags | Strings list | See example `prop-flags` | Add item flags |
-| unbreakable | Boolean | `unbreakable: true` | Make item unbreakable (works on `1.9+`) |
+| unbreakable | Boolean | `unbreakable: true` | Make item unbreakable |
 | potionData | Objects list | See example `prop-potion` | Add various potion effects for item, if this item is potion |
-| fireworkData | Object | See example `prop-firework` | If material is `FIREWORK_ROCKET`, or `FIREWORK`, it sets various settings of the fireworks |
+| fireworkData | Object | See example `prop-firework` | If material is `FIREWORK_ROCKET`, sets the firework explosion effects |
 | bookData | Object | See example `prop-book` | Add book's content and metadata (author, title) for writable book |
 | bannerData | Object | See example `prop-banner` | Colorize banner item |
 | shieldData | Object | Similar to `prop-banner` | Colorie shield item, as banner |
 | model | Number | `model: 1234567` | Custom model data |
-| enchantStore | Object | Same as `prop-ench` | Allows you to save the enchantment in an item that can later be used to enchant items on the anvil. Need for creating an enchantment book (`1.12+`). Works with `ENCHANTED_BOOK` material |
+| enchantStore | Object | Same as `prop-ench` | Store an enchantment on a `ENCHANTED_BOOK` so it can later be applied at an anvil |
 | recipes | Objects list | Same as recipe format | Create a book with custom recipes (knowledge book). Works with `KNOWLEDGE_BOOK` material |
 | nbt | Object | See example `prop-nbt` | Add NBT tags to the item |
 | **Special properties** |  |  |  |
@@ -390,7 +389,7 @@ The `effects` parameter is a [list of objects](hocon-list-obj). Each object is a
 You can add several objects in `fireworkData` property. Then it will explode with all specified effects.
 
 :::note
-This property will only work if the material of the item is `FIREWORK_ROCKET` (or `FIREWORK` on Spigot `1.12` and lower).
+This property only takes effect if the material is `FIREWORK_ROCKET`.
 :::
 
 ## Book

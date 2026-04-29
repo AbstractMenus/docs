@@ -1,42 +1,43 @@
 ---
 title: Variables API
-description: "AbstractMenus provides some CRUD methods for own variables system. Javadocs for all variables-related classes located…"
+description: Read and write player and global variables programmatically.
 ---
 
 :::note
-In many examples we do not adhere to some Java conventions and common code style to avoid boilerplate code. We want to show how to use API, and not how to write the proper code in Java.
+In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::
 
-AbstractMenus provides some CRUD methods for own variables system. Javadocs for all variables-related classes located [here](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/package-summary.html).
+AbstractMenus has a small CRUD API for the same variables menu authors edit through `/var` and `/varp`. Javadocs: [api/variables](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/package-summary.html).
 
-## Interface `Var`
+## `Var`
 
-The [Var](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/Var.html) interface provides access to variable data. All variables stored as string, so actual data getter is `value()` method.
+[`Var`](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/Var.html) is the variable record. Values are stored as strings; `Var` has typed accessors that parse on read (and may throw if the stored string isn't a valid number).
 
-It also has methods to convert raw stirng data to other Java primitive type. But make note, they may throw exception.
+Lifetimes are UTC milliseconds — compare `expiry()` to `System.currentTimeMillis()` to check whether a value is still alive. `expiry() == 0` means "no expiry".
 
-Variable lifetime based on Java UTC time and means milliseconds. The easiest way to check is value expired is to compare value from `expiry()` method with `System.currentTimeMillis()`.
+## `VariableManager`
 
-## Interface `VariableManager`
+[`VariableManager`](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/VariableManager.html) is the CRUD entry point. Get one from the API:
 
-The [VariableManager](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/VariableManager.html) interface provides CRUD methods for variables. Here you can manage global and personal variables. It also has `createBuilder()` method to create builder to build own variable.
+```java
+AbstractMenusApi api = AbstractMenusApi.get();
+VariableManager vars = api.variables();
+```
 
-:::note
-Note, that `username` and `name` (name of variable) arguments are case insensitive, so you don't need to make them lowercase manually.
-:::
+Variable names and player names passed to the manager are case-insensitive — you don't need to lowercase them yourself.
 
-## Create new variable
+## Create a variable
 
-To create new variable, you need to call `createBuilder` method of `VariableManager` interface. How to get instance if this manager, described on the [main page of API docs](api-get-instance).
-
-``` java
-AbstractMenusPlugin plugin = AbstractMenusProvider.get();
-
-Var var = plugin.getVariableManager().createBuilder()
-        .name("var_name")
-        .value("Hello")
-        .expiry(System.currentTimeMillis() * 10000) // 10 seconds
+```java
+Var var = api.variables().createBuilder()
+        .name("welcome_message")
+        .value("Hello!")
+        .expiry(System.currentTimeMillis() + 10_000) // expires in 10 seconds
         .build();
 
-plugin.getVariableManager().saveGlobal(var);
+api.variables().saveGlobal(var);
 ```
+
+For per-player variables, use `savePlayer(playerName, var)`.
+
+`expiry(0)` (or omitting the call) creates a permanent variable.

@@ -1,0 +1,142 @@
+---
+title: Migration 1.x → 2.0
+description: Map old API calls (Types, Handlers, AbstractMenusProvider) to the new ones.
+---
+
+import { Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+If your addon was written against the 1.x API (`AbstractMenusProvider`, `AbstractMenusPlugin`, `Types`, `Handlers`), this page maps every old call to its 2.0 replacement.
+
+<Aside type="caution">
+2.0 is not source-compatible with 1.x. The static facades (`Types`, `Handlers`, `AbstractMenusProvider`) were removed entirely. Bump your `compileOnly` coord to `com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2`, then update the call sites listed below.
+</Aside>
+
+## API entry point
+
+```diff lang="java"
+- AbstractMenusPlugin plugin = AbstractMenusProvider.get();
++ AbstractMenusApi api = AbstractMenusApi.get();
+```
+
+`AbstractMenusApi` replaces both `AbstractMenusPlugin` and `AbstractMenusProvider`. The static `get()` lookup goes through Bukkit's `ServicesManager` the same way the old provider did.
+
+For Path 2 addons (new in 2.0), you don't call `get()` at all — the API is passed as a parameter to your `MenuExtension` lifecycle methods. See [addon delivery](/docs/developers/addons/).
+
+## Type registration
+
+Every `Types.register*` call moved onto a typed registry hung off `api`:
+
+```diff lang="java"
+- Types.registerAction("myAction", MyAction.class, new MyAction.Serializer());
++ api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+
+- Types.registerRule("myRule", MyRule.class, new MyRule.Serializer());
++ api.rules().register("myRule", MyRule.class, new MyRule.Serializer(), this);
+
+- Types.registerActivator("myActivator", MyActivator.class, new MyActivator.Serializer());
++ api.activators().register("myActivator", MyActivator.class, new MyActivator.Serializer(), this);
+
+- Types.registerItemProperty("myProp", MyProp.class, new MyProp.Serializer());
++ api.itemProperties().register("myProp", MyProp.class, new MyProp.Serializer(), this);
+
+- Types.registerCatalog("my_catalog", MyCatalog.class, new MyCatalog.Serializer());
++ api.catalogs().register("my_catalog", MyCatalog.class, new MyCatalog.Serializer(), this);
+```
+
+The new fourth parameter (`this`) is your `MenuExtension` instance. AbstractMenus uses it to drop your registrations when your addon disables — no manual unregister.
+
+## Custom HOCON serializer
+
+```diff lang="java"
+- Types.serializers().register(MyType.class, new MyTypeSerializer());
++ api.serializers().register(MyType.class, new MyTypeSerializer());
+```
+
+Same shape, different access. `api.serializers()` returns the same `NodeSerializers` collection.
+
+## Handlers (economy / permissions / levels / placeholders / skins)
+
+The static `Handlers` facade is gone. Each section is now a [`ProviderSection<T>`](/docs/developers/handlers/) on `api.providers()`:
+
+```diff lang="java"
+- Handlers.setEconomyHandler(new MyEconomy());
++ api.providers().economy().register("myEcoId", new MyEconomy(), 100, this);
+
+- Handlers.getEconomyHandler();
++ api.providers().economy().resolve();
+
+- Handlers.getPermissionsHandler();
++ api.providers().permissions().resolve();
+
+- Handlers.getLevelHandler();
++ api.providers().levels().resolve();
+
+- Handlers.getPlaceholderHandler();
++ api.providers().placeholders().resolve();
+
+- Handlers.getSkinHandler();
++ api.providers().skins().resolve();
+```
+
+The 2.0 model lets multiple providers coexist per section, so registration takes an `id` and a `priority`. Operators pin a specific id from `config.conf` (`providers.economy = "vault"` or `"playerpoints"`), and menus can override per-action with `provider: "..."`. The 1.x "one provider wins" model is preserved when only one is registered.
+
+## Variables
+
+```diff lang="java"
+- VariableManager vm = AbstractMenusProvider.get().getVariableManager();
++ VariableManager vm = api.variables();
+```
+
+The interface itself didn't change — same `createBuilder()` / `saveGlobal()` / `savePlayer()` calls.
+
+## Menu lifecycle
+
+```diff lang="java"
+- AbstractMenusProvider.get().reloadMenus();
++ api.loadMenus();
+
+- AbstractMenusProvider.get().openMenu(player, menu);
++ api.openMenu(player, menu);
+```
+
+The two-arg form (player + menu) and the four-arg form (activator + ctx + player + menu) both still exist.
+
+## Scheduling on Folia
+
+1.x predates Folia. If you scheduled tasks via `Bukkit.getScheduler().runTaskLater(plugin, ...)` and your addon has to run on Folia, switch to entity-aware scheduling for any task that touches a player or other entity:
+
+```diff lang="java"
+- Bukkit.getScheduler().runTaskLater(plugin, () -> player.kick(reason), 20L);
++ BukkitTasks.runForEntityLater(player, () -> player.kick(reason), 20L);
+```
+
+`BukkitTasks` is in the plugin module (not the api jar), so import it from `ru.abstractmenus.util.bukkit.BukkitTasks`. If you don't depend on the plugin module, branch on Folia detection yourself and use `Bukkit.getRegionScheduler()` / `getEntityScheduler()` directly.
+
+## Maven / Gradle coord
+
+```diff
+- compileOnly 'com.github.AbstractMenus:api:1.16'
++ compileOnly 'com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2'
+```
+
+The artifactId is `minecraft-plugin` because JitPack publishes multi-module Gradle projects under one root coord (the repo name). The jar contents are the api module.
+
+If you're on GitHub Packages instead of JitPack, the native coord is `ru.abstractmenus:api:2.0.0-alpha.2`. See [Getting started](/docs/developers/general/) for the full setup.
+
+## What's gone for good
+
+| Removed | Replaced by |
+|---|---|
+| `AbstractMenusPlugin` | `AbstractMenusApi` |
+| `AbstractMenusProvider` | `AbstractMenusApi.get()` |
+| `Types` (static facade) | `api.actions()` / `api.rules()` / `api.activators()` / `api.itemProperties()` / `api.catalogs()` / `api.serializers()` |
+| `Handlers` (static facade) | `api.providers().<section>()` returning `ProviderSection<T>` |
+| Bundled Adventure | Use Paper's bundled copy (compileOnly Paper API) |
+
+## Where to next
+
+<CardGrid>
+  <LinkCard title="Addon delivery" href="/docs/developers/addons/" description="2.0 ships two paths: plugin-as-addon, AM-loaded jar. Pick one." />
+  <LinkCard title="Custom types" href="/docs/developers/own-types/" description="Updated examples for actions, rules, activators, properties, catalogs." />
+  <LinkCard title="Provider handlers" href="/docs/developers/handlers/" description="ProviderRegistry, multi-provider coexistence, priority-based resolve." />
+</CardGrid>

@@ -1,0 +1,124 @@
+---
+title: Installation
+description: Drop the jar in, configure config.conf if you need to, and you're done.
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+## Requirements
+
+- Paper or Folia, Minecraft **1.20.6 or newer** (1.21.x recommended)
+- **Java 21**
+
+AbstractMenus does not bundle Adventure — it relies on the copy Paper ships. Plain Spigot will not work.
+
+## Install
+
+<Steps>
+
+1. Download `AbstractMenus-<version>.jar` from the [releases page](https://github.com/AbstractMenus/minecraft-plugin/releases).
+
+2. Drop it into your server's `plugins/` folder.
+
+3. Start the server. AbstractMenus creates these files on first run:
+
+   ```
+   plugins/AbstractMenus/
+     ├── config.conf            main configuration
+     ├── animated_heads.conf    head animation definitions
+     ├── menus/                 your menu files (one or more .conf)
+     │   └── menu.conf          a starter menu
+     ├── addons/                Path 2 addon jars (optional)
+     └── variables.db           SQLite store for /var and /varp
+   ```
+
+4. Run `/am addons list`. You should see `AbstractMenus-Core` tagged `[built-in]`. That's the plugin registering its own bundled types through the same SPI external addons use — sanity check passed.
+
+</Steps>
+
+## config.conf reference
+
+`config.conf` is HOCON. Keys you'll touch most:
+
+```hocon
+# Persist /var and /varp values between restarts. SQLite, ~plugins/AbstractMenus/variables.db.
+variables: true
+
+# Sync variables between BungeeCord servers (only if you actually run a network).
+syncVariables: false
+
+# Register the BungeeCord plugin channel so the bungeeConnect action works.
+bungeecord: false
+
+# Ping configured BungeeCord servers periodically so bungee online-rule queries are fresh.
+bungeePing: false
+
+# Enable region-based activators and rules. Requires the WorldGuard plugin.
+useWorldGuard: false
+
+# Parse MiniMessage tags (<red>, <click:...>, <hover:...>) in messages and item text.
+# Off by default to skip the extra parse step on every render.
+useMiniMessage: false
+
+# Path to the menu folder. Override to a shared NFS mount if multiple servers
+# should serve identical menus.
+menusFolder: "default"
+
+# Print menu opens to the server log. Useful while debugging activator wiring.
+logOpenMenus: false
+
+# Path to the variables.db file. "default" puts it under the plugin folder.
+dbFolder: "default"
+
+# Time formatting suffixes for time-based placeholders.
+time {
+  day:    "d"
+  hour:   "h"
+  minute: "min"
+  second: "sec"
+}
+
+# Default provider per section. Pin a specific id (e.g. "vault", "playerpoints")
+# or leave on "auto" for highest-priority registered. Per-action overrides in
+# menus (provider: "...") win over this.
+providers {
+  economy      = "auto"
+  permissions  = "auto"
+  levels       = "auto"
+  placeholders = "auto"
+  skins        = "auto"
+}
+
+# Click debounce floors in milliseconds. Active when an item has clickCooldown > 0.
+# - default: LEFT / RIGHT / MIDDLE clicks. 80ms catches the synthetic
+#   DOUBLE_CLICK packets the Minecraft client emits per physical click.
+# - shift: SHIFT_LEFT / SHIFT_RIGHT. 250ms catches the ~3 extra QUICK_MOVE
+#   packets the client emits per shift-click. Lower values trade safety for
+#   responsiveness; raise if you still see duplicates.
+clickDebounce {
+  default = 80
+  shift   = 250
+}
+```
+
+## First-run files
+
+| File | What it is |
+|---|---|
+| `config.conf` | The keys above. Edit, then `/am reload`. |
+| `animated_heads.conf` | Reusable head animation definitions referenced by the `animatedHead` item property. |
+| `menus/menu.conf` | One sample menu opened by `/am open menu`. Delete it once you have your own menus. |
+| `variables.db` | SQLite. Don't edit manually. |
+| `addons/` | Drop Path 2 [addon jars](/docs/developers/addons/) here. |
+
+## Updating
+
+Replace the jar and restart. Menu files and `config.conf` are preserved across upgrades. Migration notes for breaking releases land in the [changelog](/changelog/).
+
+## Uninstalling
+
+Remove the jar from `plugins/`. To wipe state too, delete the `plugins/AbstractMenus/` folder.
+
+<Aside type="caution">
+Don't delete `variables.db` if you've got per-player state your players care about — the file is the only copy.
+</Aside>

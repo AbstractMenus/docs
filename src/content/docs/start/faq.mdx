@@ -78,6 +78,26 @@ Yes - logical wrappers and rule inversion. See [logical structures](/docs/advanc
 
 Variables. Create / edit / delete via [variable actions](/docs/general/actions/), read back via [variable placeholders](/docs/general/variables/).
 
+## How do I install an addon?
+
+Addons come in two flavours. **Plugin-as-addons** drop into `plugins/` like any other Bukkit plugin. **AM-loaded addons** drop into `plugins/AbstractMenus/addons/` and are managed via `/am addons`. See [Addon delivery](/docs/developers/addons/) for the differences.
+
+## Multiple economy plugins — which one does AbstractMenus pick?
+
+The one you pin in `config.conf`:
+
+```hocon
+providers {
+  economy = "vault"
+}
+```
+
+Set to `"auto"` (the default) to let priority decide — addons typically register at priority 100, the bundled Vault provider at 50, so addons win unless you pin Vault explicitly. Per-action overrides (`provider: "..."` inside HOCON) always beat the config default. See [provider handlers](/docs/developers/handlers/).
+
+## Click cooldown vs click debounce — what's the difference?
+
+`clickCooldown` on an item is the menu author's choice (e.g. "this button has a 2-second cooldown"). The server-wide `clickDebounce` floors are a safety net against duplicate-click packets the Minecraft client sends — they only kick in when `clickCooldown > 0`. Set `clickCooldown: 0` on an item to bypass both. See [installation](/docs/start/installation/#configconf-reference).
+
 ## Where to next
 
 <CardGrid>

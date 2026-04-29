@@ -175,7 +175,7 @@ bungeeOnline {
 
 Rule to compare some data (for example, placeholder from PAPI) with another data.
 
-Since AbstarctMenus v1.13 `if` rule has two formats: modern and legacy (deprecated).
+The `if` rule has two formats: modern and legacy. Use the modern form — the legacy form is kept only so old menus keep parsing.
 
 ### Modern "If" format
 
@@ -254,8 +254,8 @@ Parameter `param` is required. All other are optional.
 
 ## JavaScript
 
-:::caution
-JavaScript engine was removed from official JVM since Java 15. To continue using `js` rule, plugin loads this engine at server startup. This possible only for Spigot 1.16.5 and higher. If you use Java 15+ with Spigot less than 1.16.5, the `js` rule won't work.
+:::note
+AbstractMenus 2.0 ships its own bundled JavaScript engine (Nashorn standalone) since the JDK dropped Nashorn after Java 14. The `js` rule works on every supported server out of the box; you don't need a separate JS jar.
 :::
 
 The plugin allows you to use JavaScript code. Code inside must always return the result - `true` or `false`. If the code returns something else, the plugin will suppose this is a `false`. This rule can be used as a replacement for the `if` rule because of its greater versatility. But you should understand that interpreting JavaScript will take longer than the `if` rule.

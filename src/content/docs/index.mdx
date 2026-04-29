@@ -34,6 +34,9 @@ AbstractMenus is a Spigot/Paper/Folia plugin for building interactive inventory 
   <Card title="Animations and generation" icon="seti:image">
     Frame-based [animations](/docs/advanced/animations/) and dynamic [paginated menus](/docs/advanced/generation/) for catalogues, lists, and shops.
   </Card>
+  <Card title="Extensible" icon="puzzle">
+    Built-in actions, rules, and providers are registered through the same SPI external [addons](/docs/developers/addons/) use. Add your own — or pick up community ones — without forking.
+  </Card>
 </CardGrid>
 
 ## Concepts at a glance
@@ -49,19 +52,23 @@ AbstractMenus is a Spigot/Paper/Folia plugin for building interactive inventory 
 - **Animation frame** - one keyframe of an [animated menu](/docs/advanced/animations/).
 - **Catalog** - a dynamic collection feeding [generated menus](/docs/advanced/generation/).
 - **Value extractor** - a function that pulls a property out of a context object (block, entity, item, region, world).
+- **Provider** - a pluggable backend for economy, permissions, levels, placeholders, or skins. Registered with an id and priority; pickable per-action or via [config.conf](/docs/start/installation/#configconf-reference).
+- **Addon** - a separate jar that registers custom actions, rules, providers, etc. through the same SPI the plugin uses internally. Two delivery paths — see [Addon delivery](/docs/developers/addons/).
 
 ## Commands
 
 ```
-/am open <menu_name>                  Open a menu without an activator
-/am open <menu_name> <player>         Open a menu for another player
-/am reload                            Reload all menu files
-/am serve                             Watch the menus folder and reload on change
-/var get|set|rem|inc|dec|mul|div ...  Manage global variables
-/varp get|set|rem|inc|dec|mul|div ... Manage personal (per-player) variables
+/am open <menu_name>                       Open a menu without an activator
+/am open <menu_name> <player>              Open a menu for another player
+/am reload                                 Reload all menu files
+/am serve                                  Watch menus folder and reload on change (dev only)
+/am version                                Print plugin version
+/am addons list|info|load|reload|rescan    Manage addons
+/var get|set|rem|inc|dec|mul|div ...       Manage global variables
+/varp get|set|rem|inc|dec|mul|div ...      Manage per-player variables
 ```
 
-The `am.admin` permission grants access to all commands above.
+The `am.admin` permission grants access to all commands above. Full [commands reference](/docs/general/commands/).
 
 ## External plugin support
 

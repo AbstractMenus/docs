@@ -1,58 +1,144 @@
 ---
-title: Data Handlers
-description: "Data handlers is easy way to replace some default logic if plugin. AbstractMenus has several handlers. Interfaces for these handler you can find…"
+title: Provider handlers
+description: Plug in a custom economy, permissions, level, placeholder, or skin backend through the ProviderRegistry.
 ---
 
 :::note
-In many examples we do not adhere to some Java conventions and common code style to avoid boilerplate code. We want to show how to use API, and not how to write the proper code in Java.
+In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::
 
-Data handlers is easy way to replace some default logic if plugin. AbstractMenus has several handlers. Interfaces for these handler you can find [here](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/package-summary.html).
+AbstractMenus has five provider sections: **economy**, **permissions**, **levels**, **placeholders**, **skins**. Each one is an [`api.providers().<section>()`](https://abstractmenus.github.io/api/ru/abstractmenus/api/ProviderRegistry.html) accessor that returns a [`ProviderSection<T>`](https://abstractmenus.github.io/api/ru/abstractmenus/api/ProviderSection.html). You can register multiple handlers per section, give each one an id and a priority, and the operator picks which is the default in `config.conf`. Per-action overrides in HOCON win over the config default.
 
-For example, let's override default economy handler. For this we need to implement [EconomyHandler](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/EconomyHandler.html) interface.
+The pre-2.0 static `Handlers` facade is gone. Everything happens through `ProviderSection`.
 
-We will create simple implementation which stores balance of each player in the `Map`.
+## Sections at a glance
 
-``` java
-public class MyEcoHandler implements EconomyHandler {
+| Section | Returns | Purpose |
+|---|---|---|
+| `api.providers().economy()` | `ProviderSection<EconomyHandler>` | `takeMoney` / `giveMoney` / `hasMoney` |
+| `api.providers().permissions()` | `ProviderSection<PermissionsHandler>` | `permission` rule, group lookups |
+| `api.providers().levels()` | `ProviderSection<LevelHandler>` | `takeLevels` / `giveLevels` / `hasLevels` |
+| `api.providers().placeholders()` | `ProviderSection<PlaceholderHandler>` | placeholder substitution |
+| `api.providers().skins()` | `ProviderSection<SkinHandler>` | `setSkin` / `resetSkin` |
+
+The bundled defaults register at priority **50**:
+
+- **economy** — `vault` (Vault), `playerpoints` if you install [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon)
+- **permissions** — `vault`, `luckperms`
+- **levels** — `bukkit` (vanilla XP)
+- **placeholders** — `papi` (PlaceholderAPI), `internal` (built-ins)
+- **skins** — `skinsrestorer`
+
+Addon-supplied providers typically register at **100** so they win auto-resolve when both a default and an addon are present.
+
+## Register a handler
+
+Implement the relevant `*Handler` interface, then register it from your `MenuExtension.onEnable(api)`:
+
+```java
+public final class MyAddon implements MenuExtension {
+
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        api.providers().economy().register(
+            "playerpoints",                          // id
+            new PlayerPointsEconomy(playerPointsApi), // handler
+            100,                                      // priority — higher wins auto-resolve
+            this);                                    // owner — AbstractMenus uses this for cleanup
+    }
+}
+```
+
+The `id` is what HOCON menus and `config.conf` reference (`provider: "playerpoints"`). It's case-insensitive. The handler instance is reused for every call.
+
+## Resolve at runtime
+
+```java
+EconomyHandler eco       = api.providers().economy().resolve();          // configured default, or highest priority
+EconomyHandler vault     = api.providers().economy().resolve("vault");   // by id, or null
+boolean hasPP            = api.providers().economy().has("playerpoints");
+Set<String> ids          = api.providers().economy().ids();
+Collection<EconomyHandler> all = api.providers().economy().all();
+```
+
+`resolve()` first checks `config.conf providers.<section>`. If the operator pinned an explicit id, that wins. If they left it on `"auto"`, the highest-priority registered handler wins. The lookup is atomic: a concurrent `unregister` cannot return a stale handler.
+
+`resolve(String)` is what menu actions use when an HOCON entry has `provider: "..."`. The per-action override always beats the config default.
+
+## Example: a custom economy backend
+
+Override the default economy with one that stores balances in a `Map`:
+
+```java
+public final class MapEconomy implements EconomyHandler {
+
+    private final Map<UUID, Double> balance = new ConcurrentHashMap<>();
+
+    @Override
+    public boolean hasBalance(Player player, double amount) {
+        return balance.getOrDefault(player.getUniqueId(), 0.0) >= amount;
+    }
+
+    @Override
+    public void takeBalance(Player player, double amount) {
+        balance.merge(player.getUniqueId(), -amount,
+                (current, delta) -> Math.max(0, current + delta));
+    }
+
+    @Override
+    public void giveBalance(Player player, double amount) {
+        balance.merge(player.getUniqueId(), amount, Double::sum);
+    }
+}
+```
+
+Register it from your addon:
+
+```java
+@Override
+public void onEnable(AbstractMenusApi api) {
+    api.providers().economy().register(
+        "memory",
+        new MapEconomy(),
+        100,
+        this);
+}
+```
+
+To make it the server-wide default, the operator sets:
+
+```hocon title="config.conf"
+providers {
+  economy = "memory"
+}
+```
+
+Or per-menu, leaving the global default alone:
 
 ```hocon
-public final Map<String, Double> balance = new HashMap<>();
-
-@Override
-public boolean hasBalance(Player player, double bal) {
-    return balance.getOrDefault(player.getName(), 0.0) >= bal;
-}
-
-@Override
-public void takeBalance(Player player, double amount) {
-    double bal = balance.getOrDefault(player.getName(), 0.0);
-    bal -= amount;
-    bal = Math.max(0, bal);
-    balance.put(player.getName(), bal);
-}
-
-@Override
-public void giveBalance(Player player, double amount) {
-    double bal = balance.getOrDefault(player.getName(), 0.0);
-    bal += amount;
-    balance.put(player.getName(), bal);
+actions {
+  click: [
+    { type: takeMoney, amount: 100, provider: "memory" }
+  ]
 }
 ```
 
-}
-```
+## Handler interfaces
 
-Now we need to register this handler over default. For this we need [Handlers](https://abstractmenus.github.io/api/ru/abstractmenus/api/Handlers.html) manager. It has static methods to register handler or get access to one of them. AbstractMenus also uses these methods.
+All five live under `ru.abstractmenus.api.handler.*`:
 
-To register economy handler we need to call `setEconomyHandler` method.
+| Interface | Methods |
+|---|---|
+| [`EconomyHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/EconomyHandler.html) | `hasBalance`, `takeBalance`, `giveBalance` |
+| [`PermissionsHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/PermissionsHandler.html) | `hasPermission`, `getGroup` |
+| [`LevelHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/LevelHandler.html) | `hasLevels`, `takeLevels`, `giveLevels` |
+| [`PlaceholderHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/PlaceholderHandler.html) | `replace` |
+| [`SkinHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/SkinHandler.html) | `setSkin`, `resetSkin` |
 
-``` java
-Handlers.setEconomyHandler(new MyEcoHandler());
-```
+Method names and signatures are stable across the 2.0 line.
 
-Thats all. Now AbstractMenus will use this implementation of economy handler, not default.
+## Cleanup
 
-:::caution
-To replace handler, you need to call `set<...>Handler` method of `Handlers` class inside `onEnable` method. Also make sure you added `AbstractMenus` plugin as dependency in `plugin.yml`.
-:::
+When your addon's `onDisable` runs, AbstractMenus drops every provider you registered automatically. You don't (and can't) call `unregisterAll` yourself — the public `ProviderRegistry` interface deliberately doesn't expose it. One addon can't wipe another's providers.
+
+For Path 1 addons, "disable" means your `JavaPlugin.onDisable`. Note that AbstractMenus's auto-cleanup only fires for addons it's tracking through its `AddonManager`, which means Path 2 only. For Path 1, the registration sits in the owner-tracking map until AbstractMenus itself shuts down. Re-registering under the same id from a fresh `onEnable` overwrites the live entry, so this isn't a leak in practice.

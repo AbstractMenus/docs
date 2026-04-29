@@ -113,7 +113,7 @@ In this example, if player's message contains `hey`, `menu` or `or` symbols toge
 
 **Extractor type**: `extractor-region`
 
-These activators can only be used with the [WorldGuard](https://dev.bukkit.org/projects/worldguard) plugin. Also you need to enable `worldGuard` parameter in the AbstractMenus general config.
+These activators require the [WorldGuard](https://dev.bukkit.org/projects/worldguard) plugin and `useWorldGuard: true` in `config.conf`.
 
 ### Activator `regionJoin`
 
@@ -306,8 +306,6 @@ clickBlockType: [
   CAKE
 ]
 ```
-
-On servers with version 1.12.2 or lesser you can use numeric ids.
 
 ## Activators `button`, `lever`, `plate`
 

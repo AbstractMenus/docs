@@ -42,6 +42,7 @@ export default defineConfig({
         {
           label: "Getting Started",
           items: [
+            { slug: "start/installation" },
             { slug: "start/how-to" },
             { slug: "start/hocon" },
             { slug: "start/faq" },
@@ -51,6 +52,7 @@ export default defineConfig({
         {
           label: "General Features",
           items: [
+            { slug: "general/commands" },
             { slug: "general/menu-structure" },
             { slug: "general/item-format" },
             { slug: "general/activators" },
@@ -77,11 +79,13 @@ export default defineConfig({
           label: "For Developers",
           items: [
             { slug: "developers/general" },
-            { slug: "developers/serializers" },
+            { slug: "developers/addons" },
             { slug: "developers/own-types" },
             { slug: "developers/handlers" },
+            { slug: "developers/serializers" },
             { slug: "developers/variables" },
             { slug: "developers/utils" },
+            { slug: "developers/migration" },
           ],
         },
         {

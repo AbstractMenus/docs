@@ -1,60 +1,50 @@
 ---
-title: Types deserializing
-description: "AbstractMenus uses own wrappers over [original HOCON configuration library](https://github.com/lightbend/config). Javadocs for Configuration API, provided by…"
+title: HOCON serializers
+description: Deserialize your own types from HOCON menu configs.
 ---
 
 :::note
-In many examples we do not adhere to some Java conventions and common code style to avoid boilerplate code. We want to show how to use API, and not how to write the proper code in Java.
+In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::
 
-AbstractMenus uses own wrappers over [original HOCON configuration library](https://github.com/lightbend/config). Javadocs for Configuration API, provided by AbstractMenus, you can find [here](https://abstractmenus.github.io/api/).
+AbstractMenus uses its own wrappers over the [Lightbend HOCON config library](https://github.com/lightbend/config). A serializer is a small factory that takes a [`ConfigNode`](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/ConfigNode.html) and returns a Java object.
 
-Each menu type in AbstractMenus has own Deserializer. Deserializer is a simple [factory](https://en.wikipedia.org/wiki/Factory_method_pattern) that accepts some [ConfigNode](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/ConfigNode.html) object and returns native Java type.
+Each serializer implements [`NodeSerializer<T>`](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/serialize/NodeSerializer.html). The interface has one method: `deserialize(Class<T> type, ConfigNode node)`.
 
-Each serializer should implement [NodeSerializer](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/serialize/NodeSerializer.html) interface. This interface has only method to deserialize object from provided configuration node.
+## When you need to register a serializer
 
-## Types registration
+You usually don't need to register a serializer manually. The five `register(...)` calls on the type registries (action, rule, item-property, activator, catalog) accept a `NodeSerializer<S>` and wire it into the shared `NodeSerializers` collection automatically.
 
-To register own serializer, you need to use [Types](https://abstractmenus.github.io/api/ru/abstractmenus/api/Types.html) manager. There are many methods to register and get serializer for some menu types, like action, rule, etc. But you also can register serializer for any type that you will use in future.
+The case where you *do* register a serializer manually: when you want to deserialize a custom *parameter object* used by your action or rule, so HOCON parsing can read it nested inside another structure via `node.getValue(MyType.class)`.
 
-For this, you need to call `serializers()` method to get common serializers collection ([NodeSerializers](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/serialize/NodeSerializers.html) class) that will be used in AbstractMenus.
-
-To register your type serializer, you need to call method `register` of given `NodeSerializers` object. Example:
-
-``` java
-Types.serializers().register(MyType.class, new MyTypeSerializer());
+```java
+api.serializers().register(MyType.class, new MyTypeSerializer());
 ```
 
-How to register own menu types, like actions, rules, etc, you can read on `own_types` page.
-
-:::caution
-All registrations should be performed in `onLoad()` method. This because AbstractMenus loads all menus in `onEnable()` method and all types, used in menus, should be registered before.
-:::
+Do this from `MenuExtension.onEnable(api)`. By the time `onEnable` returns for your addon, AbstractMenus is still pre-menu-load, so any types you register are available when menus parse.
 
 ## Default serializers
 
-AbstactMenus already has serializers for Java primitives and some most used objects:
+AbstractMenus ships serializers for Java primitives and a few common types out of the box:
 
-- Boolean
-- Integer
-- Long
-- Float
-- Double
-- String
-- UUID
+- `Boolean`
+- `Integer`
+- `Long`
+- `Float`
+- `Double`
+- `String`
+- `UUID`
 
-## Example 1. Deserialize simple object
+Plus its own value types: `TypeBool`, `TypeInt`, `TypeDouble`, `TypeString`, `TypeMaterial`, `TypeLocation`, `TypeSlot`, etc.
 
-Lets try to deserialize simple object of class, called `User`.
+## Example 1. Deserialize a simple object
 
-``` java
+```java
 public class User {
     public String name;
     public int age;
 }
 ```
-
-And we have HOCON object like this:
 
 ```hocon
 user {
@@ -63,29 +53,24 @@ user {
 }
 ```
 
-Now we need to create serializer for our type.
-
-``` java
+```java
 public class UserSerializer implements NodeSerializer<User> {
 
-```hocon
-@Override
-public User deserialize(Class<User> type, ConfigNode node) throws NodeSerializeException {
-    User user = new User();
-    user.name = node.node("name").getString();
-    user.age = node.node("age").getInt();
-    return user;
+    @Override
+    public User deserialize(Class<User> type, ConfigNode node) throws NodeSerializeException {
+        User user = new User();
+        user.name = node.node("name").getString();
+        user.age = node.node("age").getInt();
+        return user;
+    }
 }
 ```
 
-}
-```
+`ConfigNode` is the parsed structure. The serializer reads named fields off `node` and copies them into the target type.
 
-`ConfigNode` provides access to parsed configuration structure. The only task when we create serializer is to read values from provided config node and write these values to our object.
+## Example 2. Deserialize nested objects
 
-## Example 2. Deserialize objects
-
-Lets say we have such HOCON object:
+If a field of your type is itself a serializable type, call `getValue(SomeType.class)` and let the registered serializer for `SomeType` do the work:
 
 ```hocon
 user {
@@ -98,11 +83,7 @@ user {
 }
 ```
 
-We do not need to ask access to each child object and deserialize it manually. We already have serializer for `User` type. So lets use modify it to get `User` object from config node by calling one method.
-
-First, we need to modify `User` class.
-
-``` java
+```java
 public class User {
     public String name;
     public int age;
@@ -110,57 +91,38 @@ public class User {
 }
 ```
 
-Then our `UserSerializer` will looks like this:
-
-``` java
+```java
 public class UserSerializer implements NodeSerializer<User> {
 
-```hocon
-@Override
-public User deserialize(Class<User> type, ConfigNode node) throws NodeSerializeException {
-    User user = new User();
-    user.name = node.node("name").getString();
-    user.age = node.node("age").getInt();
-    user.friend = node.node("friend").getValue(User.class);
-    return user;
+    @Override
+    public User deserialize(Class<User> type, ConfigNode node) throws NodeSerializeException {
+        User user = new User();
+        user.name = node.node("name").getString();
+        user.age = node.node("age").getInt();
+        user.friend = node.node("friend").getValue(User.class);
+        return user;
+    }
 }
 ```
 
-}
-```
-
-Now when we call `getValue(User.class)` configuration api will find registered `UserSerializer` by `User` type and deserialize inner type.
-
-:::caution
-To use `getValue(User.class)` method, you need to register `UserSerializer` for `User` type, as described in `api-registration` part.
-:::
+`getValue(User.class)` looks up the registered `UserSerializer` and runs it on the nested node. Make sure `UserSerializer` is registered before any HOCON that references it parses, otherwise `getValue` throws.
 
 ## Example 3. Deserialize collections
 
-HOCON supports lists of any type. In AbstractMenus API you also can get list of any type. In this example we will deserialize list of `User` objects.
-
-Lets say we have such HOCON list:
+HOCON supports lists. The API supports lists of any registered type.
 
 ```hocon
 user {
   name: "Notch"
   age: 42
   friends: [
-    {
-      name: "Petya"
-      age: 34
-    },
-    {
-      name: "Alex"
-      age: 38
-    }
+    { name: "Petya", age: 34 },
+    { name: "Alex",  age: 38 }
   ]
 }
 ```
 
-First, lets modify our `User` class. Now it should has friends list.
-
-``` java
+```java
 public class User {
     public String name;
     public int age;
@@ -168,25 +130,43 @@ public class User {
 }
 ```
 
-Then our serializer will looks like this:
-
-``` java
+```java
 public class UserSerializer implements NodeSerializer<User> {
 
-```hocon
-@Override
-public User deserialize(Class<User> type, ConfigNode node) throws NodeSerializeException {
-    User user = new User();
-    user.name = node.node("name").getString();
-    user.age = node.node("age").getInt();
-    user.friends = node.node("friends").getList(User.class);
-    return user;
+    @Override
+    public User deserialize(Class<User> type, ConfigNode node) throws NodeSerializeException {
+        User user = new User();
+        user.name = node.node("name").getString();
+        user.age = node.node("age").getInt();
+        user.friends = node.node("friends").getList(User.class);
+        return user;
+    }
 }
 ```
 
-}
+`getList(SomeType.class)` works for any type that has a registered serializer, including primitives. `node.getList(String.class)` returns a `List<String>`.
+
+## ConfigNode shortcuts
+
+`ConfigNode` exposes the common reads you'd expect:
+
+```java
+node.getString()                // primitive string
+node.getString("default")       // primitive string with default
+node.getInt()
+node.getInt(0)
+node.getBoolean()
+node.getDouble()
+node.getList(String.class)
+node.isNull()
+node.isPrimitive()
+node.isMap()
+node.isList()
+
+node.node("path")               // child node by key (supports dotted paths)
+node.children()                 // iterate children of a map node
+node.getValue(MyType.class)     // run the registered serializer
+node.getValue(MyType.class, fallback)
 ```
 
-Now we called `getList(User.class)` method to get list of `User` objects.
-
-You can get list of objects of any types. For example, when you need to get stirngs list, you just call `getList(String.class)`.
+`isNull()` is the cheapest way to probe whether an optional field exists. The convention is: `node.node("optional").isNull() ? defaultValue : node.node("optional").getInt()`.

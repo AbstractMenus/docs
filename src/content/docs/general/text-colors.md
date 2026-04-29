@@ -17,7 +17,7 @@ You can use this cheat sheet to get required color code.
 
 ## RGB colors
 
-Since Spigot 1.14 text can be colorized with RGB colors via hex code. All RGB colors must be concluded between `<>` brackets. Example:
+Text can be colorized with RGB hex codes wrapped in `<>` brackets:
 
 ```hocon
 message: "<#00FF00>Some text"
@@ -34,14 +34,12 @@ message: "<#00FF00>Some &etext"
 ## MiniMessage format
 
 :::caution
-To use this format, you need to enable parsing in plugin config. Set `useMiniMessage` to `true`.
+Off by default. Enable in `config.conf` by setting `useMiniMessage: true`. The flag exists because MiniMessage parsing adds a per-render pass over every string; servers that don't use MiniMessage skip the cost entirely.
 :::
 
-MiniMessage is a string based format to represent Minecraft chat components in a human-readable format that is easy to edit.
+[MiniMessage](https://docs.adventure.kyori.net/minimessage/format.html) is a tag-based text format — `<red>`, `<rainbow>...</rainbow>`, `<gradient:#FF0000:#0000FF>`, `<click:run_command:/foo>`, `<hover:show_text:'tooltip'>`, etc.
 
-This format described in official [MiniMessage documentation](https://docs.adventure.kyori.net/minimessage/format.html).
-
-AbstractMenus supports MiniMessage formatting in messages and item properties like `name` and `lore`. It also works in books. Note, that items supports only colorizing features like colors, rgb colors, gradients, etc. Other MiniMessage features like translatable strings are supported in chat messages only.
+AbstractMenus supports MiniMessage in messages and in item `name` / `lore`. It also works in books. Items render only the visual MiniMessage features (colors, gradients, decorations); interactive features like `<click>` and `<hover>` work in chat messages only.
 
 Example of using MiniMessage in `message` action:
 
