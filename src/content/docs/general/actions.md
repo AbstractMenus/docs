@@ -3,6 +3,8 @@ title: Actions
 description: "Action is something that happens after specific event (for example item click or menu opening). The plugin has a lot of actions. Below is a full list of…"
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 Action is something that happens after specific event (for example item click or menu opening). The plugin has a lot of actions. Below is a full list of actions.
 
 ## All actions
@@ -51,9 +53,9 @@ Action is something that happens after specific event (for example item click or
 | resetSkin | Boolean | `resetSkin: true` | Reset player’s skin using the **SkinsRestorer** plugin |
 | addRecipe | Objects list | See example `action-recipe` | Add new custom recipes for crafting |
 | setButton | Objects list | See example `action-setbtn` | Set the new button to displayed menu |
-| removeButton | `prop-slot` | See example `action-rembtn` | Remove button from displayed menu |
+| removeButton | [example](/docs/general/item-format/#slot) | See an [example](/docs/general/actions/) | Remove button from displayed menu |
 | placeItem | Objects list | See example `action-place-item` | For drag-and-drop. Place draggable item into draggable slot |
-| removePlaced | `prop-slot` or Object | See example `action-remove-placed` | Remove draggable item from displayed menu |
+| removePlaced | [example](/docs/general/item-format/#slot) or Object | See an [example](/docs/general/actions/) | Remove draggable item from displayed menu |
 | **Global variables** |  |  |  |
 | setVar | Objects list, Strings list | See example `action-var-glob-set` | Create or replace global variable |
 | removeVar | Objects list, Strings list | See example `action-var-glob-rem` | Remove global variable |
@@ -218,7 +220,7 @@ itemAdd: [
 Items without `slot` will be added in the first empty slot in inventory
 
 :::tip
-Don't forget about HOCON `hocon-list-feature`, where you can specify single list element as just single parameter.
+Don't forget about HOCON [example](/docs/start/hocon/), where you can specify single list element as just single parameter.
 :::
 
 ## Remove item
@@ -309,7 +311,7 @@ potionEffect: [
 ]
 ```
 
-The format of this action is similar to `prop-potion` item property.
+The format of this action is similar to [example](/docs/general/item-format/) item property.
 
 ## Remove potion effect
 
@@ -326,7 +328,7 @@ Action above will remove two potion effects from player.
 
 ## Open book
 
-Action to open written book. Format of this action similar to `prop-book` item property.
+Action to open written book. Format of this action similar to [example](/docs/general/item-format/) item property.
 
 ```hocon
 openBook {
@@ -693,7 +695,7 @@ Before this action, you need to set the `closeMenu` action, because when the ski
 :::
 ## Add recipe
 
-Action to add recipe to player. This is a [list of objects](hocon-list-obj) where each object is a recipe.
+Action to add recipe to player. This is a [list of objects](/docs/start/hocon/) where each object is a recipe.
 
 ```hocon
 addRecipe: [
@@ -752,7 +754,7 @@ items: [
 After click the item will glow.
 
 :::caution
-Do not use this action in display rules. While rules checking, the item is not yet created so it cannot be changed. Use [bindings](struct-bindings) instead.
+Do not use this action in display rules. While rules checking, the item is not yet created so it cannot be changed. Use [bindings](/docs/general/item-format/#bindings) instead.
 :::
 
 This action also allows you to change the properties of other items in the opened menu. To do this, you need to specify the slot in which it is located. Example:

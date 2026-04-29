@@ -3,6 +3,8 @@ title: Variables
 description: "Variable in AbstractMenus is any data, stored in memory and can be accessed through placeholders."
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 Variable in AbstractMenus is any data, stored in memory and can be accessed through placeholders.
 
 Plugin allows you to save and edit variables through actions or admin commands. Variables can be **global** or **personal**.

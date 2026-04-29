@@ -5,6 +5,12 @@ description: Two paths for shipping an AbstractMenus addon — plugin-as-addon, 
 
 import { Aside, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starlight/components";
 
+<div class="audience-tags"><span class="audience-tag audience-developer">Addon developer</span></div>
+
+<Aside type="caution" title="Alpha API">
+AbstractMenus 2.0 is in alpha. The API surface may change before the stable release. Pin a specific `compileOnly` version in your build to avoid breaking on a fresh fetch.
+</Aside>
+
 An addon is anything that registers types or providers against AbstractMenus. The plugin's own built-in actions, rules, etc. register through the same SPI an external addon uses — there's no privileged path for first-party content.
 
 There are two delivery formats. Pick the one that fits your situation.

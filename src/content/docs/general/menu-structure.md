@@ -3,6 +3,8 @@ title: Menu structure
 description: "If you already know `../start/how_to`, so here you will learn in details about menu structure and other useful features of the plugin."
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 If you already know `../start/how_to`, so here you will learn in details about menu structure and other useful features of the plugin.
 
 ## Menu file
@@ -89,7 +91,7 @@ The table below contains all the properties of menu which you can specify in men
 |----|----|----|----|
 | title | String | Yes | Set the title of a menu |
 | size | Number | Yes | Set the vertical size of a menu (rows count) |
-| type | String | No | `struct-inventory-type` |
+| type | String | No | [example](/docs/general/menu-structure/) |
 | items | Objects list | No | Menu items (buttons) |
 | activators | Object | No | An `activators` to open menu |
 | rules | Objects list | No | A `rules` to open menu. If even one of those rule is `false` then menu won't be opened |
@@ -101,7 +103,7 @@ The table below contains all the properties of menu which you can specify in men
 | updateActions | Object | No | An `actions` that will be performed when menu updated by `updateInterval` |
 | updateInterval | Number | No | An interval of menu refreshing in ticks. If not specified, menu will not be updated automatically |
 | **For drag-and-drop** |  |  |  |
-| draggable | `prop-slot` | No | Define allowed slots for placing and taking items |
+| draggable | [example](/docs/general/item-format/#slot) | No | Define allowed slots for placing and taking items |
 | onPlaceItem | Object | No | An `actions` that will be performed if player place item in allowed slot |
 | onTakeItem | Object | No | An `actions` that will be performed if player take item from allowed slot |
 | onDragItem | Object | No | An `actions` that will be performed if player place or take item using allowed slots |
@@ -319,7 +321,7 @@ In AbstractMenus order of item properties is matter. Since `bindings` block is j
 
 ### Multiple bindings
 
-You can add multiple bindings to one item. For this, just change the `bindings` block to [list of objects](hocon-list-obj). Example:
+You can add multiple bindings to one item. For this, just change the `bindings` block to [list of objects](/docs/start/hocon/). Example:
 
 ```hocon
 items: [

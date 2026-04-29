@@ -3,6 +3,8 @@ title: Logical structures
 description: "In general, all logical structures in AbstractMenus works as **if -> then -> else**. These structures can be nested."
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 In general, all logical structures in AbstractMenus works as **if -> then -> else**. These structures can be nested.
 
 ## Actions block
@@ -87,7 +89,7 @@ In the example above, the message "Nope" will send to the player if the player d
 
 ### Rules block as list
 
-Actually, any `rules` block is a [list of objects](hocon-list-obj), where each object is a rules block. Before that, always when we described the rules, we just opened the `rules` block and wrote the rules there like this:
+Actually, any `rules` block is a [list of objects](/docs/start/hocon/), where each object is a rules block. Before that, always when we described the rules, we just opened the `rules` block and wrote the rules there like this:
 
 ```hocon
 rules {

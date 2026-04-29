@@ -5,6 +5,8 @@ description: Build a menu from a dynamic catalog of objects (players, online use
 
 import { Steps } from "@astrojs/starlight/components";
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 ## Basics
 
 A generated menu is built from four pieces:
@@ -153,9 +155,9 @@ Catalog's placeholders will not work for static items inside `items` list. Becau
 
 **Type**: `PLAYERS`
 
-**Extractor type**: `extractor-entity`
+**Extractor type**: [example](/docs/advanced/input/)
 
-Returns all online players on the server. Since this catalog uses `extractor-entity` and all objects in provided collection are Players, you can use any regular placehodler with `ctg_` prefix when you use this catalog type. Example:
+Returns all online players on the server. Since this catalog uses [example](/docs/advanced/input/) and all objects in provided collection are Players, you can use any regular placehodler with `ctg_` prefix when you use this catalog type. Example:
 
 ```hocon
 catalog {
@@ -186,7 +188,7 @@ In this case, we used `player_name` placeholder (it exists in PlaceholderAPI and
 
 **Type**: `WORLDS`
 
-**Extractor type**: `extractor-world`
+**Extractor type**: [example](/docs/advanced/input/)
 
 Returns all worlds of the server.
 
@@ -194,7 +196,7 @@ Returns all worlds of the server.
 
 **Type**: `ENTITIES`
 
-**Extractor type**: `extractor-entity`
+**Extractor type**: [example](/docs/advanced/input/)
 
 Returns all entities of the player's world. Has an additional parameter to search for entities of a certain type only.
 

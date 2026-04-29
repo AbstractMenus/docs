@@ -50,7 +50,7 @@ export default defineConfig({
           ],
         },
         {
-          label: "General Features",
+          label: "Authoring menus",
           items: [
             { slug: "general/commands" },
             { slug: "general/menu-structure" },
@@ -61,18 +61,24 @@ export default defineConfig({
             { slug: "general/variables" },
             { slug: "general/text-colors" },
             { slug: "general/placeholders" },
-            { slug: "general/examples" },
           ],
         },
         {
-          label: "Advanced Features",
+          label: "Techniques",
           items: [
             { slug: "advanced/logical" },
-            { slug: "advanced/input" },
             { slug: "advanced/templates" },
+            { slug: "advanced/input" },
             { slug: "advanced/animations" },
             { slug: "advanced/generation" },
             { slug: "advanced/drag-and-drop" },
+          ],
+        },
+        {
+          label: "Reference",
+          items: [
+            { slug: "general/cheatsheet" },
+            { slug: "general/examples" },
           ],
         },
         {

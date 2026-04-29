@@ -3,6 +3,8 @@ title: Tips
 description: Workflow shortcuts while authoring menus.
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 Small things that save time. Updated as more emerge.
 
 ## Auto-reload while editing

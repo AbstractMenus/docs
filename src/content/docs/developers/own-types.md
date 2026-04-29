@@ -3,6 +3,12 @@ title: Custom types
 description: Define and register your own actions, rules, item properties, activators, and catalogs.
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-developer">Addon developer</span></div>
+
+:::caution[Alpha API]
+AbstractMenus 2.0 is in alpha. The API surface may change before the stable release. Pin a specific `compileOnly` version in your build to avoid breaking on a fresh fetch.
+:::
+
 :::note
 In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::

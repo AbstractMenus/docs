@@ -15,7 +15,27 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid } from "@astrojs/starlight/components";
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+## Pick your track
+
+<CardGrid>
+  <LinkCard
+    title="I'm setting up a server"
+    href="/docs/start/installation/"
+    description="Install the plugin, configure config.conf, manage addons. The operator track."
+  />
+  <LinkCard
+    title="I'm authoring menus"
+    href="/docs/start/how-to/"
+    description="Write HOCON menus from scratch. Activators, rules, actions, item properties."
+  />
+  <LinkCard
+    title="I'm building an addon"
+    href="/docs/developers/general/"
+    description="Pull in the API, register custom types or providers, ship a Path 1 or Path 2 addon."
+  />
+</CardGrid>
 
 ## What is AbstractMenus
 

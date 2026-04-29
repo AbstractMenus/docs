@@ -3,6 +3,8 @@ title: Drag and drop
 description: "Drag-and-drop (futher DnD) is a feature that allows players to place and take items from inventory. In the same time, menu can change it appearance or…"
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 Drag-and-drop (futher DnD) is a feature that allows players to place and take items from inventory. In the same time, menu can change it appearance or behaviour in response for this events.
 
 :::note
@@ -25,7 +27,7 @@ items: [
 ]
 ```
 
-This property has a `prop-slot` format. It can accept slot index, range or matrix. In this example we used slot index for single draggable slot. Now if we put or take item from slot 11, this event will not be cancelled.
+This property has a [example](/docs/general/item-format/#slot) format. It can accept slot index, range or matrix. In this example we used slot index for single draggable slot. Now if we put or take item from slot 11, this event will not be cancelled.
 
 :::note
 Regular menu items cannot be draggable. To place draggable item into menu manually, use `placeItem` action.
@@ -66,7 +68,7 @@ If player closed menu while some items placed in menu, they will be dropped to t
 :::
 ## DnD placeholders
 
-There is special placeholders to check properties of dragged item and other related data. These placeholders uses `extractor-item` to provide information about dragged item.
+There is special placeholders to check properties of dragged item and other related data. These placeholders uses [example](/docs/advanced/input/) to provide information about dragged item.
 
 DnD placeholders grouped by action types described below. You can play with these placeholders yourself, to understand what kind of data they returns.
 
@@ -77,7 +79,7 @@ Has `placed_` prefix, and contains data about last **placed** item. For example:
 - `%placed_item_type%` - return type of last placed item.
 - `%placed_item_amount%` - return amount of last placed item.
 
-And so on. See `extractor-item` placeholders for more information.
+And so on. See the [reference](/docs/advanced/input/) placeholders for more information.
 
 It also has special placeholder `placed_slot` which returns slot index where item was placed in.
 

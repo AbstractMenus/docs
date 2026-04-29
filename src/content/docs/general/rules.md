@@ -3,6 +3,8 @@ title: Rules
 description: "A rule is a check before performing some actions. The result of this check influences what actions will be performed."
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 A rule is a check before performing some actions. The result of this check influences what actions will be performed.
 
 Rules has simple format. Example:
@@ -41,30 +43,30 @@ In this example, we check a player for permission "some.perm", a group "default"
 | chance | Number | `chance: 50` | A random chance to complete this rule in percentages |
 | online | Number | `online: 17` | Is there required players count on the server |
 | playerIsOnline | String | `playerIsOnline: "Notch"` | Chck is required player on the server |
-| inventoryItems | Objects list | See example `rule-items` | Does player has a items, specified in the list |
-| heldItem | Object | See example `rule-held` | Does the item in the player's main hand match the specified item |
+| inventoryItems | Objects list | See an [example](/docs/general/rules/#inventory-items) | Does player has a items, specified in the list |
+| heldItem | Object | See an [example](/docs/general/rules/#held-item) | Does the item in the player's main hand match the specified item |
 | freeSlot | Number | `freeSlot: -1` `freeSlot: 3` | Checks player inventory for free slot. If number is greater that `-1` it will check specified slot. If number lesser than `0` it will check inventory for any free slot |
 | freeSlotCount | Number | `freeSlotCount: 2` | Checks player inventory for specify free slots count. If player has a same or more free slots it will return true |
-| existVar | String, Object | See example `rule-var` | Check is there exists global variable |
-| existVarp | String | See example `rule-var` | Check is there exists personal variable |
-| placedItem | Object | See example `rule-placed-item` | For drag-and-drop. Check is there placed some item in menu by player |
+| existVar | String, Object | See an [example](/docs/general/rules/#var-existing) | Check is there exists global variable |
+| existVarp | String | See an [example](/docs/general/rules/#var-existing) | Check is there exists personal variable |
+| placedItem | Object | See an [example](/docs/general/rules/) | For drag-and-drop. Check is there placed some item in menu by player |
 | **WorldGuard** |  |  |  |
 | region | Strings list | `region: "myregion"` | Checks player is in one of the specified **WorldGuard** regions |
 | **BungeeCord** |  |  |  |
-| bungeeOnline | Object | See example `rule-bungee` | Does bungee server has enough players count |
+| bungeeOnline | Object | See an [example](/docs/general/rules/#bungeecord-online) | Does bungee server has enough players count |
 | bungeeIsOnline | String | `bungeeIsOnline: "lobby"` | Checks the specified **BunegeCord** server is online |
 | **Complex rules** |  |  |  |
-| if | Objects list | See example `rule-if` | Checks some text and numeric parameters |
-| js | String | See example `rule-js` | Execute JavaScript script and check the result |
+| if | Objects list | See an [example](/docs/general/rules/#if-rule) | Checks some text and numeric parameters |
+| js | String | See an [example](/docs/general/rules/#javascript) | Execute JavaScript script and check the result |
 | **Special rules** |  |  |  |
-| and | Objects list | See example [here](logical-and) | Logical wrapper for rules implemented with 'AND' operator |
-| or | Objects list | See example [here](logical-or) | Logical wrapper for rules implemented with 'OR' operator |
-| oneof | Objects list | See example [here](logical-oneof) | Works as `and` wrapper but will be stopped if some rule in the list will be `true` |
-| playerScope | Object | See example [here](rule-player-scope) | Rules wrapper to check another player found by name |
+| and | Objects list | See example [here](/docs/advanced/logical/) | Logical wrapper for rules implemented with 'AND' operator |
+| or | Objects list | See example [here](/docs/advanced/logical/) | Logical wrapper for rules implemented with 'OR' operator |
+| oneof | Objects list | See example [here](/docs/advanced/logical/) | Works as `and` wrapper but will be stopped if some rule in the list will be `true` |
+| playerScope | Object | See example [here](/docs/advanced/logical/) | Rules wrapper to check another player found by name |
 
 ## Inventory items
 
-Rule to check player's inventory for some items. This is an [objects list](hocon-list-obj), where each object is an item. Items has same format as anywhere in AM. Example:
+Rule to check player's inventory for some items. This is an [objects list](/docs/start/hocon/), where each object is an item. Items has same format as anywhere in AM. Example:
 
 ```hocon
 inventoryItems: [

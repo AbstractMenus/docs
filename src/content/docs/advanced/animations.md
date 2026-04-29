@@ -3,6 +3,8 @@ title: Animations
 description: "Any menu with frame-by-frame animation should have a `frames` block in the root of the menu. If the menu has a `frames` block, the plugin will suppose this…"
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 ## Frame-by-frame animation
 
 Any menu with frame-by-frame animation should have a `frames` block in the root of the menu. If the menu has a `frames` block, the plugin will suppose this menu is animated. The frames block itself replaces the standard `items` block. Below are the parameters that can be specified in any animated menu, in addition to the standard.

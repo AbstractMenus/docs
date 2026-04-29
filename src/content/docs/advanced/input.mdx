@@ -5,6 +5,8 @@ description: Capture context from activators (commands, clicks, regions) and fee
 
 import { Steps } from "@astrojs/starlight/components";
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 How to save user input and reuse it inside menus.
 
 ## Activator context
@@ -31,7 +33,7 @@ To get access to activator context's placeholders, you can use placeholder in ne
 %activator_<extractor placeholder>%
 ```
 
-Each activator's placeholder start with `activator_` prefix. The `<extractor placeholder>` is a placeholder which [defined](extractor-block) for specific extractor.
+Each activator's placeholder start with `activator_` prefix. The `<extractor placeholder>` is a placeholder which [defined](/docs/advanced/input/) for specific extractor.
 
 ### How to use a context placeholder
 
@@ -89,7 +91,7 @@ items: [
 ]
 ```
 
-Here we used `entity_custom_name`, `entity_loc_x`, `entity_loc_y` and `entity_loc_z` extractor placeholders, which defined [in this place](extractor-entity)
+Here we used `entity_custom_name`, `entity_loc_x`, `entity_loc_y` and `entity_loc_z` extractor placeholders, which defined [in this place](/docs/advanced/input/)
 
 ### Example 2. Personal profile menu
 
@@ -127,7 +129,7 @@ items: [
 
 Here, we used placeholder even in menu title, because inventory was created after activator created their context. We also used PlaceholderAPI placeholders, but with `activator_` prefix. We do this, because we sure that menu will be opened only after click on player (because we set `type: PLAYER`).
 
-We used regular placeholders, because Entity Extractor can accept them, if entity is player. This and other information about required for you extractor, you can find under each [extractor's specification](extractor-entity)
+We used regular placeholders, because Entity Extractor can accept them, if entity is player. This and other information about required for you extractor, you can find under each [extractor's specification](/docs/advanced/input/)
 
 Now, if some player will shift-click other player, our menu will be opened:
 
@@ -148,7 +150,7 @@ In this topic we will talk about more complex format of the `command` activator 
 
 ### Command format
 
-To build command with arguments, you need to make `command` activator as an `hocon-obj`. This object has several required and optional parameters. Below is full structure of `commands` activator.
+To build command with arguments, you need to make `command` activator as an [example](/docs/start/hocon/). This object has several required and optional parameters. Below is full structure of [example](/docs/general/commands/) activator.
 
 | Key | Type | Note | Required |
 |----|----|----|----|
@@ -175,7 +177,7 @@ command {
 
 The `args` field is a list that can accept one of the two types of arguments: **Simple** or **Typed**.
 
-As described in `extractor-cmd` topic, `commands` activator uses Command Extractor to get paraed values from entered command. Example of using this extractor you can see in topic below.
+As described in [example](/docs/advanced/input/) topic, [example](/docs/general/commands/) activator uses Command Extractor to get paraed values from entered command. Example of using this extractor you can see in topic below.
 
 ### Simple arguments
 
@@ -196,7 +198,7 @@ After reloading, AbstractMenus will expect that player will enter command in for
 
 When player entered command and all arguments specified, menu will be opened. Otherwise player receives error message.
 
-To get values which player entered, you need to use context placeholders, as described [above](input-ctx-placeholder). Just see which placehodlers provides `extractor-cmd` and add `activator_` prefix in begin. Example:
+To get values which player entered, you need to use context placeholders, as described [above](input-ctx-placeholder). Just see which placehodlers provides [example](/docs/advanced/input/) and add `activator_` prefix in begin. Example:
 
 ```hocon
 message: "You entered %activator_cmd_arg_myarg1% and %activator_cmd_arg_myarg2%"
@@ -312,7 +314,7 @@ command {
 }
 ```
 
-For example, we need to get level of these two players. Command extractor gives access to this and other placeholders. Following extractor's placeholder format (`<key>:<placeholder>`), which described in `extractor-cmd` topic, we need to specify two parameters: argument's key and placeholder which we want to use. We want to use `player_level` placeholder, so our final placeholder will looks like:
+For example, we need to get level of these two players. Command extractor gives access to this and other placeholders. Following extractor's placeholder format (`<key>:<placeholder>`), which described in [example](/docs/advanced/input/) topic, we need to specify two parameters: argument's key and placeholder which we want to use. We want to use `player_level` placeholder, so our final placeholder will looks like:
 
 ```hocon
 %activator_player1:player_level%

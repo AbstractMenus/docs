@@ -1,9 +1,11 @@
 ---
 title: Templates
-description: "Thanks to the flexible HOCON format you can create templates for anything. A template can be any regular parameter, `hocon-obj`, `hocon-list`, etc. Templates…"
+description: "Thanks to the flexible HOCON format you can create templates for anything. A template can be any regular parameter, [example](/docs/start/hocon/), [example](/docs/start/hocon/), etc. Templates…"
 ---
 
-Thanks to the flexible HOCON format you can create templates for anything. A template can be any regular parameter, `hocon-obj`, `hocon-list`, etc. Templates can be set both inside the menu file, or you can put all templates in a separate file.
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
+Thanks to the flexible HOCON format you can create templates for anything. A template can be any regular parameter, [example](/docs/start/hocon/), [example](/docs/start/hocon/), etc. Templates can be set both inside the menu file, or you can put all templates in a separate file.
 
 ## Templates basics
 

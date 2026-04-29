@@ -3,6 +3,8 @@ title: Text formatting
 description: "As in most plugins, AM replaces `&` char to native Minecraft `§` color prefix. All text can be colorized. There is some examples below."
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 ## Colors codes
 
 As in most plugins, AM replaces `&` char to native Minecraft `§` color prefix. All text can be colorized. There is some examples below.

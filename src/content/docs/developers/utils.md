@@ -3,6 +3,12 @@ title: Utilities
 description: Color helpers, placeholder substitution, scheduling.
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-developer">Addon developer</span></div>
+
+:::caution[Alpha API]
+AbstractMenus 2.0 is in alpha. The API surface may change before the stable release. Pin a specific `compileOnly` version in your build to avoid breaking on a fresh fetch.
+:::
+
 Small helpers that addons reach for often.
 
 ## Replace color codes

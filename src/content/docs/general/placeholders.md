@@ -3,6 +3,8 @@ title: Placeholders
 description: "Placeholder is a part of text concluded between `%` chars."
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+
 Placeholder is a part of text concluded between `%` chars.
 
 The plugin supports placeholders in any parameter of the item, action, rule and in some activators. It doesn’t matter what data type the parameter accepts.
@@ -163,7 +165,7 @@ Get data from ItemStack.
 | item_display_name   | Formatted name                                                                                             |
 | item_localized_name | Localized name                                                                                             |
 | item_model          | Custom model data (MC 1.14+)                                                                               |
-| item_serialized     | The whole item serialized into base64 string. Can be used with [serialized](prop-serialized) item property |
+| item_serialized     | The whole item serialized into base64 string. Can be used with [serialized](/docs/general/item-format/#serialized) item property |
 
 ### Region extractor
 
@@ -190,7 +192,7 @@ Get data from Citizens NPC.
 | npc_full_name                        | Full name                                             |
 | npc_entity\_\<entity placeholder\> | Get value from NPC's entity by Entity Value extractor |
 
-For example, you need to get NPC's entity type. According to [Entity extractor format](extractor-entity), your placeholders will looks like this:
+For example, you need to get NPC's entity type. According to [Entity extractor format](/docs/advanced/input/), your placeholders will looks like this:
 
     npc_entity_type
 
@@ -211,4 +213,4 @@ For example, you specified argument with key `username` by some activator. Then,
 
     cmd_arg_username
 
-More about commands building and reading arguments read in `building-commands` topic.
+More about commands building and reading arguments read in [example](/docs/advanced/input/) topic.

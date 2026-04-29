@@ -1,51 +1,74 @@
 ---
 title: Item format
-description: "An item can be specified not only as a button in a menu. This [object](hocon-obj) can be used in rules, actions and activators. However, item always has one…"
+description: "An item can be specified not only as a button in a menu. This [object](/docs/start/hocon/) can be used in rules, actions and activators. However, item always has one…"
 ---
 
-An item can be specified not only as a button in a menu. This [object](hocon-obj) can be used in rules, actions and activators. However, item always has one format.
+<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-## All item properties
+An item can be specified not only as a button in a menu. This [object](/docs/start/hocon/) can be used in rules, actions and activators. However, item always has one format.
+
+:::tip[Looking for the full property list?]
+The [Cheatsheet](/docs/general/cheatsheet/) groups every property in one ctrl-F'able place. The page below has the full reference with examples for each one.
+:::
+
+## Properties by category
+
+### Slot and cooldown
 
 | Name | Data type | Example | Description |
 |----|----|----|----|
-| slot | Multiple | See example `prop-slot` | Set slot for item. Not a regular item's property. Can be used only for menu items or in some actions and rules |
-| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/start/installation/#configconf-reference) the floor wins; set `clickCooldown: 0` to bypass entirely |
-| **Material installers** |  |  |  |
-| material | String | `material: "DIAMOND_SWORD"` | Set the item material by name. |
-| texture | String | See example `prop-texture` | Using custom head texture by texture id, url, or base64 encoded. You can find many heads on the <https://minecraft-heads.com> |
-| skullOwner | String | See example `prop-skull-owner` | Set player's skin on head |
-| hdb | String | `hdb: "2853"` | Set the head by the identifier from the [HeadDatabase](https://www.spigotmc.org/resources/14280/) |
-| mmoitem | String | `mmoitem: "WEAPON:MY_SWORD"` | Take an item by type and id from the [MMOItems](https://www.spigotmc.org/resources/39267/) |
-| itemsAdder | String | itemsAdder: "\<namespaced id\>" | Take a custom stack defined in [ItemsAdder](https://www.spigotmc.org/resources/73355/) registry by their namespaced id |
-| oraxen | String | `oraxen: "my_sword"` | Take a custom stack defined in [Oraxen](https://www.spigotmc.org/resources/72448/) plugin |
-| equipItem | String or Object | See example `prop-equip-item` | Take item from player's inventory. See all slot types |
-| serialized | String | See example `prop-serialized` | Deserialize item from base64 string |
-| **Other properties** |  |  |  |
-| name | String | `name: "Peter Piper"` | Set display name |
-| count | Number | `count: 64` | Amount of item stack |
-| damage | Number | `damage: 100` | Set damage (bar under item) for damageable items. The higher the number, the lower the durability of the item |
-| lore | Strings list | See example `prop-lore` | Set item lore (text under name) |
-| glow | Boolean | `glow: true` | Set glowing effect (via invisible enchantment) |
-| enchantments | Object | See example `prop-ench` | Add enchantment to item |
-| color | String | See example | Colorize armor or potion |
-| flags | Strings list | See example `prop-flags` | Add item flags |
-| unbreakable | Boolean | `unbreakable: true` | Make item unbreakable |
-| potionData | Objects list | See example `prop-potion` | Add various potion effects for item, if this item is potion |
-| fireworkData | Object | See example `prop-firework` | If material is `FIREWORK_ROCKET`, sets the firework explosion effects |
-| bookData | Object | See example `prop-book` | Add book's content and metadata (author, title) for writable book |
-| bannerData | Object | See example `prop-banner` | Colorize banner item |
-| shieldData | Object | Similar to `prop-banner` | Colorie shield item, as banner |
-| model | Number | `model: 1234567` | Custom model data |
-| enchantStore | Object | Same as `prop-ench` | Store an enchantment on a `ENCHANTED_BOOK` so it can later be applied at an anvil |
-| recipes | Objects list | Same as recipe format | Create a book with custom recipes (knowledge book). Works with `KNOWLEDGE_BOOK` material |
-| nbt | Object | See example `prop-nbt` | Add NBT tags to the item |
-| **Special properties** |  |  |  |
-| bindings | Objects list | See example `struct-bindings` | Binds some properties to rules. If player matches specified rules, then these properties will be applied to item |
+| slot | Multiple | See [Slot](#slot) below | Where the item sits. Can be used only for menu items or in some actions and rules. |
+| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/start/installation/#configconf-reference) the floor wins; set `clickCooldown: 0` to bypass entirely. |
 
-:::note
-Material installer is a property that set the item's material and optionally other parameters. You should use only one material installer property for an item.
-:::
+### Material installers
+
+Use exactly one of these to set the item's material. The rest of the properties (display, mechanics) layer on top.
+
+| Name | Data type | Example | Description |
+|----|----|----|----|
+| material | String | `material: "DIAMOND_SWORD"` | Set the item material by name. |
+| texture | String | See [Texture](#texture) | Custom head texture by id, url, or base64. Many heads at <https://minecraft-heads.com>. |
+| skullOwner | String | See [Skull Owner](#skull-owner) | Set the player's skin on a head. |
+| hdb | String | `hdb: "2853"` | Head from [HeadDatabase](https://www.spigotmc.org/resources/14280/) by id. |
+| mmoitem | String | `mmoitem: "WEAPON:MY_SWORD"` | Item by type and id from [MMOItems](https://www.spigotmc.org/resources/39267/). |
+| itemsAdder | String | `itemsAdder: "<namespaced id>"` | Custom stack from [ItemsAdder](https://www.spigotmc.org/resources/73355/) registry. |
+| oraxen | String | `oraxen: "my_sword"` | Custom stack from [Oraxen](https://www.spigotmc.org/resources/72448/). |
+| equipItem | String or Object | See [Equip item](#equip-item) | Take an item from a player's inventory slot. |
+| serialized | String | See [Serialized](#serialized) | Deserialize an item from a base64 string. |
+
+### Display
+
+| Name | Data type | Example | Description |
+|----|----|----|----|
+| name | String | `name: "Peter Piper"` | Display name. |
+| lore | Strings list | See [Lore](#lore) | Lore lines under the name. |
+| glow | Boolean | `glow: true` | Glowing effect (via invisible enchantment). |
+| flags | Strings list | See [Flags](#flags) | Item flags. |
+| color | String | — | Colorize armor or potion. |
+| model | Number | `model: 1234567` | Custom model data. |
+
+### Mechanics
+
+| Name | Data type | Example | Description |
+|----|----|----|----|
+| count | Number | `count: 64` | Stack size. |
+| damage | Number | `damage: 100` | Damage (the bar under the item) on damageable items. Higher = less durability. |
+| unbreakable | Boolean | `unbreakable: true` | Mark the item as unbreakable. |
+| enchantments | Object | See [Enchantments](#enchantments) | Add enchantments. |
+| enchantStore | Object | Same as `enchantments` | Store an enchantment on an `ENCHANTED_BOOK` for use at an anvil. |
+| potionData | Objects list | See [Potion data](#potion-data) | Potion effects, if the item is a potion. |
+| fireworkData | Object | See [Firework data](#firework-data) | Firework explosion effects on `FIREWORK_ROCKET`. |
+| bookData | Object | See [Book data](#book-data) | Author, title, pages on a writable book. |
+| bannerData | Object | See [Banner data](#banner-data) | Banner colors and patterns. |
+| shieldData | Object | Similar to `bannerData` | Shield colors and patterns (uses banner format). |
+| recipes | Objects list | — | Custom recipes on a `KNOWLEDGE_BOOK`. |
+| nbt | Object | See [NBT](#nbt) | Raw NBT tags. |
+
+### Conditional
+
+| Name | Data type | Example | Description |
+|----|----|----|----|
+| bindings | Objects list | See [Bindings](#bindings) | Override properties when rules match. The classic "show as red glass if player can't afford" pattern. |
 
 ## Slot
 
@@ -201,7 +224,7 @@ equipItem {
 
 ## Deserialize from base64 string
 
-The `serialized` item property allow to deserialize item from base64 string. Such string usually can be retrieved using `extractor-item` placeholder, for example, when you use drag-and-drop feature. Example:
+The `serialized` item property allow to deserialize item from base64 string. Such string usually can be retrieved using [example](/docs/advanced/input/) placeholder, for example, when you use drag-and-drop feature. Example:
 
 ```hocon
 {
@@ -321,7 +344,7 @@ A flags for each Spigot versions might be different or missing. Check flags for 
 
 ## Potion effect
 
-This property is a [list of objects](hocon-list-obj) containing effects of the potion. Each item in the list is a potion effect. Example:
+This property is a [list of objects](/docs/start/hocon/) containing effects of the potion. Each item in the list is a potion effect. Example:
 
 ```hocon
 potionData: [
@@ -376,7 +399,7 @@ fireworkData {
 
 The `power` parameter set the lifetime of firework. This is optional parameter. By default its `1`.
 
-The `effects` parameter is a [list of objects](hocon-list-obj). Each object is a firework effect and has several parameters:
+The `effects` parameter is a [list of objects](/docs/start/hocon/). Each object is a firework effect and has several parameters:
 
 - **`type`** - Type of the shape when firework explodes. You can find all firework types [here](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/FireworkEffect.Type.html).
 
@@ -433,7 +456,7 @@ bannerData: "{BlockEntityTag: {Base: 12, Patterns: [{Pattern: hh, Color: 6}, {Pa
 
 ### Way 2. HOCON
 
-A more complicated, but affordable way is to specify patterns as [list of objects](hocon-list-obj). Example:
+A more complicated, but affordable way is to specify patterns as [list of objects](/docs/start/hocon/). Example:
 
 ```hocon
 bannerData: [
@@ -501,7 +524,7 @@ Inside the `nbt` property, you can write any HOCON constructs, and the plugin co
 }
 ```
 
-The `ench` parameter is a [list of objects](hocon-list-obj). The types and names of tags must exactly match those that must be in the final NBT.
+The `ench` parameter is a [list of objects](/docs/start/hocon/). The types and names of tags must exactly match those that must be in the final NBT.
 
 Of course, you can add your own custom tags:
 

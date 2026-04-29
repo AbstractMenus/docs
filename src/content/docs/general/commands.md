@@ -3,6 +3,8 @@ title: Commands
 description: Every command AbstractMenus registers, what it does, and the permissions involved.
 ---
 
+<div class="audience-tags"><span class="audience-tag audience-operator">Operator</span> <span class="audience-tag audience-author">Menu author</span></div>
+
 All AbstractMenus commands are gated behind `am.admin`. Op players have it implicitly; for staff without op, grant it through your permissions plugin.
 
 ## /am

@@ -5,6 +5,12 @@ description: Map old API calls (Types, Handlers, AbstractMenusProvider) to the n
 
 import { Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
 
+<div class="audience-tags"><span class="audience-tag audience-developer">Addon developer</span></div>
+
+<Aside type="caution" title="Alpha API">
+AbstractMenus 2.0 is in alpha. The API surface may change before the stable release. Pin a specific `compileOnly` version in your build to avoid breaking on a fresh fetch.
+</Aside>
+
 If your addon was written against the 1.x API (`AbstractMenusProvider`, `AbstractMenusPlugin`, `Types`, `Handlers`), this page maps every old call to its 2.0 replacement.
 
 <Aside type="caution">
