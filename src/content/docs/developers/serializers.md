@@ -169,10 +169,18 @@ node.isPrimitive()
 node.isMap()
 node.isList()
 
-node.node("path")               // child node by key (supports dotted paths)
-node.children()                 // iterate children of a map node
+node.node("path")               // child node by dotted path (one or many segments)
+node.child("name")              // single-step child lookup
+node.childrenList()             // List<ConfigNode> for list nodes
+node.childrenMap()              // Map<String, ConfigNode> for map nodes
+node.hasChildren()
+node.key()                      // name of this node in its parent
+node.path()                     // full dotted path from root
+node.parent()                   // parent ConfigNode or null
 node.getValue(MyType.class)     // run the registered serializer
 node.getValue(MyType.class, fallback)
 ```
 
 `isNull()` is the cheapest way to probe whether an optional field exists. The convention is: `node.node("optional").isNull() ? defaultValue : node.node("optional").getInt()`.
+
+For list and map nodes you'll use `childrenList()` / `childrenMap()` constantly - they're how the bundled serializers walk through items, actions, and bindings.

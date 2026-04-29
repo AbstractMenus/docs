@@ -1,11 +1,11 @@
 ---
 title: Templates
-description: "Thanks to the flexible HOCON format you can create templates for anything. A template can be any regular parameter, [example](/docs/start/hocon/), [example](/docs/start/hocon/), etc. Templates…"
+description: Reuse menu fragments across files - HOCON substitutions, shared item shapes, includes.
 ---
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-Thanks to the flexible HOCON format you can create templates for anything. A template can be any regular parameter, [example](/docs/start/hocon/), [example](/docs/start/hocon/), etc. Templates can be set both inside the menu file, or you can put all templates in a separate file.
+Thanks to HOCON's flexibility, you can extract any reusable fragment into a template - a single value, an [object](/docs/start/hocon/#object), a [list](/docs/start/hocon/#list), and so on. Templates can live inside the same menu file or in a separate file pulled in via `include`.
 
 ## Templates basics
 

@@ -115,7 +115,7 @@ Here we have specified the static items with actions for switching the pages of 
 
 ## Placeholders
 
-The important part of the auto-generated menus is a context placeholders. Each catalog uses one of the [Value Extractors](/docs/developers/own-types/#value-extractor). The usage of these extractor similar to how they uses for [Activators](/docs/advanced/input/). The only difference is different prefix: `ctg_`, and not `activator_`.
+The important part of the auto-generated menus is a context placeholders. Each catalog uses one of the [Value Extractors](/docs/developers/own-types/#value-extractor). The usage of these extractor is similar to how they are used for [activator context](/docs/advanced/input/#activator-context). The only difference is the prefix: `ctg_` instead of `activator_`.
 
 During menu generation, placeholders are generated for each catalog's object and can be used almost anywhere in the menu.
 
@@ -157,7 +157,7 @@ Catalog's placeholders will not work for static items inside `items` list. Becau
 
 **Extractor type**: `extractor-entity`
 
-Returns all online players on the server. Since this catalog uses [example](/docs/advanced/input/) and all objects in provided collection are Players, you can use any regular placehodler with `ctg_` prefix when you use this catalog type. Example:
+Returns all online players on the server. Since this catalog uses [`extractor-entity`](/docs/advanced/input/#activator-context) and all objects in the provided collection are Players, you can use any regular placeholder with the `ctg_` prefix when you use this catalog type. Example:
 
 ```hocon
 catalog {
@@ -198,9 +198,20 @@ Returns all worlds of the server.
 
 **Extractor type**: `extractor-entity`
 
-Returns all entities of the player's world. Has an additional parameter to search for entities of a certain type only.
+Returns all entities of the player's world (or a specified world). Optional filters narrow the result.
 
-- **`allowedTypes`** - List of strings. If this parameter is specified, only entities of the specified types are returned. See all entity types [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html)
+- **`world`** - Optional. World name. If specified, returns entities from that world instead of the viewer's. Placeholders are supported.
+- **`allowedTypes`** - Optional. List of strings. If this parameter is specified, only entities of the specified types are returned. See all entity types [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html).
+
+Example:
+
+```hocon
+catalog {
+  type: ENTITIES
+  world: "world_nether"
+  allowedTypes: [ ZOMBIE, SKELETON ]
+}
+```
 
 ### BungeeCord servers
 
@@ -239,4 +250,33 @@ This catalog uses own extractor with that placeholders:
 |-------------|--------|----------------|
 | index       | Number | Current number |
 
-So far, these are all available catalogs. In general, the catalog system is designed for independent expansion by the user to suit his needs. Despite, we will modify and add new catalogs over time.
+### Slice
+
+**Type**: `slice`
+
+**Extractor type**: *Own extractor. See placeholder below*
+
+Splits a string into a list of pieces by a separator. Useful when a placeholder hands you a comma-separated list and you want one menu element per piece.
+
+```hocon
+catalog {
+  type: slice
+  value: "%my_csv_placeholder%"
+  separator: ","
+  trim: true
+}
+```
+
+- **`value`** - The string to split. Placeholders are resolved per viewer.
+- **`separator`** - Separator passed to `String.split` (Java regex).
+- **`trim`** - Optional. If `true`, each element is trimmed. Default `true`.
+
+The catalog skips empty pieces, so `"a,,b"` with `,` produces two elements (`a`, `b`), not three.
+
+This catalog uses own extractor with that placeholders:
+
+| Placeholder     | Type   | Description           |
+|-----------------|--------|-----------------------|
+| slice_element   | String | The current element   |
+
+So far, these are all available catalogs. In general, the catalog system is designed for independent expansion by the user to suit his needs. We will modify and add new catalogs over time.

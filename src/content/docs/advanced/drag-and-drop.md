@@ -12,7 +12,7 @@ This feature currently is experimental and has some constraints. For example, yo
 :::
 
 :::tip
-Drag-and-drop feature used in some [advanced examples](examples-advanced).
+Drag-and-drop is used in some [example menus](/docs/general/examples/).
 :::
 ## Adding DnD ability
 
@@ -27,7 +27,7 @@ items: [
 ]
 ```
 
-This property has a [example](/docs/general/item-format/#slot) format. It can accept slot index, range or matrix. In this example we used slot index for single draggable slot. Now if we put or take item from slot 11, this event will not be cancelled.
+This property uses the same [slot format](/docs/general/item-format/#slot) as item slots. It can accept a slot index, a range, or a matrix. In this example we used a slot index for a single draggable slot. Now if we put an item in or take it from slot 11, the event will not be cancelled.
 
 :::note
 Regular menu items cannot be draggable. To place draggable item into menu manually, use `placeItem` action.
@@ -68,7 +68,7 @@ If player closed menu while some items placed in menu, they will be dropped to t
 :::
 ## DnD placeholders
 
-There is special placeholders to check properties of dragged item and other related data. These placeholders uses [example](/docs/advanced/input/) to provide information about dragged item.
+There are special placeholders to check properties of a dragged item and other related data. These placeholders use the [item value extractor](/docs/general/placeholders/#item-extractor) to provide information about the dragged item.
 
 DnD placeholders grouped by action types described below. You can play with these placeholders yourself, to understand what kind of data they returns.
 
@@ -79,7 +79,7 @@ Has `placed_` prefix, and contains data about last **placed** item. For example:
 - `%placed_item_type%` - return type of last placed item.
 - `%placed_item_amount%` - return amount of last placed item.
 
-And so on — see [`extractor-item`](/docs/advanced/input/) placeholders for the full set.
+And so on - see the [item extractor](/docs/general/placeholders/#item-extractor) for the full set of placeholders.
 
 It also has special placeholder `placed_slot` which returns slot index where item was placed in.
 
@@ -177,7 +177,7 @@ items: [
 ]
 ```
 
-In this example, if player placed at least 32 cobblestone in slot 2, then coal ore appears in slot 15. Otherwise, remove placed item from slot 15 if exists.
+In this example, if player placed at least 32 cobblestone in slot 2, then coal ore appears in slot 6. Otherwise, remove placed item from slot 6 if exists.
 
 :::tip
 You can't place item with this action into non-draggable slot.

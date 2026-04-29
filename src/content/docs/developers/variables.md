@@ -44,6 +44,33 @@ Var var = api.variables().createBuilder()
 api.variables().saveGlobal(var);
 ```
 
-For per-player variables, use `savePlayer(playerName, var)`.
+For per-player variables, use `savePersonal(playerName, var)`.
 
 `expiry(0)` (or omitting the call) creates a permanent variable.
+
+## Read and delete
+
+```java
+Var welcome = api.variables().getGlobal("welcome_message");
+Var claimed = api.variables().getPersonal(player.getName(), "dailyReward");
+
+api.variables().deleteGlobal("welcome_message");
+api.variables().deletePersonal(player.getName(), "dailyReward");
+```
+
+`getGlobal` / `getPersonal` return `null` if the variable does not exist or has expired and been swept. Names and player names are matched case-insensitively.
+
+## Var accessors
+
+`Var` stores values as strings, but exposes typed accessors that parse on read:
+
+```java
+Var counter = vars.getPersonal(player.getName(), "kills");
+int kills   = counter.intValue();    // throws if value is not an int
+long ts     = counter.longValue();
+boolean on  = counter.boolValue();
+double pct  = counter.doubleValue();
+float rate  = counter.floatValue();
+```
+
+Use `Var#hasExpiry()` / `Var#isExpired()` to check temporary variables, and `Var#toBuilder()` to derive a new variable from an existing one (e.g. extending the expiry).

@@ -93,7 +93,7 @@ The 2.0 model lets multiple providers coexist per section, so registration takes
 + VariableManager vm = api.variables();
 ```
 
-The interface itself didn't change — same `createBuilder()` / `saveGlobal()` / `savePlayer()` calls.
+The interface shape stayed `createBuilder()` / `saveGlobal()` plus per-player ops, but the per-player methods were renamed: `savePlayer` -> `savePersonal`, `getPlayer` -> `getPersonal`, `deletePlayer` -> `deletePersonal`. Update call sites accordingly.
 
 ## Menu lifecycle
 

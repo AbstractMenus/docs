@@ -21,17 +21,17 @@ You should only use Latin symbols and `_` when you declaring variables, because 
 
 ## Variable operations
 
-You can create, edit, remove and do math operations with variables (if it's numeric). These operations described in details [here](action-var).
+You can create, edit, remove and do math operations with variables (if it's numeric). These operations are described in detail on the [Variables actions](/docs/general/actions/#variables) page.
 
 ## Temporal variables
 
-By default, variable exists, until delete manually. But you can also create a temporal variables. Temporal variables will be deleted automatically after some time. Read [this](action-var-glob-temp) topic to know how to create temporal variables.
+By default, a variable exists until you delete it manually. But you can also create temporal variables. Temporal variables are deleted automatically after some time. See the [Temporal variable](/docs/general/actions/#temporal-variable) section for how to create them.
 
-Also you can get a remain lifetime of the variable. For this you have to use special placeholders, more information about this in table below.
+You can also get the remaining lifetime of a variable. For this you use special placeholders, listed in the table below.
 
 ## Access to variables
 
-To get value of variable you need to use a `../general/placeholders`. You can use it even without PlaceholderAPI, but we recommend you to use it. The list of variable placeholders [below](vars-pls-table).
+To get the value of a variable you use a [placeholder](/docs/general/placeholders/). You can use it even without PlaceholderAPI, but PAPI is recommended. The list of variable placeholders is [below](#vars-pls-table).
 
 `< >`  
 Required argument.

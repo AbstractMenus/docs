@@ -79,15 +79,15 @@ itemAdd {
 
 ## Placeholders for variables
 
-There are more placeholders to discover e.g. [placeholders for variables](vars-access) to get a variable value. You can use them whether you've installed PlaceholderAPI or not.
+There are more placeholders to discover, e.g. [placeholders for variables](/docs/general/variables/#access-to-variables) to read a variable value. You can use them whether you've installed PlaceholderAPI or not.
 
 ## Value extractors
 
 :::caution
-Value Extractors **are not independent placeholders**, like `%player_name%`. They can be used only in some context, like Activator's context or inside generated menus. To know how use extractors as placeholders, see `../advanced/input` article.
+Value Extractors **are not independent placeholders** like `%player_name%`. They can be used only in some context, e.g. the activator context or inside generated menus.
 :::
 
-Sometimes AbstractMenus may save some context data. For example, when player opened menu with `clickBlock` activator, plugin saves block on which player clicked. Activator's placeholders allows you to get access to some context data properties via placeholders. This is possible thanks to the Value Extractors.
+Sometimes AbstractMenus saves some context data. For example, when a player opens a menu via `clickBlock`, the plugin saves the block the player clicked. Activator placeholders give you access to that context. This is possible thanks to Value Extractors. To know how to use extractors as placeholders, see the [Activator context](/docs/advanced/input/#activator-context) article.
 
 For each data exists own extractor that can accept limited amount of placeholders. Below described all extractors and placeholder which they can accept.
 
@@ -165,7 +165,7 @@ Get data from ItemStack.
 | item_display_name   | Formatted name                                                                                             |
 | item_localized_name | Localized name                                                                                             |
 | item_model          | Custom model data (MC 1.14+)                                                                               |
-| item_serialized     | The whole item serialized into base64 string. Can be used with [serialized](/docs/general/item-format/#serialized) item property |
+| item_serialized     | The whole item serialized into base64 string. Can be used with [serialized](/docs/general/item-format/#deserialize-from-base64-string) item property |
 
 ### Region extractor
 
@@ -192,7 +192,7 @@ Get data from Citizens NPC.
 | npc_full_name                        | Full name                                             |
 | npc_entity\_\<entity placeholder\> | Get value from NPC's entity by Entity Value extractor |
 
-For example, you need to get NPC's entity type. According to [Entity extractor format](/docs/advanced/input/), your placeholders will looks like this:
+For example, you need to get NPC's entity type. According to the [Entity extractor format](#entity-extractor), your placeholder will look like this:
 
     npc_entity_type
 
@@ -213,4 +213,4 @@ For example, you specified argument with key `username` by some activator. Then,
 
     cmd_arg_username
 
-More about commands building and reading arguments read in [example](/docs/advanced/input/) topic.
+More about command building and reading arguments is in the [Commands building](/docs/advanced/input/#commands-building) section.

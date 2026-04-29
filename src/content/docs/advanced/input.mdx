@@ -21,19 +21,19 @@ Almost all activators saves own state for each player. We called this state as `
 
 Each newly opened (through activator) menu has own context. AbstractMenus allows to get some values from this context just through placeholders.
 
-## Context placeholders
+## Activator context
 
-Access to context's data via placeholders possible due Value Extractors. More about value extractors you can read in `value-extractors` topic. Here is just described way **how to use spefic extractor as placeholder**.
+Access to context data via placeholders is possible thanks to Value Extractors. More about value extractors is in the [Value extractors](/docs/general/placeholders/#value-extractors) section. Here we just describe **how to use a specific extractor as a placeholder**.
 
-Each activator uses one of the predefined extractors to provide placeholders for own context.
+Each activator uses one of the predefined extractors to provide placeholders for its own context.
 
-To get access to activator context's placeholders, you can use placeholder in next format:
+To get access to an activator's context placeholders, use a placeholder in the following format:
 
 ```text
 %activator_<extractor placeholder>%
 ```
 
-Each activator's placeholder start with `activator_` prefix. The `<extractor placeholder>` is a placeholder which [defined](/docs/advanced/input/) for specific extractor.
+Each activator placeholder starts with the `activator_` prefix. The `<extractor placeholder>` is a placeholder defined by the specific extractor (see [Value extractors](/docs/general/placeholders/#value-extractors)).
 
 ### How to use a context placeholder
 
@@ -91,7 +91,7 @@ items: [
 ]
 ```
 
-Here we used `entity_custom_name`, `entity_loc_x`, `entity_loc_y` and `entity_loc_z` extractor placeholders, which defined [in this place](/docs/advanced/input/)
+Here we used the `entity_custom_name`, `entity_loc_x`, `entity_loc_y` and `entity_loc_z` extractor placeholders, defined in the [Entity extractor](/docs/general/placeholders/#entity-extractor) reference.
 
 ### Example 2. Personal profile menu
 
@@ -129,7 +129,7 @@ items: [
 
 Here, we used placeholder even in menu title, because inventory was created after activator created their context. We also used PlaceholderAPI placeholders, but with `activator_` prefix. We do this, because we sure that menu will be opened only after click on player (because we set `type: PLAYER`).
 
-We used regular placeholders, because Entity Extractor can accept them, if entity is player. This and other information about required for you extractor, you can find under each [extractor's specification](/docs/advanced/input/)
+We used regular placeholders, because Entity Extractor accepts them when the entity is a player. This and other information about each extractor is in the [Value extractors](/docs/general/placeholders/#value-extractors) section.
 
 Now, if some player will shift-click other player, our menu will be opened:
 
@@ -137,7 +137,7 @@ Now, if some player will shift-click other player, our menu will be opened:
 
 *Player's profile menu example*
 
-More complex examples of context placeholders usage, see in `../general/examples` topic.
+More complex examples of context placeholders usage are in the [Examples](/docs/general/examples/) section.
 
 :::tip
 In this example we used PlaceholderAPI with `Player` and `Statistic` expansions.
@@ -146,11 +146,11 @@ In this example we used PlaceholderAPI with `Player` and `Statistic` expansions.
 
 AbstractMenus has powerful system to build commands and use entered arguments in menus.
 
-In this topic we will talk about more complex format of the `command` activator with taking arguments. Other information about this activator you can find in `../general/activators` article.
+This section covers the more complex form of the `command` activator with typed arguments. Other information about this activator is on the [Activators](/docs/general/activators/) page.
 
 ### Command format
 
-To build command with arguments, you need to make `command` activator as an [example](/docs/start/hocon/). This object has several required and optional parameters. Below is full structure of [example](/docs/general/commands/) activator.
+To build a command with arguments, declare the `command` activator as an [object](/docs/start/hocon/#object). The object has several required and optional parameters:
 
 | Key | Type | Note | Required |
 |----|----|----|----|
@@ -175,9 +175,9 @@ command {
 }
 ```
 
-The `args` field is a list that can accept one of the two types of arguments: **Simple** or **Typed**.
+The `args` field is a list that accepts one of two argument shapes: **Simple** or **Typed**.
 
-As described in [example](/docs/advanced/input/) topic, [example](/docs/general/commands/) activator uses Command Extractor to get paraed values from entered command. Example of using this extractor you can see in topic below.
+The `command` activator uses the [Command extractor](/docs/general/placeholders/#command-extractor) to surface entered values to placeholders. An example of using this extractor is in the section below.
 
 ### Simple arguments
 
@@ -198,7 +198,7 @@ After reloading, AbstractMenus will expect that player will enter command in for
 
 When player entered command and all arguments specified, menu will be opened. Otherwise player receives error message.
 
-To get values which player entered, you need to use context placeholders, as described [above](/docs/advanced/input/). Just see which placeholders the activator provides and add the `activator_` prefix in begin. Example:
+To get values which player entered, use context placeholders, as described in [Activator context](#activator-context). Just see which placeholders the activator provides and add the `activator_` prefix at the start. Example:
 
 ```hocon
 message: "You entered %activator_cmd_arg_myarg1% and %activator_cmd_arg_myarg2%"
@@ -314,7 +314,7 @@ command {
 }
 ```
 
-For example, we need to get level of these two players. Command extractor gives access to this and other placeholders. Following extractor's placeholder format (`<key>:<placeholder>`), which described in [example](/docs/advanced/input/) topic, we need to specify two parameters: argument's key and placeholder which we want to use. We want to use `player_level` placeholder, so our final placeholder will looks like:
+For example, we need the level of these two players. The Command extractor gives access to this and other placeholders. Following its placeholder format `<key>:<placeholder>` (see [Command extractor](/docs/general/placeholders/#command-extractor)), we specify two parameters: the argument's key and the placeholder we want. We want `player_level`, so the final placeholder looks like:
 
 ```hocon
 %activator_player1:player_level%
@@ -349,7 +349,7 @@ Currently, AbstractMenus has some resctiction for optional arguments. You can ma
 
 ### Final example. Open profile menu by command
 
-Let's modify our example, which we made [before](/docs/advanced/input/). We will replace `shiftClickEntity` activator to `command` and make command take player name:
+Let's modify the example from [Personal profile menu](#example-2-personal-profile-menu). We'll replace the `shiftClickEntity` activator with `command` and make the command take a player name:
 
 ```hocon
 title: "%activator_user:player_name%'s profile"
@@ -426,7 +426,7 @@ Action `inputChat` allows you to request some text input to player. Below is the
 | onInput | Object | Actions for completed input | false |
 | onCancel | Object | Actions for cancelled by stop word input | false |
 
-The only required paramater is a `into`. This is the name of [variable](../general/variables). When player enter a text in the chat, plugin save this text into variable with specified name. After this, you can get value if this variable anywhere through [variable placeholder](vars-access).
+The only required parameter is `into`. This is the name of a [variable](/docs/general/variables/). When the player enters text in chat, the plugin saves it into a variable with the specified name. After that, you can read the variable from anywhere through a [variable placeholder](/docs/general/variables/#access-to-variables).
 
 Basic example:
 

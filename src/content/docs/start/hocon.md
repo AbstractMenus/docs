@@ -41,7 +41,7 @@ name: "AbstractMenus"
 age: 20
 ```
 
-In this examples `name` and `age` are **keys**. `"AbstractMenus"` and `20` are **values**. More about data types see topic `data-types`
+In these examples, `name` and `age` are **keys**. `"AbstractMenus"` and `20` are **values**. More about data types is in the [HOCON data types](#hocon-data-types) section below.
 
 ### Comments
 
@@ -143,7 +143,7 @@ item {
 }
 ```
 
-Here we specified the `color` object inside the `item` object. This is just an example. There is a separate lesson on how to describe items in the plugin - `../general/item_format`.
+Here we specified the `color` object inside the `item` object. This is just an example. There is a separate lesson on how to describe items in the plugin - the [item format](/docs/general/item-format/) page.
 
 All values inside objects can be specified in one line with separating it by comma. Example:
 

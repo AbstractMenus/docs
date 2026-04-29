@@ -66,44 +66,53 @@ One-page reference. Names, one-line descriptions, and a link to the full doc for
 
 | Name | What it does | Detail |
 |---|---|---|
-| `message` | Send a chat message to the player | [docs](/docs/general/actions/) |
-| `messageOthers` | Send a message to other players | [docs](/docs/general/actions/) |
-| `actionbar` | Show an actionbar message | [docs](/docs/general/actions/) |
-| `title` | Show a title / subtitle | [docs](/docs/general/actions/) |
-| `sound` | Play a sound to the player | [docs](/docs/general/actions/) |
-| `command` | Run a command (as player or console) | [docs](/docs/general/actions/) |
-| `playerCommand` | Run as the player | [docs](/docs/general/actions/) |
-| `consoleCommand` | Run as the console | [docs](/docs/general/actions/) |
-| `playerChat` | Make the player say a phrase in chat | [docs](/docs/general/actions/) |
-| `openMenu` | Open another menu | [docs](/docs/general/actions/) |
-| `closeMenu` | Close the open menu | [docs](/docs/general/actions/) |
-| `refreshMenu` | Re-render the whole menu | [docs](/docs/general/actions/) |
-| `refreshItem` | Re-render a single slot | [docs](/docs/general/actions/) |
-| `delay` | Wait N ticks before continuing the chain | [docs](/docs/general/actions/) |
-| `giveItem` | Give an item | [docs](/docs/general/actions/) |
-| `takeItem` | Take an item | [docs](/docs/general/actions/) |
-| `clearInventory` | Clear the player's inventory | [docs](/docs/general/actions/) |
-| `teleport` | Teleport the player to a location | [docs](/docs/general/actions/) |
-| `setHealth` | Change health | [docs](/docs/general/actions/) |
-| `setFood` | Change food level | [docs](/docs/general/actions/) |
-| `setXp` | Change XP | [docs](/docs/general/actions/) |
-| `setLevel` | Change level | [docs](/docs/general/actions/) |
-| `takeMoney` | Withdraw N currency | [docs](/docs/general/actions/) |
-| `giveMoney` | Add N currency | [docs](/docs/general/actions/) |
-| `takeLevels` | Withdraw N levels | [docs](/docs/general/actions/) |
-| `giveLevels` | Add N levels | [docs](/docs/general/actions/) |
-| `setVar` | Set a global variable | [docs](/docs/general/actions/) |
-| `setVarp` | Set a per-player variable | [docs](/docs/general/actions/) |
-| `incVar` / `decVar` / `mulVar` / `divVar` | Numeric ops on a variable | [docs](/docs/general/actions/) |
-| `removeVar` / `removeVarp` | Delete a variable | [docs](/docs/general/actions/) |
-| `setSkin` | Apply a skin (SkinsRestorer) | [docs](/docs/general/actions/) |
-| `resetSkin` | Reset to default skin | [docs](/docs/general/actions/) |
+| `message` | Send chat / actionbar / title / json to the player | [docs](/docs/general/actions/#message) |
+| `broadcast` | Same shape as `message`, but to every online player | [docs](/docs/general/actions/#message) |
+| `miniMessage` | Send a MiniMessage string (legacy - `message` already supports MiniMessage) | [docs](/docs/general/actions/#message) |
+| `playerChat` | Send a chat message on behalf of the player | [docs](/docs/general/actions/) |
+| `print` | Print to console - debug helper | [docs](/docs/general/actions/) |
+| `command` | Run commands as player and/or console | [docs](/docs/general/actions/#command) |
+| `inputChat` | Capture chat input into a variable | [docs](/docs/advanced/input/#chat-input) |
+| `teleport` | Teleport the player to a location | [docs](/docs/general/actions/#teleport) |
 | `bungeeConnect` | Send the player to a BungeeCord server | [docs](/docs/general/actions/) |
-| `book` | Open a virtual written book | [docs](/docs/general/actions/) |
-| `input` | Wait for chat input from the player | [docs](/docs/advanced/input/) |
-| `dropItem` | Drop an item from a slot | [docs](/docs/advanced/drag-and-drop/) |
-| `placeItem` | Place an item into a slot | [docs](/docs/advanced/drag-and-drop/) |
-| `takeItemFromSlot` | Take an item from a slot | [docs](/docs/advanced/drag-and-drop/) |
+| `setGamemode` | Change the player's gamemode | [docs](/docs/general/actions/) |
+| `setHealth` | Set health | [docs](/docs/general/actions/) |
+| `setFoodLevel` | Set food level | [docs](/docs/general/actions/) |
+| `sound` | Play a Bukkit sound | [docs](/docs/general/actions/#sound) |
+| `customSound` | Play a resource-pack sound | [docs](/docs/general/actions/#custom-sound) |
+| `potionEffect` | Apply a potion effect | [docs](/docs/general/actions/#add-potion-effect) |
+| `removePotionEffect` | Remove a potion effect | [docs](/docs/general/actions/#remove-potion-effect) |
+| `openBook` | Open a virtual written book | [docs](/docs/general/actions/#open-book) |
+| `addRecipe` | Add a knowledge-book recipe | [docs](/docs/general/actions/#add-recipe) |
+| `itemAdd` | Add items to the player's inventory | [docs](/docs/general/actions/#add-item) |
+| `itemRemove` | Remove items by slot or by match | [docs](/docs/general/actions/#remove-item) |
+| `itemClear` | Same as `itemRemove`, ignoring stack count | [docs](/docs/general/actions/#remove-item) |
+| `inventoryClear` | Wipe the player's inventory | [docs](/docs/general/actions/) |
+| `openMenu` | Open another menu | [docs](/docs/general/actions/) |
+| `openMenuCtx` | Open another menu, forwarding activator context | [docs](/docs/general/actions/) |
+| `closeMenu` | Close the current menu | [docs](/docs/general/actions/) |
+| `refreshMenu` | Re-render the whole menu | [docs](/docs/general/actions/) |
+| `refreshItem` | Re-render a single item | [docs](/docs/general/actions/#refresh-item) |
+| `setProperty` | Add or overwrite item properties on the open menu | [docs](/docs/general/actions/#set-item-property) |
+| `remProperty` | Remove properties from an item in the open menu | [docs](/docs/general/actions/#remove-item-property) |
+| `setButton` | Add or replace a button in the open menu | [docs](/docs/general/actions/#set-menu-button) |
+| `removeButton` | Remove a button from the open menu | [docs](/docs/general/actions/#remove-menu-button) |
+| `placeItem` | Drag-and-drop helper to place an item in a draggable slot | [docs](/docs/advanced/drag-and-drop/) |
+| `removePlaced` | Remove (or partially remove) a placed item | [docs](/docs/advanced/drag-and-drop/) |
+| `pageNext` / `pagePrev` | Switch pages in a generated menu | [docs](/docs/general/actions/) |
+| `delay` | Run wrapped actions after N ticks | [docs](/docs/general/actions/#delay) |
+| `bulk` | Run several action groups under one block | [docs](/docs/general/actions/#bulk) |
+| `randActions` | Pick one block at random | [docs](/docs/general/actions/#random-actions) |
+| `playerScope` | Run actions for a different player | [docs](/docs/general/actions/#player-scope-actions) |
+| `takeMoney` / `giveMoney` | Currency withdraw / deposit (economy provider) | [docs](/docs/general/actions/#provider-selection) |
+| `givePermission` / `removePermission` | Grant / revoke a permission node (permissions provider) | [docs](/docs/general/actions/#provider-selection) |
+| `addGroup` / `removeGroup` | Add / remove a group (permissions provider) | [docs](/docs/general/actions/#provider-selection) |
+| `lpMetaSet` / `lpMetaRemove` | LuckPerms metadata mutation (LuckPerms required) | [docs](/docs/general/actions/) |
+| `giveXp` / `takeXp` | XP credit / debit (levels provider) | [docs](/docs/general/actions/#provider-selection) |
+| `giveLevel` / `takeLevel` | Level credit / debit (levels provider) | [docs](/docs/general/actions/#provider-selection) |
+| `setSkin` / `resetSkin` | Apply / reset a skin (skins provider) | [docs](/docs/general/actions/#set-skin) |
+| `setVar` / `removeVar` / `incVar` / `decVar` / `mulVar` / `divVar` | Global variable ops | [docs](/docs/general/actions/#global-vars) |
+| `setVarp` / `removeVarp` / `incVarp` / `decVarp` / `mulVarp` / `divVarp` | Personal variable ops | [docs](/docs/general/actions/#personal-vars) |
 
 If the action is money / level / permission / placeholder / skin related, you can append `provider: "vault"` (or any other registered id) to pin which backend handles it. See [provider handlers](/docs/developers/handlers/).
 
@@ -112,26 +121,26 @@ If the action is money / level / permission / placeholder / skin related, you ca
 | Group | Properties |
 |---|---|
 | Material installer | `material`, `texture`, `skullOwner`, `hdb`, `mmoitem`, `itemsAdder`, `oraxen`, `equipItem`, `serialized` |
-| Display | `name`, `lore`, `glow`, `flags`, `color`, `model` |
-| Mechanics | `count`, `damage`, `unbreakable`, `enchantments`, `enchantStore`, `potionData`, `fireworkData`, `bookData`, `bannerData`, `shieldData`, `recipes`, `nbt` |
+| Display | `name`, `lore`, `nameLight`, `loreLight`, `glow`, `flags`, `color`, `model` |
+| Mechanics | `count`, `damage`, `data`, `unbreakable`, `enchantments`, `enchantStore`, `attributeModifier`, `potionData`, `fireworkData`, `bookData`, `bannerData`, `shieldData`, `recipes`, `nbt` |
 | Slot | `slot` (number, X-Y, range, matrix) |
 | Cooldown | `clickCooldown` (milliseconds) |
 | Conditional | `bindings` (override properties when rules match) |
 
 Full reference with examples: [item format](/docs/general/item-format/).
 
+`nameLight` / `loreLight` are the legacy variants of `name` / `lore` that ignore MiniMessage and only handle `&` color codes. Useful when a name happens to contain `<` characters that MiniMessage would try to parse.
+
 ## Catalogs — for generated menus
 
 | Name | What it produces | Detail |
 |---|---|---|
-| `permGroups` | LuckPerms groups | [docs](/docs/advanced/generation/) |
-| `onlinePlayers` | Online players | [docs](/docs/advanced/generation/) |
-| `bungeeServers` | Configured BungeeCord servers | [docs](/docs/advanced/generation/) |
-| `worldPlayers` | Players in a given world | [docs](/docs/advanced/generation/) |
-| `regionPlayers` | Players in a WorldGuard region | [docs](/docs/advanced/generation/) |
-| `nearbyEntities` | Entities near the viewer | [docs](/docs/advanced/generation/) |
-| `inventoryItems` | Player's inventory items | [docs](/docs/advanced/generation/) |
-| `containerItems` | Items in a target inventory | [docs](/docs/advanced/generation/) |
+| `iterator` | Sequence of integers from `start` to `end` | [docs](/docs/advanced/generation/#iterator) |
+| `players` | Online players | [docs](/docs/advanced/generation/#players) |
+| `entities` | Entities of the viewer's (or named) world | [docs](/docs/advanced/generation/#entities) |
+| `worlds` | Loaded worlds | [docs](/docs/advanced/generation/#worlds) |
+| `bungee_servers` | BungeeCord servers (requires `bungeecord: true`) | [docs](/docs/advanced/generation/#bungeecord-servers) |
+| `slice` | Split a string into elements by separator | [docs](/docs/advanced/generation/#slice) |
 
 ## Commands — operator and author
 

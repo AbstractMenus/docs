@@ -47,6 +47,14 @@ Manage **global** variables — same data accessible through `%var_*%` placehold
 | `mul <name> <factor>` | name, factor | Multiply a numeric value. |
 | `div <name> <divisor>` | name, divisor | Divide a numeric value. |
 
+`set` accepts two extra trailing arguments:
+
+- `/var set <name> <value> <time>` - make the variable temporary; expires after `<time>` (e.g. `1h30m`, `10s`, `2d`).
+- `/var set <name> <value> <replace>` - `true` overwrites an existing variable, `false` keeps the old value if one exists.
+- `/var set <name> <value> <time> <replace>` - both at once.
+
+The third argument is interpreted as `<replace>` when it is literally `true` or `false`, otherwise as `<time>`.
+
 ## /varp
 
 Same shape as `/var` but for **per-player** variables. Each subcommand takes a leading `<player>` argument:
@@ -54,6 +62,9 @@ Same shape as `/var` but for **per-player** variables. Each subcommand takes a l
 ```
 /varp get <player> <name>
 /varp set <player> <name> <value>
+/varp set <player> <name> <value> <time>
+/varp set <player> <name> <value> <replace>
+/varp set <player> <name> <value> <time> <replace>
 /varp rem <player> <name>
 /varp inc <player> <name> <amount>
 /varp dec <player> <name> <amount>
@@ -61,7 +72,9 @@ Same shape as `/var` but for **per-player** variables. Each subcommand takes a l
 /varp div <player> <name> <divisor>
 ```
 
-Per-player variables persist across reconnects — they're stored in the same SQLite file as global variables.
+`set` accepts the same extra `<time>` and `<replace>` arguments as `/var set` - same semantics, just scoped to a specific player.
+
+Per-player variables persist across reconnects - they're stored in the same SQLite file as global variables.
 
 ## Permissions
 

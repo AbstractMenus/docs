@@ -33,17 +33,19 @@ Use exactly one of these to set the item's material. The rest of the properties 
 | mmoitem | String | `mmoitem: "WEAPON:MY_SWORD"` | Item by type and id from [MMOItems](https://www.spigotmc.org/resources/39267/). |
 | itemsAdder | String | `itemsAdder: "<namespaced id>"` | Custom stack from [ItemsAdder](https://www.spigotmc.org/resources/73355/) registry. |
 | oraxen | String | `oraxen: "my_sword"` | Custom stack from [Oraxen](https://www.spigotmc.org/resources/72448/). |
-| equipItem | String or Object | See [Equip item](#equip-item) | Take an item from a player's inventory slot. |
-| serialized | String | See [Serialized](#serialized) | Deserialize an item from a base64 string. |
+| equipItem | String or Object | See [Equipped item](#equipped-item) | Take an item from a player's inventory slot. |
+| serialized | String | See [Serialized](#deserialize-from-base64-string) | Deserialize an item from a base64 string. |
 
 ### Display
 
 | Name | Data type | Example | Description |
 |----|----|----|----|
-| name | String | `name: "Peter Piper"` | Display name. |
-| lore | Strings list | See [Lore](#lore) | Lore lines under the name. |
+| name | String | `name: "Peter Piper"` | Display name. Supports `&` codes, `<#RRGGBB>` and (when `useMiniMessage: true`) MiniMessage tags. |
+| lore | Strings list | See [Lore](#lore) | Lore lines under the name. Same color/MiniMessage rules as `name`. |
+| nameLight | String | `nameLight: "&aHi"` | Legacy variant of `name` - only `&` codes, never parses MiniMessage. Use when the name contains `<` characters. |
+| loreLight | Strings list | Same as `lore` | Legacy variant of `lore` - only `&` codes. |
 | glow | Boolean | `glow: true` | Glowing effect (via invisible enchantment). |
-| flags | Strings list | See [Flags](#flags) | Item flags. |
+| flags | Strings list | See [Flag](#flag) | Item flags. |
 | color | String | — | Colorize armor or potion. |
 | model | Number | `model: 1234567` | Custom model data. |
 
@@ -53,22 +55,24 @@ Use exactly one of these to set the item's material. The rest of the properties 
 |----|----|----|----|
 | count | Number | `count: 64` | Stack size. |
 | damage | Number | `damage: 100` | Damage (the bar under the item) on damageable items. Higher = less durability. |
+| data | Number | `data: 3` | Legacy data byte / durability value. Equivalent to `damage` on modern Bukkit; useful when porting pre-1.13 configs. |
 | unbreakable | Boolean | `unbreakable: true` | Mark the item as unbreakable. |
 | enchantments | Object | See [Enchantments](#enchantments) | Add enchantments. |
 | enchantStore | Object | Same as `enchantments` | Store an enchantment on an `ENCHANTED_BOOK` for use at an anvil. |
-| potionData | Objects list | See [Potion data](#potion-data) | Potion effects, if the item is a potion. |
-| fireworkData | Object | See [Firework data](#firework-data) | Firework explosion effects on `FIREWORK_ROCKET`. |
-| bookData | Object | See [Book data](#book-data) | Author, title, pages on a writable book. |
-| bannerData | Object | See [Banner data](#banner-data) | Banner colors and patterns. |
+| attributeModifier | Objects list | See [Attribute modifier](#attribute-modifier) | Add attribute modifiers (damage, armor, speed, ...). |
+| potionData | Objects list | See [Potion effect](#potion-effect) | Potion effects, if the item is a potion. |
+| fireworkData | Object | See [Firework](#firework) | Firework explosion effects on `FIREWORK_ROCKET`. |
+| bookData | Object | See [Book](#book) | Author, title, pages on a writable book. |
+| bannerData | Object | See [Banner](#banner) | Banner colors and patterns. |
 | shieldData | Object | Similar to `bannerData` | Shield colors and patterns (uses banner format). |
 | recipes | Objects list | — | Custom recipes on a `KNOWLEDGE_BOOK`. |
-| nbt | Object | See [NBT](#nbt) | Raw NBT tags. |
+| nbt | Object | See [NBT tags](#nbt-tags) | Raw NBT tags. |
 
 ### Conditional
 
 | Name | Data type | Example | Description |
 |----|----|----|----|
-| bindings | Objects list | See [Bindings](#bindings) | Override properties when rules match. The classic "show as red glass if player can't afford" pattern. |
+| bindings | Objects list | See [Bindings](/docs/general/menu-structure/#binding-button-properties-to-rules) | Override properties when rules match. The classic "show as red glass if player can't afford" pattern. |
 
 ## Slot
 
@@ -201,7 +205,7 @@ Also often called "Texture value". This is a url to texture, included in JSON an
 texture: "base64:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTQ1ZDY4YWVhODdjYzNmZDIwYjk2YjIxZTE4MjU1ZGIyOThiMmVhYzk4NjUyNjQ3MzExNmJkM2I1NzUwYjc4NyJ9fX0="
 ```
 
-## Equiped Item
+## Equipped Item
 
 Item property to get item from player's inventory. By default it takes item from inventory of player who opened menu. Example:
 
@@ -224,7 +228,7 @@ equipItem {
 
 ## Deserialize from base64 string
 
-The `serialized` item property allow to deserialize item from base64 string. Such string usually can be retrieved using [example](/docs/advanced/input/) placeholder, for example, when you use drag-and-drop feature. Example:
+The `serialized` item property lets you deserialize an item from a base64 string. Such a string usually comes from the [`item_serialized`](/docs/general/placeholders/#item-extractor) extractor placeholder, for example, when using the drag-and-drop feature. Example:
 
 ```hocon
 {
@@ -476,6 +480,34 @@ Each element of this list is a banner's pattern. Each pattern has this parameter
 - **`type`** - Type of the pattern. You can find all pattern types [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/banner/PatternType.html).
 
 - **`color`** - Color of the pattern. Spigot supports only named colors for banners.
+
+## Attribute modifier
+
+Add Bukkit `AttributeModifier` entries to the item. Useful for custom damage / armor / speed without writing raw NBT.
+
+```hocon
+attributeModifier: [
+  {
+    type: "generic.attack_damage"
+    amount: 7
+    operation: "add_number"
+    slot: HAND
+  },
+  {
+    type: "generic.armor"
+    amount: 5
+    operation: "add_number"
+    slot: CHEST
+  }
+]
+```
+
+Parameters:
+
+- **`type`** - The attribute key. Bukkit accepts the namespaced form (e.g. `generic.attack_damage`, `generic.armor`, `generic.movement_speed`). Internally lowercased.
+- **`amount`** - Numeric modifier value. Default `0`.
+- **`operation`** - One of `add_number`, `add_scalar`, `multiply_scalar_1`. Default `add_number`.
+- **`slot`** - Optional. Restrict the modifier to one equipment slot: `HAND`, `OFF_HAND`, `HEAD`, `CHEST`, `LEGS`, `FEET`. If omitted, the modifier applies in any slot.
 
 ## NBT tags
 

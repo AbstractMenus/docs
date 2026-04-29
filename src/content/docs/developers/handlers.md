@@ -22,8 +22,8 @@ The pre-2.0 static `Handlers` facade is gone. Everything happens through `Provid
 | Section | Returns | Purpose |
 |---|---|---|
 | `api.providers().economy()` | `ProviderSection<EconomyHandler>` | `takeMoney` / `giveMoney` / `hasMoney` |
-| `api.providers().permissions()` | `ProviderSection<PermissionsHandler>` | `permission` rule, group lookups |
-| `api.providers().levels()` | `ProviderSection<LevelHandler>` | `takeLevels` / `giveLevels` / `hasLevels` |
+| `api.providers().permissions()` | `ProviderSection<PermissionsHandler>` | `permission` / `group` rules, group and node mutation |
+| `api.providers().levels()` | `ProviderSection<LevelHandler>` | `giveXp` / `takeXp` / `giveLevel` / `takeLevel`, `xp` / `level` rules |
 | `api.providers().placeholders()` | `ProviderSection<PlaceholderHandler>` | placeholder substitution |
 | `api.providers().skins()` | `ProviderSection<SkinHandler>` | `setSkin` / `resetSkin` |
 
@@ -136,9 +136,9 @@ All five live under `ru.abstractmenus.api.handler.*`:
 | Interface | Methods |
 |---|---|
 | [`EconomyHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/EconomyHandler.java) | `hasBalance`, `takeBalance`, `giveBalance` |
-| [`PermissionsHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/PermissionsHandler.java) | `hasPermission`, `getGroup` |
-| [`LevelHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/LevelHandler.java) | `hasLevels`, `takeLevels`, `giveLevels` |
-| [`PlaceholderHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/PlaceholderHandler.java) | `replace` |
+| [`PermissionsHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/PermissionsHandler.java) | `addPermission`, `removePermission`, `hasPermission`, `addGroup`, `removeGroup`, `hasGroup` |
+| [`LevelHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/LevelHandler.java) | `getXp`, `giveXp`, `takeXp`, `getLevel`, `giveLevel`, `takeLevel` |
+| [`PlaceholderHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/PlaceholderHandler.java) | `replacePlaceholder`, `replace(Player, String)`, `replace(Player, List<String>)`, `registerAll` |
 | [`SkinHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/SkinHandler.java) | `setSkin`, `resetSkin` |
 
 Method names and signatures are stable across the 2.0 line.

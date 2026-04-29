@@ -1,19 +1,19 @@
 ---
 title: Menu structure
-description: "If you already know `../start/how_to`, so here you will learn in details about menu structure and other useful features of the plugin."
+description: A reference for every key in a menu file - properties, click types, bindings, drag-and-drop hooks.
 ---
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-If you already know `../start/how_to`, so here you will learn in details about menu structure and other useful features of the plugin.
+If you already went through the [How to create a menu](/docs/start/how-to/) tutorial, this page goes deeper into menu structure and the more useful keys.
 
 ## Menu file
 
-Each menu file can contain only menu or several related menus.
+Each menu file can contain only one menu or several related menus.
 
 ### Single menu file
 
-You may be already met with single menu file though `../start/how_to` lesson. Below an example of single-file menu.
+You may already have seen a single-menu file in the [How to create a menu](/docs/start/how-to/) tutorial. Below is an example of a single-menu file.
 
 ```hocon
 title: "&8Menu"
@@ -91,7 +91,7 @@ The table below contains all the properties of menu which you can specify in men
 |----|----|----|----|
 | title | String | Yes | Set the title of a menu |
 | size | Number | Yes | Set the vertical size of a menu (rows count) |
-| type | String | No | [example](/docs/general/menu-structure/) |
+| type | String | No | Inventory type (default: chest with `size` rows). See [Inventory type](#inventory-type). |
 | items | Objects list | No | Menu items (buttons) |
 | activators | Object | No | An `activators` to open menu |
 | rules | Objects list | No | A `rules` to open menu. If even one of those rule is `false` then menu won't be opened |
@@ -103,12 +103,12 @@ The table below contains all the properties of menu which you can specify in men
 | updateActions | Object | No | An `actions` that will be performed when menu updated by `updateInterval` |
 | updateInterval | Number | No | An interval of menu refreshing in ticks. If not specified, menu will not be updated automatically |
 | **For drag-and-drop** |  |  |  |
-| draggable | [example](/docs/general/item-format/#slot) | No | Define allowed slots for placing and taking items |
+| draggable | [Slot format](/docs/general/item-format/#slot) | No | Define allowed slots for placing and taking items |
 | onPlaceItem | Object | No | An `actions` that will be performed if player place item in allowed slot |
 | onTakeItem | Object | No | An `actions` that will be performed if player take item from allowed slot |
 | onDragItem | Object | No | An `actions` that will be performed if player place or take item using allowed slots |
 
-To learn drag-and-drop feature, go to the `../advanced/drag-and-drop` page (**for advanced users**).
+To learn the drag-and-drop feature, see the [Drag and drop](/docs/advanced/drag-and-drop/) page (**for advanced users**).
 
 ## Auto refresh
 
@@ -129,7 +129,7 @@ items: [
 
 The menu above will be refreshed every 2 seconds. Along with this, the item that display the number of players on the server will be refreshed along with the placeholder `%server_players%`.
 
-In the example above we used the default placeholders. More about placeholders you can find on `placeholders` page.
+In the example above we used the default placeholders. More about placeholders is on the [Placeholders](/docs/general/placeholders/) page.
 
 If you want to do some job when menu updated by `updateInterval`, you can use `updateActions` block.
 
@@ -150,7 +150,7 @@ Actions inside `updateActions` will be performed before items updates, so if you
 
 ## Buttons
 
-The button in the menu is an ordinary item (see `item_format`) with advanced functionality. Below are all parameters that may be specified in addition to the standard parameters of an item.
+The button in the menu is an ordinary item (see [item format](/docs/general/item-format/)) with extra functionality. Below are all the parameters you can specify in addition to the standard item parameters.
 
 | Name | Data type | Required | Description |
 |----|----|----|----|
@@ -213,7 +213,7 @@ You can find all types of clicks here. We've described the most useful of them.
 | RIGHT        | Right mouse button click                   |
 | MIDDLE       | Middle mouse button click                  |
 | SHIFT_LEFT   | Left mouse button click with Shift pressed |
-| SHIFT_RIGHT  | Left mouse button click with Shift pressed |
+| SHIFT_RIGHT  | Right mouse button click with Shift pressed |
 | DOUBLE_CLICK | Double left mouse button click             |
 
 Any of these types can be used inside `click` block either individually or together with other types.

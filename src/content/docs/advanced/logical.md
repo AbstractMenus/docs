@@ -309,6 +309,27 @@ rules {
 }
 ```
 
+### Wrapper `playerScope`
+
+Re-evaluate the wrapped rules against a different player. Useful when you have a placeholder that resolves to another player's name (e.g. a target picked through a `command` activator) and want to check rules in their context, not the menu viewer's.
+
+```hocon
+rules {
+  playerScope {
+    name: "%activator_cmd_arg_target%"
+    rules {
+      permission: "myserver.vip"
+      gamemode: SURVIVAL
+    }
+  }
+}
+```
+
+- **`name`** - The player to scope to. Placeholders are resolved.
+- **`rules`** - The rules block evaluated against that player. Same shape as a regular `rules` block.
+
+If the named player isn't online, the wrapper returns `false` without throwing.
+
 ### Combining logical wrappers
 
 You can combine logical wrappers and make more complex conditions. Example:

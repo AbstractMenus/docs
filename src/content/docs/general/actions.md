@@ -28,12 +28,14 @@ Action is something that happens after specific event (for example item click or
 | [itemClear](#remove-item) | Objects list | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
 | inventoryClear | Boolean | Fully clear player's inventory |
 | bungeeConnect | String | Connect player to another BungeeCord server |
-| [giveMoney](#provider-selection) | Number or Object | Add money to a player. Uses the configured economy provider (Vault by default). |
-| [takeMoney](#provider-selection) | Number or Object | Withdraw money from a player. Uses the configured economy provider (Vault by default). |
-| [givePermission](#provider-selection) | Strings list or Object | Grant a permission. Uses the configured permissions provider (LuckPerms by default). |
-| [removePermission](#provider-selection) | Strings list or Object | Revoke a permission. Uses the configured permissions provider. |
+| [giveMoney](#provider-selection) | Number or Object | Add money to a player. Routes through the configured economy provider. |
+| [takeMoney](#provider-selection) | Number or Object | Withdraw money from a player. Routes through the configured economy provider. |
+| [givePermission](#provider-selection) | Strings list or Object | Grant a permission. Routes through the configured permissions provider. |
+| [removePermission](#provider-selection) | Strings list or Object | Revoke a permission. Routes through the configured permissions provider. |
 | [addGroup](#provider-selection) | String or Object | Add the player to a permissions group. |
 | [removeGroup](#provider-selection) | String or Object | Remove the player from a permissions group. |
+| [lpMetaSet](#lp-meta) | Object | LuckPerms-only: set meta values on a user (`metaList`). Logs a warning and skips if the active permissions provider is not LuckPerms. |
+| [lpMetaRemove](#lp-meta) | Strings list | LuckPerms-only: remove meta keys from a user. Logs a warning and skips if the active permissions provider is not LuckPerms. |
 | setGamemode | String | Set new game mode for player. All available modes names can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/GameMode.html) |
 | setHealth | Number | Set player health level |
 | setFoodLevel | Number | Set player food level |
@@ -49,7 +51,7 @@ Action is something that happens after specific event (for example item click or
 | [setProperty](#set-item-property) | Object | Set new or overwrite existing properties for the menu item |
 | [remProperty](#remove-item-property) | Objects list | Remove specified properties from the menu item |
 | [refreshItem](#refresh-item) | Multiple | Update only one menu item, without updating the entire menu |
-| [setSkin](#set-skin) | Object | Set the player's skin. Uses the configured skin provider (SkinsRestorer by default). |
+| [setSkin](#set-skin) | Object | Set the player's skin. Routes through the configured skin provider. |
 | [resetSkin](#set-skin) | Boolean | Reset the player's skin via the same provider. |
 | [addRecipe](#add-recipe) | Objects list | Add new custom recipes for crafting |
 | [setButton](#set-menu-button) | Objects list | Set the new button to displayed menu |
@@ -81,7 +83,9 @@ Action is something that happens after specific event (for example item click or
 
 ## Provider selection
 
-Money, level, permission, placeholder, and skin actions all go through AbstractMenus's pluggable provider system. Out of the box, [Vault](https://www.spigotmc.org/resources/vault.34315/) handles money/permissions and [LuckPerms](https://www.spigotmc.org/resources/28140/) handles permissions/groups. Drop in an addon like [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon) and you get a second economy provider on the same server.
+Money, level, permission, placeholder, and skin actions all go through AbstractMenus's pluggable provider system. Out of the box, [Vault](https://www.spigotmc.org/resources/vault.34315/) handles money / permissions, [LuckPerms](https://www.spigotmc.org/resources/28140/) handles permissions / groups, vanilla XP backs the levels section, and [SkinsRestorer](https://www.spigotmc.org/resources/2124/) backs skins. Drop in an addon like [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon) and you get a second economy provider on the same server.
+
+The default `config.conf providers.<section>` value is `"auto"`: AbstractMenus picks the highest-priority registered provider. Bundled providers register at priority 50, addon providers typically at 100, so an addon wins auto-resolution unless an operator explicitly pins a different id.
 
 ### Default backend (no `provider:` field)
 
@@ -221,11 +225,20 @@ command { player: "command 1" }
 
 And same with `console` block.
 
+By default, all commands have placeholders resolved before being dispatched. Set `ignorePlaceholder: true` to send the raw command string verbatim - useful when a command argument literally contains `%` characters.
+
+```hocon
+command {
+  console: "lp user %player_name% permission set foo.bar true"
+  ignorePlaceholder: false  // default; resolves %player_name%
+}
+```
+
 ## Chat Input
 
 This action will close menu and ask player to enter some text in the chat. After text entered, plugin will save it into variable.
 
-All about chat input feature read on `input-chat` page.
+All about chat input feature read on the [Chat input](/docs/advanced/input/#chat-input) page.
 
 ## Teleport
 
@@ -250,7 +263,7 @@ teleport: "world, 0.0, 100.0, 0.0, 0.0, 0.0"
 
 ## Add item
 
-Add item or items to player's inventory. Item has format described on `item_format` page. Example:
+Add item or items to player's inventory. Item has the format described on the [item format](/docs/general/item-format/) page. Example:
 
 ```hocon
 itemAdd: [
@@ -269,7 +282,7 @@ itemAdd: [
 Items without `slot` will be added in the first empty slot in inventory
 
 :::tip
-Don't forget about HOCON [example](/docs/start/hocon/), where you can specify single list element as just single parameter.
+Don't forget about the HOCON [single-element shortcut](/docs/start/hocon/), where you can specify a single list element as just a single parameter.
 :::
 
 ## Remove item
@@ -319,7 +332,7 @@ Parameter `name` required. All parameters are optional.
 
 - **`public`** - Is this sound will be played for all near players.
 
-- **`location`** - Location in which sound will play. Location format same as in `action-tp` action.
+- **`location`** - Location in which sound will play. Location format is the same as in the [teleport](#teleport) action.
 
 You can also use short format:
 
@@ -331,20 +344,36 @@ In this case, the sound will play only for player in player's location.
 
 ## Custom sound
 
-Same as `action-sound` action, but accepts sound name from resource pack. Example:
+Same as the [sound](#sound) action, but accepts a sound name from a resource pack. Example:
 
 ```hocon
 customSound: "name.songs_sound"
 ```
 
-This action also has optional parameter `category` if use as object. This parameter accept one of the values defined [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/SoundCategory.html). Example:
+When used as an object, the action accepts every parameter `sound` does, plus a sound `category`:
 
 ```hocon
 customSound: {
   name: "name.songs_sound"
   category: RECORDS
+  volume: 1.0
+  pitch: 1.0
+  public: false
+  location {
+    world: "world"
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
 }
 ```
+
+- **`name`** - Resource-pack sound name (e.g. `name.songs_sound`). Required.
+- **`category`** - One of the values defined [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/SoundCategory.html). Default `MASTER`.
+- **`volume`** - Volume. Default `1.0`.
+- **`pitch`** - Pitch. Default `1.0`.
+- **`public`** - If `true`, plays for nearby players too. Default `false`.
+- **`location`** - Location in which sound will play. Same shape as in the [teleport](#teleport) action. Default: the player's current location.
 
 ## Add potion effect
 
@@ -391,12 +420,43 @@ openBook {
 }
 ```
 
+## LP meta
+
+LuckPerms-only actions to read or write LuckPerms `meta` values on a user. They go through the active permissions provider and only fire when that provider is LuckPerms; otherwise they log a warning and skip.
+
+### `lpMetaSet`
+
+```hocon
+lpMetaSet {
+  ignorePlaceholder: false
+  metaList: [
+    { key: "prefix", value: "&7[Member]" }
+    { key: "suffix", value: "&8[%player_world%]" }
+  ]
+}
+```
+
+- **`metaList`** - List of `{ key, value }` pairs. `value` is run through placeholder substitution unless `ignorePlaceholder` is `true`.
+- **`ignorePlaceholder`** - If `true`, send the raw `value` verbatim. Default `false`.
+
+### `lpMetaRemove`
+
+Removes meta keys from the user. Accepts a single string or a list:
+
+```hocon
+lpMetaRemove: "prefix"
+```
+
+```hocon
+lpMetaRemove: [ "prefix", "suffix" ]
+```
+
 ## Variables
 
 These actions for create, update, delete, and do some math with variables.
 
 :::note
-More about what variables are and how use them, read on `variables` page.
+More about what variables are and how to use them, see the [Variables](/docs/general/variables/) page.
 :::
 
 There are two version of each variable-related action - **global** and **personal**. For example there is `setVar` and `setVarp` actions for global and personal variables, respectively.
@@ -540,7 +600,7 @@ Actions to interact with personal variabes.
 
 #### Set
 
-Action `setVarp` used to create personal variable for player who opened menu. This action has same format as `action-var-glob-set` action for global variables.
+Action `setVarp` used to create personal variable for player who opened menu. This action has same format as the global [setVar](#set) action.
 
 Example:
 
@@ -550,11 +610,11 @@ setVarp: "myvar::Hello, world"
 
 #### Temporal variable
 
-Same as with `action-var-glob-temp` of global variables, but using `setVarp` action.
+Same as the [Temporal variable](#temporal-variable) section for global variables, but using `setVarp` action.
 
 #### Rewriting safety
 
-Same as with `action-var-glob-replace` of global variables, but using `setVarp` action.
+Same as the [Rewriting safety](#rewriting-safety) section for global variables, but using `setVarp` action.
 
 #### Remove
 
@@ -576,7 +636,7 @@ There is several actions to do math operations with personal variables:
 
 - **`divVarp`** - Divide personal variable
 
-All arguments and usage similar to `action-var-glob-math` of global variables.
+All arguments and usage similar to the [Math actions](#math-actions) of global variables.
 
 ```hocon
 incVarp: "myvar::2"
@@ -803,7 +863,7 @@ items: [
 After click the item will glow.
 
 :::caution
-Do not use this action in display rules. While rules checking, the item is not yet created so it cannot be changed. Use [bindings](/docs/general/item-format/#bindings) instead.
+Do not use this action in display rules. While rules checking, the item is not yet created so it cannot be changed. Use [bindings](/docs/general/menu-structure/#binding-button-properties-to-rules) instead.
 :::
 
 This action also allows you to change the properties of other items in the opened menu. To do this, you need to specify the slot in which it is located. Example:
