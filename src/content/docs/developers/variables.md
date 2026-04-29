@@ -13,17 +13,17 @@ AbstractMenus 2.0 is in alpha. The API surface may change before the stable rele
 In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::
 
-AbstractMenus has a small CRUD API for the same variables menu authors edit through `/var` and `/varp`. Javadocs: [api/variables](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/package-summary.html).
+AbstractMenus has a small CRUD API for the same variables menu authors edit through `/var` and `/varp`. Javadocs: [api/variables](https://github.com/AbstractMenus/minecraft-plugin/tree/master/api/src/main/java/ru/abstractmenus/api/variables).
 
 ## `Var`
 
-[`Var`](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/Var.html) is the variable record. Values are stored as strings; `Var` has typed accessors that parse on read (and may throw if the stored string isn't a valid number).
+[`Var`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/variables/Var.java) is the variable record. Values are stored as strings; `Var` has typed accessors that parse on read (and may throw if the stored string isn't a valid number).
 
 Lifetimes are UTC milliseconds — compare `expiry()` to `System.currentTimeMillis()` to check whether a value is still alive. `expiry() == 0` means "no expiry".
 
 ## `VariableManager`
 
-[`VariableManager`](https://abstractmenus.github.io/api/ru/abstractmenus/api/variables/VariableManager.html) is the CRUD entry point. Get one from the API:
+[`VariableManager`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/variables/VariableManager.java) is the CRUD entry point. Get one from the API:
 
 ```java
 AbstractMenusApi api = AbstractMenusApi.get();

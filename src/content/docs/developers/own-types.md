@@ -31,7 +31,7 @@ All registration calls happen in `MenuExtension.onEnable(api)`. Don't register f
 
 ## Action
 
-An action is something the plugin does: send a message, give an item, run a command, open another menu. Each action class implements [`Action`](https://abstractmenus.github.io/api/ru/abstractmenus/api/Action.html):
+An action is something the plugin does: send a message, give an item, run a command, open another menu. Each action class implements [`Action`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/Action.java):
 
 ```java
 public class MessageAction implements Action {
@@ -81,7 +81,7 @@ items: [
 
 ## Rule
 
-A rule is a boolean check evaluated against a player. It implements [`Rule`](https://abstractmenus.github.io/api/ru/abstractmenus/api/Rule.html):
+A rule is a boolean check evaluated against a player. It implements [`Rule`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/Rule.java):
 
 ```java
 public class IsBobRule implements Rule {
@@ -118,7 +118,7 @@ A rule with no parameters can take `true` (HOCON-shorthand for "this rule is act
 
 A value extractor pulls named values out of a context object. Activators and catalogs use it to expose context data through placeholders.
 
-It implements [`ValueExtractor`](https://abstractmenus.github.io/api/ru/abstractmenus/api/ValueExtractor.html):
+It implements [`ValueExtractor`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/ValueExtractor.java):
 
 ```java
 public class UserExtractor implements ValueExtractor {
@@ -143,7 +143,7 @@ The shape is similar to PlaceholderAPI but accepts any context type, not only `P
 
 ## Activator
 
-An activator is an event listener that opens a menu. It extends the abstract [`Activator`](https://abstractmenus.github.io/api/ru/abstractmenus/api/Activator.html), which extends Bukkit's `Listener`. Inside the class, listen for any Bukkit event you need:
+An activator is an event listener that opens a menu. It extends the abstract [`Activator`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/Activator.java), which extends Bukkit's `Listener`. Inside the class, listen for any Bukkit event you need:
 
 ```java
 public class SneakActivator extends Activator {
@@ -243,7 +243,7 @@ items: [
 
 An item property modifies an item's appearance — display name, lore, material, custom model data, etc.
 
-Implement [`ItemProperty`](https://abstractmenus.github.io/api/ru/abstractmenus/api/inventory/ItemProperty.html):
+Implement [`ItemProperty`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/inventory/ItemProperty.java):
 
 - **`canReplaceMaterial`** — returns `true` if the property changes the item's material. Material-replacing properties run first so subsequent properties operate on a valid `ItemMeta`.
 - **`isApplyMeta`** — return `true` if AbstractMenus should call `setItemMeta` on the stack after `apply` returns. Return `false` if `apply` already handles meta itself.
@@ -315,7 +315,7 @@ api.itemProperties().register("creeperHead", CreeperHeadProperty.class, new Cree
 
 A catalog provides a dynamic collection of objects to a generated menu. Each entry in the collection becomes one rendered item, and a `ValueExtractor` lets you read fields off each entry through placeholders.
 
-The class implements [`Catalog<T>`](https://abstractmenus.github.io/api/ru/abstractmenus/api/Catalog.html):
+The class implements [`Catalog<T>`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/Catalog.java):
 
 ```java
 public class UserCatalog implements Catalog<User> {

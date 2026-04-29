@@ -13,7 +13,7 @@ AbstractMenus 2.0 is in alpha. The API surface may change before the stable rele
 In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::
 
-AbstractMenus has five provider sections: **economy**, **permissions**, **levels**, **placeholders**, **skins**. Each one is an [`api.providers().<section>()`](https://abstractmenus.github.io/api/ru/abstractmenus/api/ProviderRegistry.html) accessor that returns a [`ProviderSection<T>`](https://abstractmenus.github.io/api/ru/abstractmenus/api/ProviderSection.html). You can register multiple handlers per section, give each one an id and a priority, and the operator picks which is the default in `config.conf`. Per-action overrides in HOCON win over the config default.
+AbstractMenus has five provider sections: **economy**, **permissions**, **levels**, **placeholders**, **skins**. Each one is an [`api.providers().<section>()`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/ProviderRegistry.java) accessor that returns a [`ProviderSection<T>`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/ProviderSection.java). You can register multiple handlers per section, give each one an id and a priority, and the operator picks which is the default in `config.conf`. Per-action overrides in HOCON win over the config default.
 
 The pre-2.0 static `Handlers` facade is gone. Everything happens through `ProviderSection`.
 
@@ -135,11 +135,11 @@ All five live under `ru.abstractmenus.api.handler.*`:
 
 | Interface | Methods |
 |---|---|
-| [`EconomyHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/EconomyHandler.html) | `hasBalance`, `takeBalance`, `giveBalance` |
-| [`PermissionsHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/PermissionsHandler.html) | `hasPermission`, `getGroup` |
-| [`LevelHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/LevelHandler.html) | `hasLevels`, `takeLevels`, `giveLevels` |
-| [`PlaceholderHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/PlaceholderHandler.html) | `replace` |
-| [`SkinHandler`](https://abstractmenus.github.io/api/ru/abstractmenus/api/handler/SkinHandler.html) | `setSkin`, `resetSkin` |
+| [`EconomyHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/EconomyHandler.java) | `hasBalance`, `takeBalance`, `giveBalance` |
+| [`PermissionsHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/PermissionsHandler.java) | `hasPermission`, `getGroup` |
+| [`LevelHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/LevelHandler.java) | `hasLevels`, `takeLevels`, `giveLevels` |
+| [`PlaceholderHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/PlaceholderHandler.java) | `replace` |
+| [`SkinHandler`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/handler/SkinHandler.java) | `setSkin`, `resetSkin` |
 
 Method names and signatures are stable across the 2.0 line.
 

@@ -13,9 +13,9 @@ AbstractMenus 2.0 is in alpha. The API surface may change before the stable rele
 In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
 :::
 
-AbstractMenus uses its own wrappers over the [Lightbend HOCON config library](https://github.com/lightbend/config). A serializer is a small factory that takes a [`ConfigNode`](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/ConfigNode.html) and returns a Java object.
+AbstractMenus uses its own wrappers over the [Lightbend HOCON config library](https://github.com/lightbend/config). A serializer is a small factory that takes a [`ConfigNode`](https://github.com/AbstractMenus/hocon/blob/master/src/main/java/ru/abstractmenus/hocon/api/ConfigNode.java) and returns a Java object.
 
-Each serializer implements [`NodeSerializer<T>`](https://abstractmenus.github.io/api/ru/abstractmenus/hocon/api/serialize/NodeSerializer.html). The interface has one method: `deserialize(Class<T> type, ConfigNode node)`.
+Each serializer implements [`NodeSerializer<T>`](https://github.com/AbstractMenus/hocon/blob/master/src/main/java/ru/abstractmenus/hocon/api/serialize/NodeSerializer.java). The interface has one method: `deserialize(Class<T> type, ConfigNode node)`.
 
 ## When you need to register a serializer
 
