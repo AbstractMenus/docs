@@ -15,17 +15,17 @@ Action is something that happens after specific event (for example item click or
 | openMenuCtx | String | Same as `openMenu` but forwards [context](/docs/advanced/input/) from activator of previous menu |
 | closeMenu | Boolean or Number | Close current menu. If there is number instead of boolean, menu will be closed after delay in specified ticks |
 | refreshMenu | Boolean or Number | Update all menu content except the title. If there is number instead of boolean, menu will be updated after delay in specified ticks |
-| message | Object or String | Send message to player. There is ability to send simple text, JSON text, title, etc. |
-| broadcast | Object or String | Send message to all players on server. Format similar to `message` action |
-| miniMessage | String | **(Deprecated. MiniMessage now supported by default message actions)** Send message with `mini-message` |
+| [message](#message) | Object or String | Send message to player. There is ability to send simple text, JSON text, title, etc. |
+| [broadcast](#message) | Object or String | Send message to all players on server. Format similar to `message` action |
+| [miniMessage](#message) | String | **(Deprecated. MiniMessage now supported by default message actions)** Send message with `mini-message` |
 | playerChat | Strings list | Send a message on behalf of the player who opened the menu |
 | print | String | Print message in console. Useful for debugging |
-| command | Object | Execute a list of commands on behalf of a player or server |
-| inputChat | Object | Request player for enter text in chat and save result in variable |
-| teleport | Object | Teleport player to location |
-| itemAdd | Objects list | Add any items to player |
-| itemRemove | Objects list | Remove items from player's inventory. Items will be compared by specified properties or could be just removed by slot number |
-| itemClear | Objects list | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
+| [command](#command) | Object | Execute a list of commands on behalf of a player or server |
+| [inputChat](#chat-input) | Object | Request player for enter text in chat and save result in variable |
+| [teleport](#teleport) | Object | Teleport player to location |
+| [itemAdd](#add-item) | Objects list | Add any items to player |
+| [itemRemove](#remove-item) | Objects list | Remove items from player's inventory. Items will be compared by specified properties or could be just removed by slot number |
+| [itemClear](#remove-item) | Objects list | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
 | inventoryClear | Boolean | Fully clear player's inventory |
 | bungeeConnect | String | Connect player to another BungeeCord server |
 | giveMoney | Number | Gives money for player. **Vault** required |
@@ -41,40 +41,40 @@ Action is something that happens after specific event (for example item click or
 | takeXp | Number | Take player's XP points |
 | giveLevel | Number | Increase level for player on specified value |
 | takeLevel | Number | Decrease player's level on specified value |
-| sound | Object | Play sound |
-| customSound | Object | Play custom sound from resource pack |
-| potionEffect | Objects list | Give potion effect to player |
-| removePotionEffect | Strings list | Remove potion effect from player |
-| openBook | Object | Create and open a written book for player |
-| setProperty | Object | Set new or overwrite existing properties for the menu item |
-| remProperty | Objects list | Remove specified properties from the menu item |
-| refreshItem | Multiple | Update only one menu item, without updating the entire menu |
-| setSkin | Object | Set skin for player using the **SkinsRestorer** plugin |
-| resetSkin | Boolean | Reset player’s skin using the **SkinsRestorer** plugin |
-| addRecipe | Objects list | Add new custom recipes for crafting |
-| setButton | Objects list | Set the new button to displayed menu |
-| removeButton | Slot (number, range, matrix) | Remove button from displayed menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
-| placeItem | Objects list | For drag-and-drop. Place draggable item into draggable slot |
+| [sound](#sound) | Object | Play sound |
+| [customSound](#custom-sound) | Object | Play custom sound from resource pack |
+| [potionEffect](#add-potion-effect) | Objects list | Give potion effect to player |
+| [removePotionEffect](#remove-potion-effect) | Strings list | Remove potion effect from player |
+| [openBook](#open-book) | Object | Create and open a written book for player |
+| [setProperty](#set-item-property) | Object | Set new or overwrite existing properties for the menu item |
+| [remProperty](#remove-item-property) | Objects list | Remove specified properties from the menu item |
+| [refreshItem](#refresh-item) | Multiple | Update only one menu item, without updating the entire menu |
+| [setSkin](#set-skin) | Object | Set skin for player using the **SkinsRestorer** plugin |
+| [resetSkin](#set-skin) | Boolean | Reset player’s skin using the **SkinsRestorer** plugin |
+| [addRecipe](#add-recipe) | Objects list | Add new custom recipes for crafting |
+| [setButton](#set-menu-button) | Objects list | Set the new button to displayed menu |
+| [removeButton](#remove-menu-button) | Slot (number, range, matrix) | Remove button from displayed menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
+| placeItem | Objects list | For drag-and-drop. Place draggable item into draggable slot (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
 | removePlaced | Slot or Object | Remove a draggable item from the menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
 | **Global variables** |  |  |
-| setVar | Objects list, Strings list | Create or replace global variable |
-| removeVar | Objects list, Strings list | Remove global variable |
-| incVar | Objects list, Strings list | Increment global numeric variable |
-| decVar | Objects list, Strings list | Decrement global numeric variable |
-| mulVar | Objects list, Strings list | Multiply global numeric variable |
-| divVar | Objects list, Strings list | Divide global numeric variable |
+| [setVar](#global-vars) | Objects list, Strings list | Create or replace global variable |
+| [removeVar](#global-vars) | Objects list, Strings list | Remove global variable |
+| [incVar](#global-vars) | Objects list, Strings list | Increment global numeric variable |
+| [decVar](#global-vars) | Objects list, Strings list | Decrement global numeric variable |
+| [mulVar](#global-vars) | Objects list, Strings list | Multiply global numeric variable |
+| [divVar](#global-vars) | Objects list, Strings list | Divide global numeric variable |
 | **Personal variables** |  |  |
-| setVarp | Objects list, Strings list | Create or replace personal variable |
-| removeVarp | Objects list, Strings list | Remove personal variable |
-| incVarp | Objects list, Strings list | Increment personal numeric variable |
-| decVarp | Objects list, Strings list | Decrement personal numeric variable |
-| mulVarp | Objects list, Strings list | Multiply personal numeric variable |
-| divVarp | Objects list, Strings list | Divide personal numeric variable |
+| [setVarp](#personal-vars) | Objects list, Strings list | Create or replace personal variable |
+| [removeVarp](#personal-vars) | Objects list, Strings list | Remove personal variable |
+| [incVarp](#personal-vars) | Objects list, Strings list | Increment personal numeric variable |
+| [decVarp](#personal-vars) | Objects list, Strings list | Decrement personal numeric variable |
+| [mulVarp](#personal-vars) | Objects list, Strings list | Multiply personal numeric variable |
+| [divVarp](#personal-vars) | Objects list, Strings list | Divide personal numeric variable |
 | **Special actions** |  |  |
-| delay | Object | Wrap actions block to perform they after some delay |
-| bulk | Objects list | Perform many actions, even of one type |
-| randActions | Objects list | Perform random actions block from the list |
-| playerScope | Object | Perform actions for other player |
+| [delay](#delay) | Object | Wrap actions block to perform they after some delay |
+| [bulk](#bulk) | Objects list | Perform many actions, even of one type |
+| [randActions](#random-actions) | Objects list | Perform random actions block from the list |
+| [playerScope](#player-scope-actions) | Object | Perform actions for other player |
 | **For generated menus** |  |  |
 | pagePrev | Number | Switch to one of the previous page. Works only with generated menus |
 | pageNext | Number | Switch to one of the next page. Works only with generated menus |
