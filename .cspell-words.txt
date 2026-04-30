@@ -179,3 +179,5 @@ recognised
 customisation
 customises
 organisation
+JDBC
+JPMS
