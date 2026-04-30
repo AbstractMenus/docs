@@ -5,7 +5,7 @@ description: A reference for every key in a menu file - properties, click types,
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-If you already went through the [How to create a menu](/docs/start/how-to/) tutorial, this page goes deeper into menu structure and the more useful keys.
+If you already went through the [How to create a menu](/docs/en/start/how-to/) tutorial, this page goes deeper into menu structure and the more useful keys.
 
 ## Menu file
 
@@ -13,7 +13,7 @@ Each menu file can contain only one menu or several related menus.
 
 ### Single menu file
 
-You may already have seen a single-menu file in the [How to create a menu](/docs/start/how-to/) tutorial. Below is an example of a single-menu file.
+You may already have seen a single-menu file in the [How to create a menu](/docs/en/start/how-to/) tutorial. Below is an example of a single-menu file.
 
 ```hocon
 title: "&8Menu"
@@ -103,12 +103,12 @@ The table below contains all the properties of menu which you can specify in men
 | updateActions | Object | No | An `actions` that will be performed when menu updated by `updateInterval` |
 | updateInterval | Number | No | An interval of menu refreshing in ticks. If not specified, menu will not be updated automatically |
 | **For drag-and-drop** |  |  |  |
-| draggable | [Slot format](/docs/general/item-format/#slot) | No | Define allowed slots for placing and taking items |
+| draggable | [Slot format](/docs/en/general/item-format/#slot) | No | Define allowed slots for placing and taking items |
 | onPlaceItem | Object | No | An `actions` that will be performed if player place item in allowed slot |
 | onTakeItem | Object | No | An `actions` that will be performed if player take item from allowed slot |
 | onDragItem | Object | No | An `actions` that will be performed if player place or take item using allowed slots |
 
-To learn the drag-and-drop feature, see the [Drag and drop](/docs/advanced/drag-and-drop/) page (**for advanced users**).
+To learn the drag-and-drop feature, see the [Drag and drop](/docs/en/advanced/drag-and-drop/) page (**for advanced users**).
 
 ## Auto refresh
 
@@ -129,7 +129,7 @@ items: [
 
 The menu above will be refreshed every 2 seconds. Along with this, the item that display the number of players on the server will be refreshed along with the placeholder `%server_players%`.
 
-In the example above we used the default placeholders. More about placeholders is on the [Placeholders](/docs/general/placeholders/) page.
+In the example above we used the default placeholders. More about placeholders is on the [Placeholders](/docs/en/general/placeholders/) page.
 
 If you want to do some job when menu updated by `updateInterval`, you can use `updateActions` block.
 
@@ -150,7 +150,7 @@ Actions inside `updateActions` will be performed before items updates, so if you
 
 ## Buttons
 
-The button in the menu is an ordinary item (see [item format](/docs/general/item-format/)) with extra functionality. Below are all the parameters you can specify in addition to the standard item parameters.
+The button in the menu is an ordinary item (see [item format](/docs/en/general/item-format/)) with extra functionality. Below are all the parameters you can specify in addition to the standard item parameters.
 
 | Name | Data type | Required | Description |
 |----|----|----|----|
@@ -307,12 +307,12 @@ The `bindings` block has next format:
 
 - **`rules`** - Regular rules to check player
 
-Inside `props` block you can specify one or multiple [item properties](/docs/general/item-format/), as you do it just inside item. All these properties will be added to item only if player matches rules, specified inside `rules` block.
+Inside `props` block you can specify one or multiple [item properties](/docs/en/general/item-format/), as you do it just inside item. All these properties will be added to item only if player matches rules, specified inside `rules` block.
 
 Inside `rules` block you can specify any rules, like in any other `rules` block.
 
 :::note
-Item must have a default [material installer](/docs/general/item-format/). If you use bindings with material installer property, you just owerwrite it.
+Item must have a default [material installer](/docs/en/general/item-format/). If you use bindings with material installer property, you just owerwrite it.
 :::
 
 :::caution
@@ -321,7 +321,7 @@ In AbstractMenus order of item properties is matter. Since `bindings` block is j
 
 ### Multiple bindings
 
-You can add multiple bindings to one item. For this, just change the `bindings` block to [list of objects](/docs/start/hocon/). Example:
+You can add multiple bindings to one item. For this, just change the `bindings` block to [list of objects](/docs/en/start/hocon/). Example:
 
 ```hocon
 items: [

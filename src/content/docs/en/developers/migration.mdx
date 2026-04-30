@@ -26,7 +26,7 @@ If your addon was written against the 1.x API (`AbstractMenusProvider`, `Abstrac
 
 `AbstractMenusApi` replaces both `AbstractMenusPlugin` and `AbstractMenusProvider`. The static `get()` lookup goes through Bukkit's `ServicesManager` the same way the old provider did.
 
-For Path 2 addons (new in 2.0), you don't call `get()` at all — the API is passed as a parameter to your `MenuExtension` lifecycle methods. See [addon delivery](/docs/developers/addons/).
+For Path 2 addons (new in 2.0), you don't call `get()` at all — the API is passed as a parameter to your `MenuExtension` lifecycle methods. See [addon delivery](/docs/en/developers/addons/).
 
 ## Type registration
 
@@ -62,7 +62,7 @@ Same shape, different access. `api.serializers()` returns the same `NodeSerializ
 
 ## Handlers (economy / permissions / levels / placeholders / skins)
 
-The static `Handlers` facade is gone. Each section is now a [`ProviderSection<T>`](/docs/developers/handlers/) on `api.providers()`:
+The static `Handlers` facade is gone. Each section is now a [`ProviderSection<T>`](/docs/en/developers/handlers/) on `api.providers()`:
 
 ```diff lang="java"
 - Handlers.setEconomyHandler(new MyEconomy());
@@ -127,7 +127,7 @@ The two-arg form (player + menu) and the four-arg form (activator + ctx + player
 
 The artifactId is `minecraft-plugin` because JitPack publishes multi-module Gradle projects under one root coord (the repo name). The jar contents are the api module.
 
-If you're on GitHub Packages instead of JitPack, the native coord is `ru.abstractmenus:api:2.0.0-alpha.2`. See [Getting started](/docs/developers/general/) for the full setup.
+If you're on GitHub Packages instead of JitPack, the native coord is `ru.abstractmenus:api:2.0.0-alpha.2`. See [Getting started](/docs/en/developers/general/) for the full setup.
 
 ## What's gone for good
 
@@ -142,7 +142,7 @@ If you're on GitHub Packages instead of JitPack, the native coord is `ru.abstrac
 ## Where to next
 
 <CardGrid>
-  <LinkCard title="Addon delivery" href="/docs/developers/addons/" description="2.0 ships two paths: plugin-as-addon, AM-loaded jar. Pick one." />
-  <LinkCard title="Custom types" href="/docs/developers/own-types/" description="Updated examples for actions, rules, activators, properties, catalogs." />
-  <LinkCard title="Provider handlers" href="/docs/developers/handlers/" description="ProviderRegistry, multi-provider coexistence, priority-based resolve." />
+  <LinkCard title="Addon delivery" href="/docs/en/developers/addons/" description="2.0 ships two paths: plugin-as-addon, AM-loaded jar. Pick one." />
+  <LinkCard title="Custom types" href="/docs/en/developers/own-types/" description="Updated examples for actions, rules, activators, properties, catalogs." />
+  <LinkCard title="Provider handlers" href="/docs/en/developers/handlers/" description="ProviderRegistry, multi-provider coexistence, priority-based resolve." />
 </CardGrid>

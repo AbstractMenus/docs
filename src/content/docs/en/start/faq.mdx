@@ -15,7 +15,7 @@ Question not here? Drop it in the [Discord channel](https://discord.gg/4VGP3Gv).
 
 ## Does AbstractMenus support YAML configs?
 
-No. Only HOCON. Read [HOCON format](/docs/start/hocon/) - if you know JSON, you already know 90% of HOCON.
+No. Only HOCON. Read [HOCON format](/docs/en/start/hocon/) - if you know JSON, you already know 90% of HOCON.
 
 ## Where can I use placeholders?
 
@@ -41,7 +41,7 @@ The **last** item in the list whose rules the player matches. Use this on purpos
 
 ## How do I open a menu by command, item interaction, region enter, NPC click?
 
-These are activators - one per file, multiple per menu. See [activators](/docs/general/activators/).
+These are activators - one per file, multiple per menu. See [activators](/docs/en/general/activators/).
 
 ## How do I refuse to open the menu without a permission?
 
@@ -52,15 +52,15 @@ rules { permission: "i.am.admin" }
 denyActions { message: "&cNot allowed." }
 ```
 
-[Open rules reference](/docs/general/menu-structure/).
+[Open rules reference](/docs/en/general/menu-structure/).
 
 ## Different item appearance depending on rules?
 
-That's `bindings`. See [bindings reference](/docs/general/menu-structure/#binding-button-properties-to-rules).
+That's `bindings`. See [bindings reference](/docs/en/general/menu-structure/#binding-button-properties-to-rules).
 
 ## One item across many slots?
 
-Slot accepts a number, a range (`0-8`), or a matrix. See [slot formats](/docs/general/item-format/#slot).
+Slot accepts a number, a range (`0-8`), or a matrix. See [slot formats](/docs/en/general/item-format/#slot).
 
 ## Skull with the viewer's skin?
 
@@ -70,19 +70,19 @@ skullOwner: "%player_name%"
 
 ## Items that refresh on a timer?
 
-`updateInterval` on the menu root. See [auto-refresh](/docs/general/menu-structure/#auto-refresh).
+`updateInterval` on the menu root. See [auto-refresh](/docs/en/general/menu-structure/#auto-refresh).
 
 ## AND / OR / NOT combinations of rules?
 
-Yes - logical wrappers and rule inversion. See [logical structures](/docs/advanced/logical/).
+Yes - logical wrappers and rule inversion. See [logical structures](/docs/en/advanced/logical/).
 
 ## Persistent state shared between menus?
 
-Variables. Create / edit / delete via [variable actions](/docs/general/actions/), read back via [variable placeholders](/docs/general/variables/).
+Variables. Create / edit / delete via [variable actions](/docs/en/general/actions/), read back via [variable placeholders](/docs/en/general/variables/).
 
 ## How do I install an addon?
 
-Addons come in two flavours. **Plugin-as-addons** drop into `plugins/` like any other Bukkit plugin. **AM-loaded addons** drop into `plugins/AbstractMenus/addons/` and are managed via `/am addons`. See [Addon delivery](/docs/developers/addons/) for the differences.
+Addons come in two flavours. **Plugin-as-addons** drop into `plugins/` like any other Bukkit plugin. **AM-loaded addons** drop into `plugins/AbstractMenus/addons/` and are managed via `/am addons`. See [Addon delivery](/docs/en/developers/addons/) for the differences.
 
 ## Multiple economy plugins — which one does AbstractMenus pick?
 
@@ -94,17 +94,17 @@ providers {
 }
 ```
 
-Set to `"auto"` (the default) to let priority decide — addons typically register at priority 100, the bundled Vault provider at 50, so addons win unless you pin Vault explicitly. Per-action overrides (`provider: "..."` inside HOCON) always beat the config default. See [provider handlers](/docs/developers/handlers/).
+Set to `"auto"` (the default) to let priority decide — addons typically register at priority 100, the bundled Vault provider at 50, so addons win unless you pin Vault explicitly. Per-action overrides (`provider: "..."` inside HOCON) always beat the config default. See [provider handlers](/docs/en/developers/handlers/).
 
 ## Click cooldown vs click debounce — what's the difference?
 
-`clickCooldown` on an item is the menu author's choice (e.g. "this button has a 2-second cooldown"). The server-wide `clickDebounce` floors are a safety net against duplicate-click packets the Minecraft client sends — they only kick in when `clickCooldown > 0`. Set `clickCooldown: 0` on an item to bypass both. See [installation](/docs/start/config/).
+`clickCooldown` on an item is the menu author's choice (e.g. "this button has a 2-second cooldown"). The server-wide `clickDebounce` floors are a safety net against duplicate-click packets the Minecraft client sends — they only kick in when `clickCooldown > 0`. Set `clickCooldown: 0` on an item to bypass both. See [installation](/docs/en/start/config/).
 
 ## Where to next
 
 <CardGrid>
-  <LinkCard title="HOCON format" href="/docs/start/hocon/" description="The config syntax. JSON with comments, includes, and substitutions." />
-  <LinkCard title="How to create a menu" href="/docs/start/how-to/" description="Step-by-step build of your first menu." />
-  <LinkCard title="Tips" href="/docs/start/tips/" description="Workflow shortcuts while authoring menus." />
-  <LinkCard title="Examples" href="/docs/general/examples/" description="Reference menus you can copy-paste." />
+  <LinkCard title="HOCON format" href="/docs/en/start/hocon/" description="The config syntax. JSON with comments, includes, and substitutions." />
+  <LinkCard title="How to create a menu" href="/docs/en/start/how-to/" description="Step-by-step build of your first menu." />
+  <LinkCard title="Tips" href="/docs/en/start/tips/" description="Workflow shortcuts while authoring menus." />
+  <LinkCard title="Examples" href="/docs/en/general/examples/" description="Reference menus you can copy-paste." />
 </CardGrid>

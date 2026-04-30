@@ -12,7 +12,7 @@ Action is something that happens after specific event (for example item click or
 | Name | Data type | Description |
 |----|----|----|
 | openMenu | String | Open a menu with the specified name |
-| openMenuCtx | String | Same as `openMenu` but forwards [context](/docs/advanced/input/) from activator of previous menu |
+| openMenuCtx | String | Same as `openMenu` but forwards [context](/docs/en/advanced/input/) from activator of previous menu |
 | closeMenu | Boolean or Number | Close current menu. If there is number instead of boolean, menu will be closed after delay in specified ticks |
 | refreshMenu | Boolean or Number | Update all menu content except the title. If there is number instead of boolean, menu will be updated after delay in specified ticks |
 | [message](#message) | Object or String | Send message to player. There is ability to send simple text, JSON text, title, etc. |
@@ -55,9 +55,9 @@ Action is something that happens after specific event (for example item click or
 | [resetSkin](#set-skin) | Boolean | Reset the player's skin via the same provider. |
 | [addRecipe](#add-recipe) | Objects list | Add new custom recipes for crafting |
 | [setButton](#set-menu-button) | Objects list | Set the new button to displayed menu |
-| [removeButton](#remove-menu-button) | Slot (number, range, matrix) | Remove button from displayed menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
-| placeItem | Objects list | For drag-and-drop. Place draggable item into draggable slot (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
-| removePlaced | Slot or Object | Remove a draggable item from the menu (see [drag-and-drop](/docs/advanced/drag-and-drop/)) |
+| [removeButton](#remove-menu-button) | Slot (number, range, matrix) | Remove button from displayed menu (see [drag-and-drop](/docs/en/advanced/drag-and-drop/)) |
+| placeItem | Objects list | For drag-and-drop. Place draggable item into draggable slot (see [drag-and-drop](/docs/en/advanced/drag-and-drop/)) |
+| removePlaced | Slot or Object | Remove a draggable item from the menu (see [drag-and-drop](/docs/en/advanced/drag-and-drop/)) |
 | **Global variables** |  |  |
 | [setVar](#global-vars) | Objects list, Strings list | Create or replace global variable |
 | [removeVar](#global-vars) | Objects list, Strings list | Remove global variable |
@@ -130,7 +130,7 @@ When AbstractMenus runs a money/level/permission action, it picks the handler in
 
 The same shape applies to `giveLevel`/`takeLevel` (levels), `givePermission`/`removePermission`/`addGroup`/`removeGroup` (permissions), and `setSkin`/`resetSkin` (skins). Just swap `economy` for the relevant section name in `config.conf`.
 
-For implementing your own provider, see [Provider handlers](/docs/developers/handlers/).
+For implementing your own provider, see [Provider handlers](/docs/en/developers/handlers/).
 
 ## Message
 
@@ -238,7 +238,7 @@ command {
 
 This action will close menu and ask player to enter some text in the chat. After text entered, plugin will save it into variable.
 
-All about chat input feature read on the [Chat input](/docs/advanced/input/#chat-input) page.
+All about chat input feature read on the [Chat input](/docs/en/advanced/input/#chat-input) page.
 
 ## Teleport
 
@@ -263,7 +263,7 @@ teleport: "world, 0.0, 100.0, 0.0, 0.0, 0.0"
 
 ## Add item
 
-Add item or items to player's inventory. Item has the format described on the [item format](/docs/general/item-format/) page. Example:
+Add item or items to player's inventory. Item has the format described on the [item format](/docs/en/general/item-format/) page. Example:
 
 ```hocon
 itemAdd: [
@@ -282,7 +282,7 @@ itemAdd: [
 Items without `slot` will be added in the first empty slot in inventory
 
 :::tip
-Don't forget about the HOCON [single-element shortcut](/docs/start/hocon/), where you can specify a single list element as just a single parameter.
+Don't forget about the HOCON [single-element shortcut](/docs/en/start/hocon/), where you can specify a single list element as just a single parameter.
 :::
 
 ## Remove item
@@ -389,7 +389,7 @@ potionEffect: [
 ]
 ```
 
-The format of this action is similar to the [`potionData` item property](/docs/general/item-format/).
+The format of this action is similar to the [`potionData` item property](/docs/en/general/item-format/).
 
 ## Remove potion effect
 
@@ -406,7 +406,7 @@ Action above will remove two potion effects from player.
 
 ## Open book
 
-Action to open a written book. The format mirrors the [`bookData` item property](/docs/general/item-format/).
+Action to open a written book. The format mirrors the [`bookData` item property](/docs/en/general/item-format/).
 
 ```hocon
 openBook {
@@ -456,7 +456,7 @@ lpMetaRemove: [ "prefix", "suffix" ]
 These actions for create, update, delete, and do some math with variables.
 
 :::note
-More about what variables are and how to use them, see the [Variables](/docs/general/variables/) page.
+More about what variables are and how to use them, see the [Variables](/docs/en/general/variables/) page.
 :::
 
 There are two version of each variable-related action - **global** and **personal**. For example there is `setVar` and `setVarp` actions for global and personal variables, respectively.
@@ -804,7 +804,7 @@ Before this action, you need to set the `closeMenu` action, because when the ski
 :::
 ## Add recipe
 
-Action to add recipe to player. This is a [list of objects](/docs/start/hocon/) where each object is a recipe.
+Action to add recipe to player. This is a [list of objects](/docs/en/start/hocon/) where each object is a recipe.
 
 ```hocon
 addRecipe: [
@@ -863,7 +863,7 @@ items: [
 After click the item will glow.
 
 :::caution
-Do not use this action in display rules. While rules checking, the item is not yet created so it cannot be changed. Use [bindings](/docs/general/menu-structure/#binding-button-properties-to-rules) instead.
+Do not use this action in display rules. While rules checking, the item is not yet created so it cannot be changed. Use [bindings](/docs/en/general/menu-structure/#binding-button-properties-to-rules) instead.
 :::
 
 This action also allows you to change the properties of other items in the opened menu. To do this, you need to specify the slot in which it is located. Example:

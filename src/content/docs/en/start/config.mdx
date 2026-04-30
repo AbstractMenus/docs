@@ -7,7 +7,7 @@ import { Aside } from "@astrojs/starlight/components";
 
 <div class="audience-tags"><span class="audience-tag audience-operator">Operator</span></div>
 
-`plugins/AbstractMenus/config.conf` is the global plugin configuration. It's HOCON (a superset of JSON — see [HOCON format](/docs/start/hocon/) for the syntax primer). Every key is optional; AbstractMenus generates the file on first run with the defaults shown below.
+`plugins/AbstractMenus/config.conf` is the global plugin configuration. It's HOCON (a superset of JSON — see [HOCON format](/docs/en/start/hocon/) for the syntax primer). Every key is optional; AbstractMenus generates the file on first run with the defaults shown below.
 
 After editing, run `/am reload` — no restart needed.
 
@@ -142,7 +142,7 @@ The `providers {}` block sets the default backend for each pluggable section. Ou
 
 `"auto"` means "pick the highest-priority registered provider". Built-in providers register at priority 50; addons typically at 100 — so addons win unless you pin an explicit id here.
 
-Per-action overrides in HOCON (`provider: "..."` inside an action or rule) always beat the config default. See [Provider selection](/docs/general/actions/#provider-selection) for the resolution rules.
+Per-action overrides in HOCON (`provider: "..."` inside an action or rule) always beat the config default. See [Provider selection](/docs/en/general/actions/#provider-selection) for the resolution rules.
 
 ### Click debounce
 

@@ -15,7 +15,7 @@ export async function GET({ site }: APIContext) {
       .replace(/"/g, "&quot;");
 
   const items = entries.map((entry) => {
-    const link = `${origin}/changelog/#${entry.id}`;
+    const link = `${origin}/en/changelog/#${entry.id}`;
     const title = escape(entry.data.title);
     const summary = escape(entry.data.summary ?? "");
     return `    <item>
@@ -31,7 +31,7 @@ export async function GET({ site }: APIContext) {
 <rss version="2.0">
   <channel>
     <title>AbstractMenus changelog</title>
-    <link>${origin}/changelog/</link>
+    <link>${origin}/en/changelog/</link>
     <description>Notable changes to AbstractMenus and to this documentation site.</description>
     <language>en</language>
 ${items}

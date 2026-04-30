@@ -1,14 +1,14 @@
 ---
 title: Item format
-description: "An item can be specified not only as a button in a menu. This [object](/docs/start/hocon/) can be used in rules, actions and activators. However, item always has one…"
+description: "An item can be specified not only as a button in a menu. This [object](/docs/en/start/hocon/) can be used in rules, actions and activators. However, item always has one…"
 ---
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-An item can be specified not only as a button in a menu. This [object](/docs/start/hocon/) can be used in rules, actions and activators. However, item always has one format.
+An item can be specified not only as a button in a menu. This [object](/docs/en/start/hocon/) can be used in rules, actions and activators. However, item always has one format.
 
 :::tip[Looking for the full property list?]
-The [Cheatsheet](/docs/general/cheatsheet/) groups every property in one ctrl-F'able place. The page below has the full reference with examples for each one.
+The [Cheatsheet](/docs/en/general/cheatsheet/) groups every property in one ctrl-F'able place. The page below has the full reference with examples for each one.
 :::
 
 ## Properties by category
@@ -18,7 +18,7 @@ The [Cheatsheet](/docs/general/cheatsheet/) groups every property in one ctrl-F'
 | Name | Data type | Example | Description |
 |----|----|----|----|
 | slot | Multiple | See [Slot](#slot) below | Where the item sits. Can be used only for menu items or in some actions and rules. |
-| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/start/config/) the floor wins; set `clickCooldown: 0` to bypass entirely. |
+| clickCooldown | Number | `clickCooldown: 500` | Per-item click cooldown in **milliseconds**. Reset when the menu closes or refreshes. Below the server-wide [click debounce floor](/docs/en/start/config/) the floor wins; set `clickCooldown: 0` to bypass entirely. |
 
 ### Material installers
 
@@ -72,7 +72,7 @@ Use exactly one of these to set the item's material. The rest of the properties 
 
 | Name | Data type | Example | Description |
 |----|----|----|----|
-| bindings | Objects list | See [Bindings](/docs/general/menu-structure/#binding-button-properties-to-rules) | Override properties when rules match. The classic "show as red glass if player can't afford" pattern. |
+| bindings | Objects list | See [Bindings](/docs/en/general/menu-structure/#binding-button-properties-to-rules) | Override properties when rules match. The classic "show as red glass if player can't afford" pattern. |
 
 ## Slot
 
@@ -228,7 +228,7 @@ equipItem {
 
 ## Deserialize from base64 string
 
-The `serialized` item property lets you deserialize an item from a base64 string. Such a string usually comes from the [`item_serialized`](/docs/general/placeholders/#item-extractor) extractor placeholder, for example, when using the drag-and-drop feature. Example:
+The `serialized` item property lets you deserialize an item from a base64 string. Such a string usually comes from the [`item_serialized`](/docs/en/general/placeholders/#item-extractor) extractor placeholder, for example, when using the drag-and-drop feature. Example:
 
 ```hocon
 {
@@ -247,7 +247,7 @@ If you save such string into variable and then use it after server update or dow
 
 ## Lore
 
-The lore is a [list of strings](/docs/start/hocon/). Each new line in the list is a line in the item's lore. For example:
+The lore is a [list of strings](/docs/en/start/hocon/). Each new line in the list is a line in the item's lore. For example:
 
 ```hocon
 lore: [
@@ -313,7 +313,7 @@ Colors can be used only for painting leather armor, potions and other materials 
 
 ## Flag
 
-Flags are used to add new properties to item. The list of flags is a [strings list](/docs/start/hocon/) like `lore`. For example:
+Flags are used to add new properties to item. The list of flags is a [strings list](/docs/en/start/hocon/) like `lore`. For example:
 
 ```hocon
 flags: [
@@ -348,7 +348,7 @@ A flags for each Spigot versions might be different or missing. Check flags for 
 
 ## Potion effect
 
-This property is a [list of objects](/docs/start/hocon/) containing effects of the potion. Each item in the list is a potion effect. Example:
+This property is a [list of objects](/docs/en/start/hocon/) containing effects of the potion. Each item in the list is a potion effect. Example:
 
 ```hocon
 potionData: [
@@ -403,7 +403,7 @@ fireworkData {
 
 The `power` parameter set the lifetime of firework. This is optional parameter. By default its `1`.
 
-The `effects` parameter is a [list of objects](/docs/start/hocon/). Each object is a firework effect and has several parameters:
+The `effects` parameter is a [list of objects](/docs/en/start/hocon/). Each object is a firework effect and has several parameters:
 
 - **`type`** - Type of the shape when firework explodes. You can find all firework types [here](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/FireworkEffect.Type.html).
 
@@ -440,7 +440,7 @@ This property has several parameters:
 
 - **`title`** - The displayed book's title.
 
-- **`pages`** - The [list of strings](/docs/start/hocon/). Each new line is a new page content.
+- **`pages`** - The [list of strings](/docs/en/start/hocon/). Each new line is a new page content.
 
 :::note
 The `bookData` property will only work for `WRITTEN_BOOK` material.
@@ -460,7 +460,7 @@ bannerData: "{BlockEntityTag: {Base: 12, Patterns: [{Pattern: hh, Color: 6}, {Pa
 
 ### Way 2. HOCON
 
-A more complicated, but affordable way is to specify patterns as [list of objects](/docs/start/hocon/). Example:
+A more complicated, but affordable way is to specify patterns as [list of objects](/docs/en/start/hocon/). Example:
 
 ```hocon
 bannerData: [
@@ -556,7 +556,7 @@ Inside the `nbt` property, you can write any HOCON constructs, and the plugin co
 }
 ```
 
-The `ench` parameter is a [list of objects](/docs/start/hocon/). The types and names of tags must exactly match those that must be in the final NBT.
+The `ench` parameter is a [list of objects](/docs/en/start/hocon/). The types and names of tags must exactly match those that must be in the final NBT.
 
 Of course, you can add your own custom tags:
 

@@ -23,7 +23,7 @@ api.activators().register("...", MyActivator.class, new MyActivator.Serializer()
 api.catalogs().register("...", MyCatalog.class, new MyCatalog.Serializer(), this);
 ```
 
-Keys are case-insensitive. The `owner` is your [`MenuExtension`](/docs/developers/addons/) instance — AbstractMenus uses it to drop your registrations when your addon disables.
+Keys are case-insensitive. The `owner` is your [`MenuExtension`](/docs/en/developers/addons/) instance — AbstractMenus uses it to drop your registrations when your addon disables.
 
 Pick a vendor prefix for your keys (`myaddon_action`, `playerpoints_take`) so a future built-in named the same thing doesn't collide.
 

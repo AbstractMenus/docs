@@ -18,17 +18,17 @@ There are two ways to deliver an addon. Pick one:
 <CardGrid>
   <LinkCard
     title="Path 1 — plugin-as-addon"
-    href="/docs/developers/addons/#path-1"
+    href="/docs/en/developers/addons/#path-1"
     description="A standard Bukkit plugin. Drops into plugins/, loaded by Bukkit."
   />
   <LinkCard
     title="Path 2 — AM-loaded addon"
-    href="/docs/developers/addons/#path-2"
+    href="/docs/en/developers/addons/#path-2"
     description="A jar with addon.conf. Drops into plugins/AbstractMenus/addons/, loaded by AbstractMenus."
   />
 </CardGrid>
 
-The pages below cover the API surface itself. The [addons page](/docs/developers/addons/) covers delivery: which path to pick, manifest format, lifecycle.
+The pages below cover the API surface itself. The [addons page](/docs/en/developers/addons/) covers delivery: which path to pick, manifest format, lifecycle.
 
 ## Add the API to your build
 
@@ -101,7 +101,7 @@ depend:
 
 Use `softdepend:` if your plugin should still load when AbstractMenus is missing — then guard API calls with `Bukkit.getPluginManager().getPlugin("AbstractMenus") != null`.
 
-Path 2 addons don't have a `plugin.yml`. They use `addon.conf` instead, with a `pluginDependencies` field. See the [addons page](/docs/developers/addons/).
+Path 2 addons don't have a `plugin.yml`. They use `addon.conf` instead, with a `pluginDependencies` field. See the [addons page](/docs/en/developers/addons/).
 
 ## Get the API instance
 
@@ -150,13 +150,13 @@ api.getPlugin();       // raw Bukkit Plugin handle
 Each registry, manager, and helper has its own page on this docs section.
 
 <CardGrid>
-  <LinkCard title="Addon delivery" href="/docs/developers/addons/" description="Path 1 vs Path 2, MenuExtension lifecycle, addon.conf manifest." />
-  <LinkCard title="Custom types" href="/docs/developers/own-types/" description="Define and register your own actions, rules, item properties, activators, catalogs." />
-  <LinkCard title="Provider handlers" href="/docs/developers/handlers/" description="Plug in a custom economy / permissions / placeholder / skin / level backend." />
-  <LinkCard title="Serializers" href="/docs/developers/serializers/" description="HOCON deserialization for your own types." />
-  <LinkCard title="Variables API" href="/docs/developers/variables/" description="Read and write player and global variables programmatically." />
-  <LinkCard title="Utilities" href="/docs/developers/utils/" description="Color helpers, placeholder replacement, scheduling." />
-  <LinkCard title="Migration 1.x → 2.0" href="/docs/developers/migration/" description="Map old API calls (Types, Handlers, AbstractMenusProvider) to the new ones." />
+  <LinkCard title="Addon delivery" href="/docs/en/developers/addons/" description="Path 1 vs Path 2, MenuExtension lifecycle, addon.conf manifest." />
+  <LinkCard title="Custom types" href="/docs/en/developers/own-types/" description="Define and register your own actions, rules, item properties, activators, catalogs." />
+  <LinkCard title="Provider handlers" href="/docs/en/developers/handlers/" description="Plug in a custom economy / permissions / placeholder / skin / level backend." />
+  <LinkCard title="Serializers" href="/docs/en/developers/serializers/" description="HOCON deserialization for your own types." />
+  <LinkCard title="Variables API" href="/docs/en/developers/variables/" description="Read and write player and global variables programmatically." />
+  <LinkCard title="Utilities" href="/docs/en/developers/utils/" description="Color helpers, placeholder replacement, scheduling." />
+  <LinkCard title="Migration 1.x → 2.0" href="/docs/en/developers/migration/" description="Map old API calls (Types, Handlers, AbstractMenusProvider) to the new ones." />
 </CardGrid>
 
 ## Optional: GitHub Packages instead of JitPack

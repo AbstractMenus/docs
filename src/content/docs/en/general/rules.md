@@ -35,7 +35,7 @@ In this example, we check a player for permission "some.perm", a group "default"
 | world | String | Player is in the named world |
 | gamemode | String | Player's gamemode matches |
 | group | Strings list | Player is in a LuckPerms group |
-| money | Number or Object | Player has at least N currency. Object form `{ amount, provider }` lets you pin a specific economy provider — see [Provider selection](/docs/general/actions/#provider-selection). |
+| money | Number or Object | Player has at least N currency. Object form `{ amount, provider }` lets you pin a specific economy provider — see [Provider selection](/docs/en/general/actions/#provider-selection). |
 | level | Number | Player has at least N levels |
 | xp | Number | Player has at least N XP points |
 | health | Number | Player has at least N HP |
@@ -59,14 +59,14 @@ In this example, we check a player for permission "some.perm", a group "default"
 | [if](#if-rule) | Objects list | Compare placeholders with text or numeric values |
 | [js](#javascript) | String | Run a JavaScript expression and use its result |
 | **Special rules** |  |  |
-| [and](/docs/advanced/logical/) | Objects list | Logical AND wrapper |
-| [or](/docs/advanced/logical/) | Objects list | Logical OR wrapper |
-| [oneof](/docs/advanced/logical/) | Objects list | Stops on the first matching rule |
-| [playerScope](/docs/advanced/logical/) | Object | Re-evaluate rules against a different player |
+| [and](/docs/en/advanced/logical/) | Objects list | Logical AND wrapper |
+| [or](/docs/en/advanced/logical/) | Objects list | Logical OR wrapper |
+| [oneof](/docs/en/advanced/logical/) | Objects list | Stops on the first matching rule |
+| [playerScope](/docs/en/advanced/logical/) | Object | Re-evaluate rules against a different player |
 
 ## Inventory items
 
-Rule to check player's inventory for some items. This is an [objects list](/docs/start/hocon/), where each object is an item. Items has same format as anywhere in AM. Example:
+Rule to check player's inventory for some items. This is an [objects list](/docs/en/start/hocon/), where each object is an item. Items has same format as anywhere in AM. Example:
 
 ```hocon
 inventoryItems: [

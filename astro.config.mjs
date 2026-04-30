@@ -12,6 +12,11 @@ export default defineConfig({
   site: SITE,
   base: BASE,
   trailingSlash: "always",
+  // Bare /docs/ -> default locale. The destination must include `base`
+  // because Astro doesn't auto-prepend it for redirect targets.
+  redirects: {
+    "/": "/docs/en/",
+  },
   integrations: [
     starlight({
       title: "AbstractMenus",
@@ -22,12 +27,11 @@ export default defineConfig({
         { icon: "discord", label: "Discord", href: "https://discord.gg/4VGP3Gv" },
         { icon: "github", label: "GitHub", href: "https://github.com/AbstractMenus" },
       ],
-      defaultLocale: "root",
+      defaultLocale: "en",
       locales: {
-        // English lives at /docs/ (the root locale).
-        root: { label: "English", lang: "en" },
-        // Russian lives at /docs/ru/. Pages without a Russian translation
-        // fall back to the English version with a "translate this page" note.
+        // Each locale lives in its own subdirectory under
+        // src/content/docs/<locale>/, served at /docs/<locale>/.
+        en: { label: "English", lang: "en" },
         ru: { label: "Русский", lang: "ru" },
       },
       customCss: ["./src/styles/brand.css"],
@@ -102,7 +106,8 @@ export default defineConfig({
         },
         {
           label: "Changelog",
-          link: "/changelog/",
+          link: "/en/changelog/",
+          translations: { ru: "/ru/changelog/" },
           attrs: { "data-changelog-link": "true" },
         },
       ],

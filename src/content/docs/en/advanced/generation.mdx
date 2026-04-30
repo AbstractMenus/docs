@@ -115,7 +115,7 @@ Here we have specified the static items with actions for switching the pages of 
 
 ## Placeholders
 
-The important part of the auto-generated menus is a context placeholders. Each catalog uses one of the [Value Extractors](/docs/developers/own-types/#value-extractor). The usage of these extractor is similar to how they are used for [activator context](/docs/advanced/input/#activator-context). The only difference is the prefix: `ctg_` instead of `activator_`.
+The important part of the auto-generated menus is a context placeholders. Each catalog uses one of the [Value Extractors](/docs/en/developers/own-types/#value-extractor). The usage of these extractor is similar to how they are used for [activator context](/docs/en/advanced/input/#activator-context). The only difference is the prefix: `ctg_` instead of `activator_`.
 
 During menu generation, placeholders are generated for each catalog's object and can be used almost anywhere in the menu.
 
@@ -141,7 +141,7 @@ For example, to use the `page` placeholder from this list, you can write `%ctg_p
 
 A catalog is a dynamic collection of objects of the same type. Each catalog has its own unique name. The catalog can also have additional parameters that you can specify in the same `catalog` block.
 
-Each catalog provides own palceholders due one of the [Value Extractor](/docs/developers/own-types/#value-extractor). To know that placeholders you can use with some catalog, just look at the placeholders which provides extractor which catalog uses. Then just add `ctg_` prefix. These placeholders can be used in templates for generation. Below are the default catalogs currently available in AbstractMenus.
+Each catalog provides own palceholders due one of the [Value Extractor](/docs/en/developers/own-types/#value-extractor). To know that placeholders you can use with some catalog, just look at the placeholders which provides extractor which catalog uses. Then just add `ctg_` prefix. These placeholders can be used in templates for generation. Below are the default catalogs currently available in AbstractMenus.
 
 :::tip
 You can create your own catalogs, using an API.
@@ -157,7 +157,7 @@ Catalog's placeholders will not work for static items inside `items` list. Becau
 
 **Extractor type**: `extractor-entity`
 
-Returns all online players on the server. Since this catalog uses [`extractor-entity`](/docs/advanced/input/#activator-context) and all objects in the provided collection are Players, you can use any regular placeholder with the `ctg_` prefix when you use this catalog type. Example:
+Returns all online players on the server. Since this catalog uses [`extractor-entity`](/docs/en/advanced/input/#activator-context) and all objects in the provided collection are Players, you can use any regular placeholder with the `ctg_` prefix when you use this catalog type. Example:
 
 ```hocon
 catalog {

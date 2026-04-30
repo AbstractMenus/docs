@@ -143,7 +143,7 @@ item {
 }
 ```
 
-Here we specified the `color` object inside the `item` object. This is just an example. There is a separate lesson on how to describe items in the plugin - the [item format](/docs/general/item-format/) page.
+Here we specified the `color` object inside the `item` object. This is just an example. There is a separate lesson on how to describe items in the plugin - the [item format](/docs/en/general/item-format/) page.
 
 All values inside objects can be specified in one line with separating it by comma. Example:
 

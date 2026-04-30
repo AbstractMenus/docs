@@ -89,7 +89,7 @@ In the example above, the message "Nope" will send to the player if the player d
 
 ### Rules block as list
 
-Actually, any `rules` block is a [list of objects](/docs/start/hocon/), where each object is a rules block. Before that, always when we described the rules, we just opened the `rules` block and wrote the rules there like this:
+Actually, any `rules` block is a [list of objects](/docs/en/start/hocon/), where each object is a rules block. Before that, always when we described the rules, we just opened the `rules` block and wrote the rules there like this:
 
 ```hocon
 rules {
@@ -186,7 +186,7 @@ rules {
 
 In example above, rule `and` will return `true` if player have permission `group.vip` **AND** gamemode CREATIVE.
 
-Another example with using wrapper as list of rules groups. This format similar to format described [above](/docs/advanced/logical/)
+Another example with using wrapper as list of rules groups. This format similar to format described [above](/docs/en/advanced/logical/)
 
 ```hocon
 rules {

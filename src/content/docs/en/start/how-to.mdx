@@ -93,7 +93,7 @@ All menu files sit under `plugins/AbstractMenus/menus/`. The plugin walks the fo
 
    ![Menu with the Excalibur button](/docs/img/howto_excalibur.png)
 
-   - `slot` - cell index, starting at 0. [Other slot formats](/docs/general/item-format/#slot) include ranges and matrices.
+   - `slot` - cell index, starting at 0. [Other slot formats](/docs/en/general/item-format/#slot) include ranges and matrices.
    - `material` - Bukkit material name. [Full list on the Spigot Javadoc](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html).
    - `name` - display name. Supports `&` colour codes and placeholders.
 
@@ -121,7 +121,7 @@ All menu files sit under `plugins/AbstractMenus/menus/`. The plugin walks the fo
    ]
    ```
 
-   Reload, click the sword, the menu closes. Different mouse buttons can run different actions - see [click types](/docs/general/menu-structure/) for the full list.
+   Reload, click the sword, the menu closes. Different mouse buttons can run different actions - see [click types](/docs/en/general/menu-structure/) for the full list.
 
 </Steps>
 
@@ -184,7 +184,7 @@ What happens on click:
 2. If they have enough, an Excalibur is added to inventory and 100 coins are taken.
 3. If not, a no-villager sound plays.
 
-See [logical structures](/docs/advanced/logical/) for nested rule trees and inversion.
+See [logical structures](/docs/en/advanced/logical/) for nested rule trees and inversion.
 
 ### Gate the whole menu
 
@@ -209,22 +209,22 @@ Players without `i.am.admin` get the message instead of the menu.
 <CardGrid>
   <LinkCard
     title="Item format"
-    href="/docs/general/item-format/"
+    href="/docs/en/general/item-format/"
     description="Every property an item can carry, with HOCON examples."
   />
   <LinkCard
     title="Activators"
-    href="/docs/general/activators/"
+    href="/docs/en/general/activators/"
     description="All the events that can open a menu."
   />
   <LinkCard
     title="Rules"
-    href="/docs/general/rules/"
+    href="/docs/en/general/rules/"
     description="Conditions for opening menus, showing items, running actions."
   />
   <LinkCard
     title="Actions"
-    href="/docs/general/actions/"
+    href="/docs/en/general/actions/"
     description="Everything a click or a rule check can trigger."
   />
 </CardGrid>

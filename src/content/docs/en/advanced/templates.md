@@ -5,7 +5,7 @@ description: Reuse menu fragments across files - HOCON substitutions, shared ite
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-Thanks to HOCON's flexibility, you can extract any reusable fragment into a template - a single value, an [object](/docs/start/hocon/#object), a [list](/docs/start/hocon/#list), and so on. Templates can live inside the same menu file or in a separate file pulled in via `include`.
+Thanks to HOCON's flexibility, you can extract any reusable fragment into a template - a single value, an [object](/docs/en/start/hocon/#object), a [list](/docs/en/start/hocon/#list), and so on. Templates can live inside the same menu file or in a separate file pulled in via `include`.
 
 ## Templates basics
 

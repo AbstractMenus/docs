@@ -22,7 +22,7 @@ activators {
 In this example, the menu will be opened when you joined to the server, or if you enter `/menu` or `/game` command.
 
 :::tip
-Many activators, such as `command`, save their state so you can read it from the opened menu. See [activator input](/docs/advanced/input/).
+Many activators, such as `command`, save their state so you can read it from the opened menu. See [activator input](/docs/en/advanced/input/).
 :::
 
 ## All activators
@@ -80,7 +80,7 @@ When you enter `/menu` or `/game` command, menu will be opened.
 
 ### Command with arguments
 
-This activator has other, more complex formats — you can build your own commands with arguments. See [activator input](/docs/advanced/input/).
+This activator has other, more complex formats — you can build your own commands with arguments. See [activator input](/docs/en/advanced/input/).
 
 ## Activator `chat`
 
@@ -191,7 +191,7 @@ All entity types can be found [here](https://hub.spigotmc.org/javadocs/bukkit/or
 
 **Extractor type**: `extractor-entity`
 
-The `clickEntity` activator is a [list of objects](/docs/start/hocon/). Each object is a simple entity data. Example:
+The `clickEntity` activator is a [list of objects](/docs/en/start/hocon/). Each object is a simple entity data. Example:
 
 ```hocon
 clickEntity {
@@ -345,7 +345,7 @@ plate: [
 
 **Extractor type**: *None*
 
-The `table` activator is a [strings list](/docs/start/hocon/)
+The `table` activator is a [strings list](/docs/en/start/hocon/)
 
 ```hocon
 table: [
