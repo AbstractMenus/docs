@@ -17,7 +17,7 @@ Requires Node 20+ (CI runs Node 22).
 
 ## Layout
 
-```
+```text
 src/
   assets/                 logos and images referenced from MDX frontmatter
   content/
@@ -60,12 +60,14 @@ If `base` ever changes, do a project-wide find/replace `/docs/img/` -> `/<new-ba
 
 1. Drop a new `.md` (or `.mdx`) file under `src/content/docs/<locale>/<section>/`. Add the same path under both `en/` and `ru/` if you have both translations.
 2. Frontmatter at minimum:
+
    ```yaml
    ---
    title: My new page
    description: One-line summary for search and meta tags.
    ---
    ```
+
 3. Add the slug to the sidebar in `astro.config.mjs` under the right section. Slugs are locale-relative - the same `slug: "start/how-to"` resolves to `en/start/how-to` for English and `ru/start/how-to` for Russian.
 
 ## HOCON syntax highlighting

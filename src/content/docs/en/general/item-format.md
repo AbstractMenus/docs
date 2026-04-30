@@ -153,6 +153,7 @@ The slots counting in cells matrix always starts from top-left.
 :::caution
 Items placed by ranged slots and cells matrix doesn't cloning. This mean that if you change property of some item, changes will apply to other items placed by this slot. So you shouldn't use this slot format for unique items.
 :::
+
 ## Skull Owner
 
 This property can be used to get player's head. It takes player name as argument. For example:
@@ -299,6 +300,7 @@ color: WHITE
 :::note[See also]
 You can find list of colors [here](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Color.html)
 :::
+
 ### Way 1. HEX
 
 Hexadecimal format like in CSS.

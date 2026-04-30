@@ -18,13 +18,40 @@
     "MD029": { "style": "ordered" },
 
     // Bare URLs are fine in code-like contexts; we use real links elsewhere.
-    "MD034": false
+    "MD034": false,
+
+    // Compact-style tables (no spaces around pipes) come from the original
+    // RST conversion. Reformatting every reference table to "leading_and_trailing"
+    // is a churny, churn-only change. The compact style still renders fine.
+    "MD060": false,
+
+    // Carry-over RST content has many "[here](...)" links. They will get
+    // rewritten during the editorial pass; not blocking on it now.
+    "MD059": false,
+
+    // Bold lines like "*Result*" used as image captions occasionally trip
+    // this rule. Borderline judgment call, not worth fighting.
+    "MD036": false,
+
+    // RST list output uses "1.  Item" (two spaces). Reformatting every
+    // numbered list across the migrated content is churn for no reader gain.
+    "MD030": false,
+
+    // Indented code blocks are valid Markdown and exist in carry-over content.
+    // Mixing styles is OK; both render the same.
+    "MD046": false,
+
+    // Duplicate headings across different parent sections are fine
+    // (e.g. "Set" under both "Global vars" and "Personal vars").
+    // Only complain when actual sibling headings collide.
+    "MD024": { "siblings_only": true }
   },
   "ignores": [
     "node_modules",
     "dist",
     ".astro",
     "src/grammars",
-    "src/content/docs/demo/**"
+    "src/content/docs/en/demo/**",
+    "src/content/docs/ru/demo/**"
   ]
 }

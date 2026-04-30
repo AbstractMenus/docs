@@ -14,6 +14,7 @@ This feature currently is experimental and has some constraints. For example, yo
 :::tip
 Drag-and-drop is used in some [example menus](/docs/en/general/examples/).
 :::
+
 ## Adding DnD ability
 
 To allow players place and take items, add `draggable` property to menu root:
@@ -66,6 +67,7 @@ Event `onDragItem` useful for cases when you need to check draggable slot every 
 :::tip
 If player closed menu while some items placed in menu, they will be dropped to the ground.
 :::
+
 ## DnD placeholders
 
 There are special placeholders to check properties of a dragged item and other related data. These placeholders use the [item value extractor](/docs/en/general/placeholders/#item-extractor) to provide information about the dragged item.

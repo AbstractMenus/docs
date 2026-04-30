@@ -59,7 +59,7 @@ The third argument is interpreted as `<replace>` when it is literally `true` or 
 
 Same shape as `/var` but for **per-player** variables. Each subcommand takes a leading `<player>` argument:
 
-```
+```text
 /varp get <player> <name>
 /varp set <player> <name> <value>
 /varp set <player> <name> <value> <time>

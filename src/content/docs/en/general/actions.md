@@ -624,7 +624,7 @@ To remove personal variable, use the `removeVarp` action. This action has same f
 removeVarp: "my_var_name"
 ```
 
-#### Math actions
+#### Math actions (personal)
 
 There is several actions to do math operations with personal variables:
 
@@ -802,6 +802,7 @@ setSkin {
 :::caution
 Before this action, you need to set the `closeMenu` action, because when the skin is changed, player respawning. If the menu is opened, it may cause a critical error for the client.
 :::
+
 ## Add recipe
 
 Action to add recipe to player. This is a [list of objects](/docs/en/start/hocon/) where each object is a recipe.

@@ -19,7 +19,7 @@ Author-time only. Don't leave the file watcher running on a production server â€
 
 Drop a new `addon.conf`-bearing jar into `plugins/AbstractMenus/addons/`, then run:
 
-```
+```text
 /am addons rescan
 ```
 
@@ -35,7 +35,7 @@ If you want `<click:run_command:...>`, `<hover:show_text:...>`, gradients, or ra
 
 For the same data your menus read with `%var_*%` and `%varp_*%`:
 
-```
+```text
 /var set kit_cooldown 1700000000000     # epoch ms
 /varp set Notch coins 500
 /varp inc Notch coins 25
