@@ -138,7 +138,7 @@ In this example we used the rules block as a list. Let see what happens when you
 7.  If both checks on the permission and money amount were successful, the message "You have enough money and the right permission!" will be displayed.
 
 :::note
-When using rules as a list, each next element of the list performed independ of the result of checking the previous one. In example above, even if the player doesn't have `my.perm` permission, the check for the amount of money will still be performed. But in a global sense, the entire `rules` block will no longer be considered successful. So, the message "The player has the right and money!" will not be displayed if at least one of the rules block was not successful.
+When using rules as a list, each next element runs independently of the previous one's result. In the example above, even if the player doesn't have `my.perm`, the money check still runs. But in the global sense, the entire `rules` block is considered failed if any rule fails. So the message "You have enough money and the right permission!" won't display unless every rule succeeded.
 :::
 
 ## Inverting rule (operator "NOT")
@@ -162,7 +162,7 @@ denyActions {
 In this example, `actions` block will be executed if player have no permission `group.admin`. This means that `permission` rule result was inverted.
 
 :::note
-Unfortunatelly, traditional "NOT" char (`!`) reserved by HOCON, so we decided to use `-`.
+Unfortunately, traditional "NOT" char (`!`) reserved by HOCON, so we decided to use `-`.
 :::
 
 You can use this notation for any rule, even for logical wrappers. About logical wrappers in the next part.
@@ -403,7 +403,7 @@ rules {
 }
 ```
 
-Since we use `or` rule wrapper, it will return `true` if atleast one of the rule is `true` for player.
+Since we use `or` rule wrapper, it will return `true` if at least one of the rules is `true` for the player.
 
 In this case multiple `gamemode` rules with this prefix will work similar to:
 

@@ -148,7 +148,7 @@ If you sure, that entity is a Player, you can use any placeholder (PAPI or bundl
 | entity_ticks_lived     | How much entity lives                 |
 | **Living entity**      |                                       |
 | entity_last_damage     | Last damage value                     |
-| entity_no_damage_ticks | How much entity exists wothout damage |
+| entity_no_damage_ticks | How long the entity has existed without damage |
 | entity_killer          | Last killer name (if exists)          |
 | entity_eye_height      | Eye height value                      |
 
@@ -174,7 +174,7 @@ Get data from WorldGuard region.
 | Name                  | Note                               |
 |-----------------------|------------------------------------|
 | region_id             | Region name                        |
-| region_priority       | Region priproty                    |
+| region_priority       | Region priority                    |
 | region_type           | Region type (cuboid, poly2d, etc.) |
 | region_owners         | List of owners                     |
 | region_members        | List of members                    |

@@ -225,7 +225,7 @@ Each typed argument is an object with parameters. All they has general fields wh
 
 | Key | Type | Note | Required |
 |----|----|----|----|
-| key | String | Unique argument name, which you will use in placehodlers | true |
+| key | String | Unique argument name, which you will use in placeholders | true |
 | type | String | Argument type. See all types above | true |
 | error | String | Custom error message | false |
 | default | String | Default value of argument. Makes argument optional | false |
@@ -346,7 +346,7 @@ If player enter `/profile`, then `user` argument will be equal name of player wh
 
 If player enter `/profile Notch`, then `user` will be `Notch`.
 
-Currently, AbstractMenus has some resctiction for optional arguments. You can make only one optional argument and put it only in the end of arguments list. This due arguments parsing algorithm, which can't know which argument you entered, if there are more than one optional argument.
+Currently, AbstractMenus has a restriction for optional arguments. You can declare only one optional argument, and it must sit at the end of the arguments list. This is due to the argument-parsing algorithm, which can't tell which argument you entered when more than one is optional.
 
 ### Final example. Open profile menu by command
 
@@ -411,7 +411,7 @@ activators {
 }
 ```
 
-Command with `override: true`, will be registered as chat listener, not only as regular command. This will allow to "override" third-party plugin command, even if AbstarctMenus loaded after this plugin.
+Command with `override: true`, will be registered as chat listener, not only as regular command. This will allow to "override" third-party plugin command, even if AbstractMenus loaded after this plugin.
 
 When user enter such command, plugin performs it as regular command and cancel next message handling to avoid performing this command by the real "command owner".
 

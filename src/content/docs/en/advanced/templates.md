@@ -41,7 +41,7 @@ items: [
 
 Now after plugin reload, this item will appear in menu.
 
-Note, that path to template always begid from file's root, mo matter where you use placeholder to include it. For example, you have template inside another block:
+Note that the path to a template always begins from the file's root, no matter where you use the placeholder to include it. For example, if you have a template inside another block:
 
 ```hocon
 templates {

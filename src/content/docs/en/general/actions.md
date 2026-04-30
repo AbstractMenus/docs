@@ -25,7 +25,7 @@ Action is something that happens after specific event (for example item click or
 | [teleport](#teleport) | Object | Teleport player to location |
 | [itemAdd](#add-item) | Objects list | Add any items to player |
 | [itemRemove](#remove-item) | Objects list | Remove items from player's inventory. Items will be compared by specified properties or could be just removed by slot number |
-| [itemClear](#remove-item) | Objects list | Remove item from player's inventory with same way as in `itemRemove` action, but independ from itemstack size. So `count` property has no effect on this |
+| [itemClear](#remove-item) | Objects list | Remove items from player's inventory the same way as `itemRemove`, but independent of itemstack size. The `count` property has no effect here |
 | inventoryClear | Boolean | Fully clear player's inventory |
 | bungeeConnect | String | Connect player to another BungeeCord server |
 | [giveMoney](#provider-selection) | Number or Object | Add money to a player. Routes through the configured economy provider. |
@@ -463,7 +463,7 @@ There are two version of each variable-related action - **global** and **persona
 
 ### Global vars
 
-Actions to interact with global variabes.
+Actions to interact with global variables.
 
 #### Set
 
@@ -596,7 +596,7 @@ This format is still works for backward compatibility or in cases when you have 
 
 ### Personal vars
 
-Actions to interact with personal variabes.
+Actions to interact with personal variables.
 
 #### Set
 

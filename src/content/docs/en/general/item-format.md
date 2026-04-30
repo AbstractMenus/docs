@@ -169,7 +169,7 @@ skullOwner: "%player_name%"
 ```
 
 :::caution
-AbstratMenus loads player's skin on join to server. If you use name of player who is not joined to server, plugin will try to load skin data before menu will be opened. If you use static names in skullOwner, more suitable way is to use `texture` property.
+AbstractMenus loads the player's skin on join to server. If you use name of player who is not joined to server, plugin will try to load skin data before menu will be opened. If you use static names in skullOwner, more suitable way is to use `texture` property.
 :::
 
 :::note

@@ -1,11 +1,11 @@
 ---
 title: HOCON format
-description: "To configure menus, AbstactMenus uses **HOCON** (.conf files) instead of **YAML** (.yml files).…"
+description: "To configure menus, AbstractMenus uses **HOCON** (.conf files) instead of **YAML** (.yml files).…"
 ---
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span> <span class="audience-tag audience-developer">Addon developer</span></div>
 
-To configure menus, AbstactMenus uses **HOCON** (`.conf` files) instead of **YAML** (`.yml` files). This format may seem complicated for you, but later you will understand why this format is ideal for really flexible menus.
+To configure menus, AbstractMenus uses **HOCON** (`.conf` files) instead of **YAML** (`.yml` files). This format may seem complicated for you, but later you will understand why this format is ideal for really flexible menus.
 
 :::note
 More information about HOCON format you can find [here](https://github.com/lightbend/config/blob/master/HOCON.md).

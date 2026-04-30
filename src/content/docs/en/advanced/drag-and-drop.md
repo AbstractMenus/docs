@@ -1,11 +1,11 @@
 ---
 title: Drag and drop
-description: "Drag-and-drop (futher DnD) is a feature that allows players to place and take items from inventory. In the same time, menu can change it appearance or…"
+description: "Drag-and-drop (further DnD) is a feature that allows players to place and take items from inventory. In the same time, menu can change it appearance or…"
 ---
 
 <div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
 
-Drag-and-drop (futher DnD) is a feature that allows players to place and take items from inventory. In the same time, menu can change it appearance or behaviour in response for this events.
+Drag-and-drop (further DnD) is a feature that allows players to place and take items from inventory. In the same time, menu can change it appearance or behaviour in response for this events.
 
 :::note
 This feature currently is experimental and has some constraints. For example, you cannot use some DnD actions like placing item by shift-click.
@@ -62,7 +62,7 @@ When player put item into available draggable slot, it will receive message.
 
 These events will be called every time player changed item in draggable slot, even if it just increased it's amount.
 
-Event `onDragItem` useful for cases when you need to check draggable slot every time player do sometning in menu.
+Event `onDragItem` is useful when you need to check the draggable slot every time the player does something in the menu.
 
 :::tip
 If player closed menu while some items placed in menu, they will be dropped to the ground.

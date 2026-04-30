@@ -215,7 +215,7 @@ If you need math operations or more complex conditions, then you can use `js` ru
 ### Legacy "If" format
 
 :::caution
-We don't recommend use this format since modern `if` more brief, uderstandable and has more abilities to build complex logical expressions.
+We don't recommend this format. Modern `if` is more concise, easier to understand, and supports more complex logical expressions.
 :::
 
 Example:

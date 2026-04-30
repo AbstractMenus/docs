@@ -144,3 +144,38 @@ substring
 substitutions
 intermediates
 intermediates
+
+# Project author / proper nouns
+Nanit
+Nashorn
+Deutsch
+
+# AbstractMenus-specific HOCON keys / placeholders
+hanim
+mrules
+vart
+varpt
+itemstack
+actionbar
+classloader
+Cheatsheet
+Cooldown
+cooldown
+cooldowns
+Frontmatter
+
+# Common technical English not in default dict
+interactable
+pickable
+respawn
+respawning
+laggy
+topo
+
+# British English (project preference)
+behaviour
+colour
+recognised
+customisation
+customises
+organisation

@@ -243,7 +243,7 @@ You can use other types of inventory, not only chest. For this use the `type` pr
 If you use custom inventory type, you can omit a `slot` property.
 
 :::caution
-Not every type of invenotry will work. A `HOPPER` and `DISPENSER` types will work on all supported MC versions. Other types may work incorrectly.
+Not every inventory type works. `HOPPER` and `DISPENSER` types work on all supported MC versions. Other types may work incorrectly.
 :::
 
 Below is example of menu with custom inventory type.
@@ -312,7 +312,7 @@ Inside `props` block you can specify one or multiple [item properties](/docs/en/
 Inside `rules` block you can specify any rules, like in any other `rules` block.
 
 :::note
-Item must have a default [material installer](/docs/en/general/item-format/). If you use bindings with material installer property, you just owerwrite it.
+Item must have a default [material installer](/docs/en/general/item-format/). If you use bindings with a material installer property, you just overwrite it.
 :::
 
 :::caution
@@ -350,5 +350,5 @@ items: [
 Here, we changed `bindings` block to list and added new binding. Now, if player has `group.vip` permission, then new lore will be applied to item.
 
 :::note
-Inside one item, a similar properties in different bindings will be owerwritten by last one. For example, if you use two `material` properties for two item bindings, then only last material will be applied (if player matches both).
+Inside one item, similar properties in different bindings get overwritten by the last one. For example, if you use two `material` properties across two bindings, only the last material applies (if the player matches both).
 :::
