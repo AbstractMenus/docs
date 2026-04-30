@@ -1,0 +1,85 @@
+/* AbstractMenus brand palette layered on top of Starlight defaults.
+   Source brand colour: #F05454 (kept from the old RTD theme). */
+
+:root {
+  --sl-color-accent-low: #5a1a1a;
+  --sl-color-accent: #f05454;
+  --sl-color-accent-high: #ffd1d1;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #ffd1d1;
+  --sl-color-accent: #d63b3b;
+  --sl-color-accent-high: #5a1a1a;
+}
+
+/* Header tint matches the original red header bar. */
+header.header {
+  border-bottom: 1px solid color-mix(in srgb, #f05454 30%, transparent);
+}
+
+/* Layout: give code-heavy docs more room.
+   Default --sl-content-width is 45rem (720px). The right "On this page"
+   column is computed as the remainder, so widening content automatically
+   narrows the TOC. */
+:root {
+  --sl-content-width: 56rem;
+}
+
+/* On viewports between 1152px (Starlight's TOC breakpoint) and 1280px
+   the wider content + TOC starts to crowd. Tighten the TOC there. */
+@media (min-width: 72rem) and (max-width: 80rem) {
+  .right-sidebar-container {
+    width: 14rem !important;
+  }
+}
+
+/* Theme picker: Starlight hardcodes width 6.25em on the <select>, which
+   truncates longer localised labels (e.g. ru "Светлая"). Let it size to
+   its widest option instead, with a min-width as a floor so it doesn't
+   shrink below the English layout. */
+starlight-theme-select select {
+  width: auto !important;
+  min-width: 6.25em;
+}
+
+/* Audience tags. Sit right under the page title so the reader can tell
+   in a glance whether the page is meant for them. Three roles:
+     - operator    (server admin, runs /am addons, edits config.conf)
+     - author      (menu author, writes HOCON menus)
+     - developer   (Java developer, writes addons against the API) */
+.audience-tags {
+  margin: -0.25rem 0 1.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-family: var(--sl-font-system, ui-sans-serif);
+}
+.audience-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  line-height: 1.5;
+}
+.audience-operator {
+  background: color-mix(in srgb, #16a34a 14%, transparent);
+  color: color-mix(in srgb, #16a34a 95%, white);
+  border-color: color-mix(in srgb, #16a34a 30%, transparent);
+}
+.audience-author {
+  background: color-mix(in srgb, #2563eb 14%, transparent);
+  color: color-mix(in srgb, #2563eb 95%, white);
+  border-color: color-mix(in srgb, #2563eb 30%, transparent);
+}
+.audience-developer {
+  background: color-mix(in srgb, #9333ea 14%, transparent);
+  color: color-mix(in srgb, #9333ea 95%, white);
+  border-color: color-mix(in srgb, #9333ea 30%, transparent);
+}
+:root[data-theme="light"] .audience-operator  { color: #14532d; }
+:root[data-theme="light"] .audience-author    { color: #1e3a8a; }
+:root[data-theme="light"] .audience-developer { color: #581c87; }

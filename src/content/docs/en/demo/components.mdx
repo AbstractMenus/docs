@@ -1,0 +1,393 @@
+---
+title: Components demo
+description: Side-by-side comparison of plain Markdown vs Starlight components and Expressive Code features.
+---
+
+import { Tabs, TabItem, Steps, FileTree, Badge, LinkCard, CardGrid, Aside } from "@astrojs/starlight/components";
+
+This page shows each enhancement twice: the **plain Markdown version first**, then the **enhanced version**. Same content, different rendering.
+
+---
+
+## 1. Tabs
+
+### Before (plain)
+
+For Maven, add this:
+
+```xml
+<repositories>
+  <repository>
+    <id>jitpack</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+<dependencies>
+  <dependency>
+    <groupId>com.github.AbstractMenus</groupId>
+    <artifactId>api</artifactId>
+    <version>1.16</version>
+    <scope>provided</scope>
+  </dependency>
+</dependencies>
+```
+
+For Gradle (Groovy):
+
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+dependencies {
+    compileOnly 'com.github.AbstractMenus:api:1.16'
+}
+```
+
+For Gradle (Kotlin):
+
+```kotlin
+repositories {
+    maven("https://jitpack.io")
+}
+dependencies {
+    compileOnly("com.github.AbstractMenus:api:1.16")
+}
+```
+
+### After (`<Tabs>`)
+
+<Tabs syncKey="build-tool">
+  <TabItem label="Maven" icon="seti:maven">
+    ```xml
+    <repositories>
+      <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io</url>
+      </repository>
+    </repositories>
+    <dependencies>
+      <dependency>
+        <groupId>com.github.AbstractMenus</groupId>
+        <artifactId>api</artifactId>
+        <version>1.16</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+    ```
+  </TabItem>
+  <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+    ```groovy
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        compileOnly 'com.github.AbstractMenus:api:1.16'
+    }
+    ```
+  </TabItem>
+  <TabItem label="Gradle (Kotlin)" icon="seti:gradle">
+    ```kotlin
+    repositories {
+        maven("https://jitpack.io")
+    }
+    dependencies {
+        compileOnly("com.github.AbstractMenus:api:1.16")
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+`syncKey` keeps every Tabs group on the page in sync, so picking "Gradle (Kotlin)" once updates all later snippets that use the same key.
+
+---
+
+## 2. Steps
+
+### Before (plain)
+
+1. Create a `.conf` file inside `plugins/AbstractMenus/menus/`.
+2. Add a `title` and `size` to the file.
+3. Add an `activators` block to declare what opens the menu.
+4. Run `/am reload` on the server.
+
+### After (`<Steps>`)
+
+<Steps>
+
+1. Create a `.conf` file inside `plugins/AbstractMenus/menus/`.
+
+2. Add a `title` and `size` to the file:
+
+   ```hocon
+   title: "My first menu"
+   size: 6
+   ```
+
+3. Add an `activators` block to declare what opens the menu:
+
+   ```hocon
+   activators {
+     command: "mymenu"
+   }
+   ```
+
+4. Run `/am reload` on the server, then `/mymenu` in chat.
+
+</Steps>
+
+The vertical line and numbered circles make it obvious where one step ends and the next begins. Steps can contain whole code blocks and multiple paragraphs.
+
+---
+
+## 3. FileTree
+
+### Before (plain)
+
+Plugin folder layout:
+
+```
+plugins/AbstractMenus/
+  config.conf
+  menus/
+    main.conf
+    shop.conf
+    casino/
+      blackjack.conf
+      slots.conf
+  variables.db
+```
+
+### After (`<FileTree>`)
+
+<FileTree>
+
+- plugins/AbstractMenus
+  - config.conf the global plugin config
+  - menus
+    - main.conf
+    - shop.conf
+    - casino
+      - blackjack.conf
+      - slots.conf
+  - variables.db **SQLite, do not edit by hand**
+
+</FileTree>
+
+Inline annotations land in the right column, folders collapse on hover, and the icons come from the file extension automatically.
+
+---
+
+## 4. Badge
+
+### Before (plain)
+
+`takeMoney` action *(since 1.16, requires Vault)* - removes money from the player's balance.
+
+### After (`<Badge>`)
+
+`takeMoney` <Badge text="since 1.16" variant="note" /> <Badge text="requires Vault" variant="caution" /> - removes money from the player's balance.
+
+Variants: `note`, `tip`, `caution`, `danger`, `success`. They line up cleanly next to headings and inline references.
+
+### Inline next to a heading
+
+#### `openMenu` action <Badge text="core" variant="success" />
+
+Opens another menu, optionally for a different player.
+
+---
+
+## 5. LinkCard / CardGrid
+
+### Before (plain)
+
+See also:
+- [Activators reference](/docs/en/general/activators/)
+- [Rules reference](/docs/en/general/rules/)
+- [Item format](/docs/en/general/item-format/)
+
+### After (`<LinkCard>` grid)
+
+<CardGrid>
+  <LinkCard
+    title="Activators"
+    href="/docs/en/general/activators/"
+    description="What opens a menu - commands, item interactions, region enters, NPC clicks."
+  />
+  <LinkCard
+    title="Rules"
+    href="/docs/en/general/rules/"
+    description="Conditions checked before a menu opens, an item shows, or an action runs."
+  />
+  <LinkCard
+    title="Item format"
+    href="/docs/en/general/item-format/"
+    description="Every property an item can carry, with HOCON examples."
+  />
+</CardGrid>
+
+---
+
+## 6. Aside variants
+
+<Aside type="note">
+  Default note. Good for additional context.
+</Aside>
+
+<Aside type="tip" title="Pro tip">
+  Tip with a custom title.
+</Aside>
+
+<Aside type="caution">
+  Caution. Use for things that frequently surprise users.
+</Aside>
+
+<Aside type="danger">
+  Danger. Reserved for things that break the server or corrupt data if ignored.
+</Aside>
+
+The `:::note` shorthand from regular Markdown maps to the same component, so existing pages keep working.
+
+---
+
+## 7. Code block enhancements (Expressive Code)
+
+### Line highlighting
+
+Highlight specific lines by listing them after the language tag:
+
+````md
+```hocon {2,4-6}
+title: "Shop"
+size: 3
+items: [
+  {
+    slot: 0
+    material: DIAMOND
+  }
+]
+```
+````
+
+```hocon {2,4-6}
+title: "Shop"
+size: 3
+items: [
+  {
+    slot: 0
+    material: DIAMOND
+  }
+]
+```
+
+### Diff markers
+
+Use `del` and `ins` markers to show before/after inside one block:
+
+````md
+```hocon
+title: "My menu"
+size: 6
+activators {
+- command: "menu"
++ command: "mymenu"
+}
+```
+````
+
+```diff lang="hocon"
+  title: "My menu"
+  size: 6
+  activators {
+-   command: "menu"
++   command: "mymenu"
+  }
+```
+
+### Filename + frame
+
+````md
+```hocon title="plugins/AbstractMenus/menus/main.conf"
+title: "Main menu"
+size: 6
+```
+````
+
+```hocon title="plugins/AbstractMenus/menus/main.conf"
+title: "Main menu"
+size: 6
+```
+
+### "ins/del" word-level
+
+Mark `mark`, `ins`, `del` keywords highlight individual tokens, not just lines:
+
+````md
+```hocon "DIAMOND_SWORD" del="material:" ins="type:"
+{
+  slot: 0
+  material: DIAMOND_SWORD
+  name: "Excalibur"
+}
+```
+````
+
+```hocon "DIAMOND_SWORD" del="material:" ins="type:"
+{
+  slot: 0
+  material: DIAMOND_SWORD
+  name: "Excalibur"
+}
+```
+
+---
+
+## 8. Combined: a real tutorial section
+
+Putting Steps + Tabs + line markers together looks like this:
+
+<Steps>
+
+1. **Add the API to your build**
+
+   <Tabs syncKey="build-tool">
+     <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+       ```groovy
+       repositories {
+           maven { url 'https://jitpack.io' }
+       }
+       dependencies {
+           compileOnly 'com.github.AbstractMenus:api:1.16'
+       }
+       ```
+     </TabItem>
+     <TabItem label="Maven" icon="seti:maven">
+       ```xml
+       <dependency>
+         <groupId>com.github.AbstractMenus</groupId>
+         <artifactId>api</artifactId>
+         <version>1.16</version>
+         <scope>provided</scope>
+       </dependency>
+       ```
+     </TabItem>
+   </Tabs>
+
+2. **Declare AbstractMenus as a soft dep in `plugin.yml`**
+
+   ```yaml title="plugin.yml" {3-4}
+   name: MyPlugin
+   version: 1.0.0
+   depend:
+     - AbstractMenus
+   ```
+
+3. **Get the plugin instance**
+
+   ```java title="src/main/java/com/example/MyPlugin.java"
+   AbstractMenusPlugin plugin = AbstractMenusProvider.get();
+   ```
+
+</Steps>
+
+Compare with the same flow on [`/docs/en/developers/general/`](/docs/en/developers/general/) which uses none of these components - much denser, harder to scan.

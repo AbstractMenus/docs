@@ -1,0 +1,76 @@
+---
+title: Variables API
+description: Read and write player and global variables programmatically.
+---
+
+<div class="audience-tags"><span class="audience-tag audience-developer">Addon developer</span></div>
+
+:::caution[Alpha API]
+AbstractMenus 2.0 is in alpha. The API surface may change before the stable release. Pin a specific `compileOnly` version in your build to avoid breaking on a fresh fetch.
+:::
+
+:::note
+In many examples we don't follow strict Java conventions to keep the code short. We're showing how the API works, not how to write production code.
+:::
+
+AbstractMenus has a small CRUD API for the same variables menu authors edit through `/var` and `/varp`. Javadocs: [api/variables](https://github.com/AbstractMenus/minecraft-plugin/tree/master/api/src/main/java/ru/abstractmenus/api/variables).
+
+## `Var`
+
+[`Var`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/variables/Var.java) is the variable record. Values are stored as strings; `Var` has typed accessors that parse on read (and may throw if the stored string isn't a valid number).
+
+Lifetimes are UTC milliseconds — compare `expiry()` to `System.currentTimeMillis()` to check whether a value is still alive. `expiry() == 0` means "no expiry".
+
+## `VariableManager`
+
+[`VariableManager`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/variables/VariableManager.java) is the CRUD entry point. Get one from the API:
+
+```java
+AbstractMenusApi api = AbstractMenusApi.get();
+VariableManager vars = api.variables();
+```
+
+Variable names and player names passed to the manager are case-insensitive — you don't need to lowercase them yourself.
+
+## Create a variable
+
+```java
+Var var = api.variables().createBuilder()
+        .name("welcome_message")
+        .value("Hello!")
+        .expiry(System.currentTimeMillis() + 10_000) // expires in 10 seconds
+        .build();
+
+api.variables().saveGlobal(var);
+```
+
+For per-player variables, use `savePersonal(playerName, var)`.
+
+`expiry(0)` (or omitting the call) creates a permanent variable.
+
+## Read and delete
+
+```java
+Var welcome = api.variables().getGlobal("welcome_message");
+Var claimed = api.variables().getPersonal(player.getName(), "dailyReward");
+
+api.variables().deleteGlobal("welcome_message");
+api.variables().deletePersonal(player.getName(), "dailyReward");
+```
+
+`getGlobal` / `getPersonal` return `null` if the variable does not exist or has expired and been swept. Names and player names are matched case-insensitively.
+
+## Var accessors
+
+`Var` stores values as strings, but exposes typed accessors that parse on read:
+
+```java
+Var counter = vars.getPersonal(player.getName(), "kills");
+int kills   = counter.intValue();    // throws if value is not an int
+long ts     = counter.longValue();
+boolean on  = counter.boolValue();
+double pct  = counter.doubleValue();
+float rate  = counter.floatValue();
+```
+
+Use `Var#hasExpiry()` / `Var#isExpired()` to check temporary variables, and `Var#toBuilder()` to derive a new variable from an existing one (e.g. extending the expiry).

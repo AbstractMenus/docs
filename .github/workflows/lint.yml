@@ -1,0 +1,35 @@
+name: Lint docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  spell:
+    name: cspell
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: streetsidesoftware/cspell-action@v6
+        with:
+          files: |
+            src/content/**/*.{md,mdx}
+            README.md
+          inline: warning
+          incremental_files_only: false
+
+  markdown:
+    name: markdownlint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: |
+            src/content/**/*.{md,mdx}
+            README.md

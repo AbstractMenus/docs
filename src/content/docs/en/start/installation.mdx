@@ -1,0 +1,67 @@
+---
+title: Installation
+description: Drop the jar in, configure config.conf if you need to, and you're done.
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-operator">Operator</span></div>
+
+## Requirements
+
+- Paper or Folia, Minecraft **1.20.6 or newer** (1.21.x recommended)
+- **Java 21**
+
+AbstractMenus does not bundle Adventure — it relies on the copy Paper ships. Plain Spigot will not work.
+
+## Install
+
+<Steps>
+
+1. Download `AbstractMenus-<version>.jar` from the [releases page](https://github.com/AbstractMenus/minecraft-plugin/releases).
+
+2. Drop it into your server's `plugins/` folder.
+
+3. Start the server. AbstractMenus creates these files on first run:
+
+   ```text
+   plugins/AbstractMenus/
+     ├── config.conf            main configuration
+     ├── animated_heads.conf    head animation definitions
+     ├── menus/                 your menu files (one or more .conf)
+     │   └── menu.conf          a starter menu
+     ├── addons/                Path 2 addon jars (optional)
+     └── variables.db           SQLite store for /var and /varp
+   ```
+
+4. Run `/am addons list`. You should see `AbstractMenus-Core` tagged `[built-in]`. That's the plugin registering its own bundled types through the same SPI external addons use — sanity check passed.
+
+</Steps>
+
+## Configuring
+
+`plugins/AbstractMenus/config.conf` holds every server-wide setting — provider defaults, click debounce floors, MiniMessage opt-in, BungeeCord, time formatting. Full key-by-key reference: [config.conf reference](/docs/en/start/config/).
+
+After editing, run `/am reload`.
+
+## First-run files
+
+| File | What it is |
+|---|---|
+| `config.conf` | The keys above. Edit, then `/am reload`. |
+| `animated_heads.conf` | Reusable head animation definitions referenced through the `%hanim_:<name>:<id>%` placeholder (see [placeholders](/docs/en/general/placeholders/)). |
+| `menus/menu.conf` | One sample menu opened by `/am open menu`. Delete it once you have your own menus. |
+| `variables.db` | SQLite. Don't edit manually. |
+| `addons/` | Drop Path 2 [addon jars](/docs/en/developers/addons/) here. |
+
+## Updating
+
+Replace the jar and restart. Menu files and `config.conf` are preserved across upgrades. Migration notes for breaking releases land in the [changelog](/changelog/).
+
+## Uninstalling
+
+Remove the jar from `plugins/`. To wipe state too, delete the `plugins/AbstractMenus/` folder.
+
+<Aside type="caution">
+Don't delete `variables.db` if you've got per-player state your players care about — the file is the only copy.
+</Aside>

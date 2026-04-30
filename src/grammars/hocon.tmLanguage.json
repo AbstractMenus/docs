@@ -1,0 +1,117 @@
+{
+  "name": "hocon",
+  "displayName": "HOCON",
+  "aliases": ["conf"],
+  "scopeName": "source.hocon",
+  "fileTypes": ["conf", "hocon"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#include" },
+    { "include": "#substitution" },
+    { "include": "#multiline-string" },
+    { "include": "#string" },
+    { "include": "#key" },
+    { "include": "#operator" },
+    { "include": "#constant" },
+    { "include": "#number" },
+    { "include": "#duration" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        { "name": "comment.line.double-slash.hocon", "match": "//.*$" },
+        { "name": "comment.line.number-sign.hocon", "match": "#.*$" }
+      ]
+    },
+    "include": {
+      "name": "meta.include.hocon",
+      "begin": "\\b(include)\\b",
+      "end": "$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.include.hocon" }
+      },
+      "patterns": [
+        {
+          "match": "\\b(url|file|classpath|required)\\b",
+          "name": "support.function.include.hocon"
+        },
+        { "include": "#string" },
+        { "include": "#punctuation" }
+      ]
+    },
+    "substitution": {
+      "name": "variable.other.substitution.hocon",
+      "begin": "\\$\\{\\??",
+      "end": "\\}",
+      "beginCaptures": { "0": { "name": "punctuation.definition.template-expression.begin.hocon" } },
+      "endCaptures":   { "0": { "name": "punctuation.definition.template-expression.end.hocon" } },
+      "patterns": [
+        { "match": "[\\w\\-\\.]+", "name": "variable.other.hocon" }
+      ]
+    },
+    "multiline-string": {
+      "name": "string.quoted.triple.hocon",
+      "begin": "\"\"\"",
+      "end": "\"\"\"",
+      "patterns": [
+        { "include": "#substitution" }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.double.hocon",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.hocon",
+          "match": "\\\\(?:[\"\\\\/bfnrt]|u[0-9A-Fa-f]{4})"
+        },
+        { "include": "#substitution" },
+        {
+          "name": "invalid.illegal.unrecognized-string-escape.hocon",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "key": {
+      "match": "([A-Za-z_][\\w\\-\\.]*)\\s*(?=[:={]|\\+=)",
+      "captures": {
+        "1": { "name": "support.type.property-name.hocon" }
+      }
+    },
+    "operator": {
+      "name": "keyword.operator.assignment.hocon",
+      "match": "(\\+=|=|:)"
+    },
+    "constant": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.hocon",
+          "match": "\\b(true|false|yes|no|on|off)\\b"
+        },
+        {
+          "name": "constant.language.null.hocon",
+          "match": "\\b(null)\\b"
+        }
+      ]
+    },
+    "number": {
+      "name": "constant.numeric.hocon",
+      "match": "-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"
+    },
+    "duration": {
+      "name": "constant.numeric.duration.hocon",
+      "match": "-?\\d+(?:\\.\\d+)?\\s*(ns|us|ms|s|m|h|d|nanoseconds?|microseconds?|milliseconds?|seconds?|minutes?|hours?|days?|bytes?|kilobytes?|megabytes?|gigabytes?|terabytes?|kB|MB|GB|TB|KiB|MiB|GiB|TiB)\\b"
+    },
+    "punctuation": {
+      "patterns": [
+        { "name": "punctuation.section.block.begin.hocon", "match": "\\{" },
+        { "name": "punctuation.section.block.end.hocon",   "match": "\\}" },
+        { "name": "punctuation.section.array.begin.hocon", "match": "\\[" },
+        { "name": "punctuation.section.array.end.hocon",   "match": "\\]" },
+        { "name": "punctuation.separator.comma.hocon",     "match": "," }
+      ]
+    }
+  }
+}

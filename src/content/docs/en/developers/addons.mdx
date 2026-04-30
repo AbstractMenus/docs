@@ -1,0 +1,229 @@
+---
+title: Addon delivery
+description: Two paths for shipping an AbstractMenus addon — plugin-as-addon, or AM-loaded jar — and the lifecycle hooks both share.
+---
+
+import { Aside, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-developer">Addon developer</span></div>
+
+<Aside type="caution" title="Alpha API">
+AbstractMenus 2.0 is in alpha. The API surface may change before the stable release. Pin a specific `compileOnly` version in your build to avoid breaking on a fresh fetch.
+</Aside>
+
+An addon is anything that registers types or providers against AbstractMenus. The plugin's own built-in actions, rules, etc. register through the same SPI an external addon uses — there's no privileged path for first-party content.
+
+There are two delivery formats. Pick the one that fits your situation.
+
+| | Path 1 — plugin-as-addon | Path 2 — AM-loaded addon |
+|---|---|---|
+| Jar drops into | `plugins/` | `plugins/AbstractMenus/addons/` |
+| Loaded by | Bukkit | AbstractMenus |
+| Manifest | `plugin.yml` | `addon.conf` (HOCON) |
+| Main class extends | `JavaPlugin` + `MenuExtension` | `MenuExtension` only (no-arg ctor) |
+| Visible in `/plugins` | Yes | No |
+| Visible in `/am addons list` | Yes (tagged `[as-plugin]`) | Yes |
+| Reload at runtime | `/reload` (whole server) | `/am addons reload <name>` |
+| Per-jar classloader | No (Bukkit shares) | Yes (isolated, child-first) |
+| Cross-plugin dependency order | Bukkit's `depend:` graph | `pluginDependencies:` in addon.conf |
+
+**Pick Path 1** when your addon is also a real Bukkit plugin: registers Bukkit listeners, owns commands, exposes its own API for other plugins, or needs Bukkit's `depend:` for hard ordering against another plugin.
+
+**Pick Path 2** when your addon is purely an AM extension (a provider bridge, a custom action type, a custom rule). You get hot reload, classloader isolation, and a cleaner namespace.
+
+For a pure provider bridge, both work. The reference [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon) ships both branches side by side as comparison material.
+
+## MenuExtension lifecycle
+
+Both paths implement [`MenuExtension`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/MenuExtension.java). It has three lifecycle hooks plus three metadata methods.
+
+```java
+public interface MenuExtension {
+    default void onLoad(AbstractMenusApi api)    {}
+    void onEnable(AbstractMenusApi api);
+    default void onDisable(AbstractMenusApi api) {}
+
+    default String name()             { return getClass().getSimpleName(); }
+    default String version()          { return "unknown"; }
+    default String targetApiVersion() { return null; }
+}
+```
+
+- **`onLoad`** runs for every loaded extension *before* any extension's `onEnable`. Use it for ordering-independent setup. Do not register types here — other extensions may not be loaded yet.
+- **`onEnable`** runs in dependency order. Register types and providers here.
+- **`onDisable`** runs on server shutdown or `/am addons reload`. Type and provider registrations are cleaned up automatically by AbstractMenus — you only need to clean up things AbstractMenus can't see (Bukkit listeners, scheduler tasks, JDBC connections, files, threads).
+
+All three hooks run on the main server thread.
+
+<a id="path-1"></a>
+
+## Path 1 — plugin-as-addon
+
+Make your `JavaPlugin` also implement `MenuExtension`. Bukkit calls your plugin's own `onEnable`; you forward to the SPI hook from there.
+
+```java title="MyAddon.java"
+package com.example.myaddon;
+
+import org.bukkit.plugin.java.JavaPlugin;
+import ru.abstractmenus.api.AbstractMenusApi;
+import ru.abstractmenus.api.MenuExtension;
+
+public final class MyAddon extends JavaPlugin implements MenuExtension {
+
+    @Override
+    public void onEnable() {
+        AbstractMenusApi api = AbstractMenusApi.get();
+        if (api == null) {
+            getLogger().severe("AbstractMenus API not available — disabling.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        onEnable(api);
+    }
+
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+        // ... register the rest of your types and providers
+    }
+
+    @Override
+    public String name()    { return "MyAddon"; }
+
+    @Override
+    public String version() { return getPluginMeta().getVersion(); }
+}
+```
+
+```yaml title="plugin.yml"
+name: MyAddon
+version: 1.0.0
+main: com.example.myaddon.MyAddon
+api-version: '1.21'
+depend:
+  - AbstractMenus
+```
+
+`depend: [AbstractMenus]` is what guarantees AbstractMenus is enabled before your `onEnable` runs. Add other plugins (`PlayerPoints`, `WorldGuard`, etc.) to the same list if your registration logic touches their APIs at startup.
+
+<a id="path-2"></a>
+
+## Path 2 — AM-loaded addon
+
+Implement `MenuExtension` directly. No `JavaPlugin`, no `plugin.yml`. Ship the jar with an `addon.conf` at its root.
+
+```java title="MyAddon.java"
+package com.example.myaddon;
+
+import ru.abstractmenus.api.AbstractMenusApi;
+import ru.abstractmenus.api.MenuExtension;
+
+public final class MyAddon implements MenuExtension {
+
+    public MyAddon() {
+        // Required no-arg constructor. AbstractMenus instantiates the
+        // class reflectively after the addon.conf parse succeeds.
+    }
+
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+    }
+
+    @Override
+    public String name()    { return "MyAddon"; }
+
+    @Override
+    public String version() { return "1.0.0"; }
+}
+```
+
+```hocon title="addon.conf"
+name             = "MyAddon"
+version          = "1.0.0"
+main             = "com.example.myaddon.MyAddon"
+authors          = ["yourname"]
+description      = "Adds a custom action type to AbstractMenus."
+targetApiVersion = "2.0.0"
+
+# Names of other AM-loaded addons that must enable before this one.
+# AbstractMenus topo-sorts the dependency graph and reports cycles.
+addonDependencies = []
+
+# Bukkit plugins that must be present and enabled. AbstractMenus skips
+# the addon (with a warning) if any of these are missing.
+pluginDependencies = []
+
+# Bukkit plugins this addon optionally integrates with. Missing soft
+# deps log a notice but don't block the addon.
+pluginSoftDependencies = []
+```
+
+Drop the resulting jar into `plugins/AbstractMenus/addons/`. AbstractMenus picks it up on startup, or via `/am addons rescan` at runtime.
+
+### addon.conf field reference
+
+| Field | Required | Type | Notes |
+|---|---|---|---|
+| `name` | Yes | string | Display name. Shown in `/am addons list`. Must be unique across all loaded addons. |
+| `version` | Yes | string | Free-form version string. |
+| `main` | Yes | string | Fully-qualified class name. Must implement `MenuExtension` and have a no-arg constructor. |
+| `authors` | No | string\[\] or string | Empty list if absent. |
+| `description` | No | string | Empty if absent. |
+| `targetApiVersion` | No | string | Diagnostic only. Logged on enable, shown in `/am addons info`. |
+| `addonDependencies` | No | string\[\] or string | Other AM-loaded addon names. Sorted into enable order via DAG. |
+| `pluginDependencies` | No | string\[\] or string | Bukkit plugin names. Hard-required. |
+| `pluginSoftDependencies` | No | string\[\] or string | Bukkit plugin names. Optional. |
+
+Both list-typed fields accept either a HOCON list or a single string (auto-wrapped).
+
+## Dependency resolution
+
+When AbstractMenus loads addons:
+
+1. Every jar in `plugins/AbstractMenus/addons/` is opened. `addon.conf` is parsed and validated. Bad addons log a warning and are skipped.
+2. Each addon's `pluginDependencies` are checked. Missing hard deps mark the addon FAILED in the loaded set so operators see it in `/am addons list`. Soft deps log a notice.
+3. The `addonDependencies` graph is topo-sorted. Cycles fail the whole batch with a clear error. Addons with unsatisfied deps are flagged individually (transitive failures included — A → B → missing C marks both A and B failed).
+4. Stage 1: every addon's `onLoad` runs.
+5. Stage 2: every addon's `onEnable` runs in dependency order.
+6. AbstractMenus parses menus. Your registered types are now resolvable from HOCON.
+
+If `onEnable` throws, AbstractMenus rolls back any registrations the addon managed to make and marks the addon FAILED. The rest of the addons continue.
+
+## Owner-based cleanup
+
+Every `register(...)` call takes the `MenuExtension` instance as the last parameter:
+
+```java
+api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+//                                                                            ^^^^
+//                                                                            owner
+```
+
+When the owning addon disables, AbstractMenus drops every type and provider registered under that owner. You don't (and can't) call `unregisterAll` from your addon — the public API doesn't expose it, so one addon can't wipe another's registrations.
+
+For Path 1 plugins, "disable" means `onDisable` from `JavaPlugin`. Note that AbstractMenus's auto-cleanup only fires for addons it's tracking through its `AddonManager`, which means Path 2. For Path 1, your registration sits in AbstractMenus's owner-tracking map until AbstractMenus itself shuts down. That's harmless: the next `onEnable` overwrites the existing entry under the same id.
+
+## /am addons command tree
+
+Operators manage AM-loaded addons through `/am addons`:
+
+```text
+/am addons list                    List every loaded addon (Path 1, Path 2, built-in)
+/am addons info <name>             Full metadata: status, version, deps, error
+/am addons load <name>             Load a Path 2 jar that's in addons/ but not yet loaded
+/am addons reload <name>           Disable, rebuild classloader, re-enable a Path 2 addon
+/am addons rescan                  Scan addons/ for new jars and load any not yet loaded
+```
+
+`reload` and `load` are Path 2 only (they need a jar in `addons/`). `info` works for all three kinds.
+
+## Reference implementation
+
+[PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon) is a small reference addon that registers PlayerPoints as an economy provider. The repo has three branches:
+
+- [`master`](https://github.com/AbstractMenus/PlayerPointsAddon/tree/master) — README only, comparison overview.
+- [`as-plugin`](https://github.com/AbstractMenus/PlayerPointsAddon/tree/as-plugin) — Path 1 implementation.
+- [`as-addon`](https://github.com/AbstractMenus/PlayerPointsAddon/tree/as-addon) — Path 2 implementation.
+
+Both functional branches register the same provider through the same SPI; the diff between them is mostly the lifecycle plumbing.
