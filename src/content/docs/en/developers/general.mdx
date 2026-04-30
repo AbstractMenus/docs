@@ -17,14 +17,14 @@ There are two ways to deliver an addon. Pick one:
 
 <CardGrid>
   <LinkCard
-    title="Path 1 — plugin-as-addon"
+    title="Path 1 — AM-loaded addon"
     href="/docs/en/developers/addons/#path-1"
-    description="A standard Bukkit plugin. Drops into plugins/, loaded by Bukkit."
+    description="A jar with addon.conf. Drops into plugins/AbstractMenus/addons/, loaded by AbstractMenus."
   />
   <LinkCard
-    title="Path 2 — AM-loaded addon"
+    title="Path 2 — plugin-as-addon"
     href="/docs/en/developers/addons/#path-2"
-    description="A jar with addon.conf. Drops into plugins/AbstractMenus/addons/, loaded by AbstractMenus."
+    description="A standard Bukkit plugin. Drops into plugins/, loaded by Bukkit."
   />
 </CardGrid>
 
@@ -88,9 +88,9 @@ The artifactId is `minecraft-plugin` (the repo name). JitPack publishes multi-mo
 The API depends on Adventure (`net.kyori.adventure.text.*`). Paper bundles Adventure, so on Paper the dependency is satisfied automatically. On plain Spigot you'll need to shade or include Adventure yourself.
 </Aside>
 
-## Declare the dependency in plugin.yml (Path 1 only)
+## Declare the dependency in plugin.yml (Path 2 only)
 
-Path 1 plugin-as-addons declare AbstractMenus as a hard dependency so Bukkit guarantees ordering — your `onEnable` runs after AbstractMenus is up.
+Path 2 plugin-as-addons declare AbstractMenus as a hard dependency so Bukkit guarantees ordering — your `onEnable` runs after AbstractMenus is up.
 
 ```yaml title="plugin.yml" ins={3-4}
 name: MyAddon
@@ -101,7 +101,7 @@ depend:
 
 Use `softdepend:` if your plugin should still load when AbstractMenus is missing — then guard API calls with `Bukkit.getPluginManager().getPlugin("AbstractMenus") != null`.
 
-Path 2 addons don't have a `plugin.yml`. They use `addon.conf` instead, with a `pluginDependencies` field. See the [addons page](/docs/en/developers/addons/).
+Path 1 addons don't have a `plugin.yml`. They use `addon.conf` instead, with a `pluginDependencies` field. See the [addons page](/docs/en/developers/addons/).
 
 ## Get the API instance
 
@@ -115,7 +115,7 @@ AbstractMenusApi api = AbstractMenusApi.get();
 
 It returns `null` if AbstractMenus has not enabled yet. With `depend: [AbstractMenus]` declared, your `onEnable` will always see a non-null result.
 
-For Path 2 addons, you don't call `get()` at all — the API is passed as a parameter to the lifecycle methods:
+For Path 1 addons, you don't call `get()` at all — the API is passed as a parameter to the lifecycle methods:
 
 ```java
 public final class MyAddon implements MenuExtension {

@@ -3,7 +3,7 @@ title: Commands
 description: Every command AbstractMenus registers, what it does, and the permissions involved.
 ---
 
-<div class="audience-tags"><span class="audience-tag audience-operator">Operator</span> <span class="audience-tag audience-author">Menu author</span></div>
+<div class="audience-tags"><span class="audience-tag audience-operator">Server admin</span> <span class="audience-tag audience-author">Menu author</span></div>
 
 All AbstractMenus commands are gated behind `am.admin`. Op players have it implicitly; for staff without op, grant it through your permissions plugin.
 
@@ -21,17 +21,17 @@ The plugin's main command. Subcommands:
 
 ### /am addons
 
-Manage addons — both Path 1 plugin-as-addons and Path 2 AM-loaded jars.
+Manage addons — both regular addons (jars in `plugins/AbstractMenus/addons/`) and plugin-as-addons.
 
 | Subcommand | What it does |
 |---|---|
-| `/am addons list` | List every loaded addon. Path 1 entries are tagged `[as-plugin]`, the built-in core is `[built-in]`, Path 2 has no tag. |
-| `/am addons info <name>` | Full metadata: status, version, authors, description, dependencies. For Path 1 it surfaces the Bukkit `plugin.yml` description; for Path 2 it surfaces `addon.conf`. |
-| `/am addons load <name>` | Load a Path 2 addon that's in `plugins/AbstractMenus/addons/` but not yet loaded. Tab-completes available unloaded addons. |
-| `/am addons reload <name>` | Disable, rebuild the classloader, and re-enable a Path 2 addon. Path 1 addons need a server `/reload` instead. |
+| `/am addons list` | List every loaded addon. Regular addons have no tag, plugin-as-addons are tagged `[as-plugin]`, the built-in core is `[built-in]`. |
+| `/am addons info <name>` | Full metadata: status, version, authors, description, dependencies. For a regular addon it surfaces the `addon.conf`; for a plugin-as-addon it surfaces the Bukkit `plugin.yml` description. |
+| `/am addons load <name>` | Load an addon that's in `plugins/AbstractMenus/addons/` but not yet loaded. Tab-completes available unloaded addons. |
+| `/am addons reload <name>` | Disable, rebuild the classloader, and re-enable an addon. Plugin-as-addons can't be hot-reloaded — they need a server `/reload`. |
 | `/am addons rescan` | Scan `addons/` for new jars and load any that aren't loaded yet. |
 
-Tab completion is wired up for `info`, `reload`, and `load`. `info` completes against everything (Path 1 + Path 2 + core); `reload` and `load` complete against the relevant subset.
+Tab completion is wired up for `info`, `reload`, and `load`. `info` completes against everything (including the built-in core); `reload` and `load` complete against the relevant subset.
 
 ## /var
 

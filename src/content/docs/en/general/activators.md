@@ -47,9 +47,27 @@ Many activators, such as `command`, save their state so you can read it from the
 | [table](#activator-table-sign) | Strings list | Open menu when sign with some text clicked |
 | [swapItems](#activator-swapitems) | None | Open menu when player swaps item. By default it's 'F' key |
 
+## Activator context and placeholders
+
+Under each activator below you'll see an **Extractor type** line. That's the name of the `%activator_<key>%` placeholder set you can use in the opened menu to read data about whatever triggered the activator: the item in hand, the region, the NPC, the block, the command arguments.
+
+Usage: drop `%activator_<key>%` into the menu `title`, item `name`/`lore`, rule conditions, action arguments. Find the available keys for each extractor in [Value extractors](/docs/en/general/placeholders/#value-extractors). The **Extractor type** label is a link to that extractor's table.
+
+Example. `clickItem` uses [`extractor-item`](/docs/en/general/placeholders/#item-extractor). A player right-clicks a `DIAMOND` named "Excalibur":
+
+```hocon
+title: "Clicked on %activator_item_type% (%activator_item_display_name%)"
+```
+
+Menu opens with the title `Clicked on DIAMOND (Excalibur)`.
+
+`%activator_name%` is always available too - it returns the activator's own name (`clickItem`, `command`, `regionJoin`...).
+
+Some activators show `*None*` here, which means they don't carry their own context, so `%activator_<key>%` placeholders don't apply (only `%activator_name%` does).
+
 ## Activator `command`
 
-**Extractor type**: `extractor-cmd`
+**Extractor type**: [`extractor-cmd`](/docs/en/general/placeholders/#command-extractor)
 
 Open menu if player entered command. This activator has several formats which described below.
 
@@ -113,7 +131,7 @@ In this example, if player's message contains `hey`, `menu` or `or` symbols toge
 
 ## WorldGuard regions
 
-**Extractor type**: `extractor-region`
+**Extractor type**: [`extractor-region`](/docs/en/general/placeholders/#region-extractor)
 
 These activators require the [WorldGuard](https://dev.bukkit.org/projects/worldguard) plugin and `useWorldGuard: true` in `config.conf`.
 
@@ -145,7 +163,7 @@ In this example, the menu will be opened if you leave from `spawn` or `otherRegi
 
 ## Activator `clickItem`
 
-**Extractor type**: `extractor-item`
+**Extractor type**: [`extractor-item`](/docs/en/general/placeholders/#item-extractor)
 
 You can add activator to open menu when some item clicked by right click in player's hand.
 
@@ -162,7 +180,7 @@ Make sure that you specified all item properties. If some property missing, plug
 
 ## Activator `clickNPC`
 
-**Extractor type**: `extractor-npc`
+**Extractor type**: [`extractor-npc`](/docs/en/general/placeholders/#npc-extractor)
 
 Here listed NPC id which will open the menu when click NPC. Example:
 
@@ -184,12 +202,12 @@ To find NPC id just type `/npc sel` while you looking at NPC. After this enter `
 Open menu by clicking on entity. There are two types of this activator: for simple clicks and clicks with `Shift` key pressed.
 
 :::tip
-All entity types can be found [here](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html).
+All entity types can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html).
 :::
 
 ### Activator `clickEntity`
 
-**Extractor type**: `extractor-entity`
+**Extractor type**: [`extractor-entity`](/docs/en/general/placeholders/#entity-extractor)
 
 The `clickEntity` activator is a [list of objects](/docs/en/start/hocon/). Each object is a simple entity data. Example:
 
@@ -216,7 +234,7 @@ clickEntity: [
 
 Each object have parameters:
 
-- **`type`** - Bukkit's type of the entity.
+- **`type`** - [Bukkit entity type](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html).
 
 - **`name`** - \[Optional\]. Display name of the entity.
 
@@ -224,7 +242,7 @@ In this example we specified `PLAYER` entity and `ZOMBIE` entity with `&eZombie`
 
 ### Activator `shiftClickEntity`
 
-**Extractor type**: `extractor-entity`
+**Extractor type**: [`extractor-entity`](/docs/en/general/placeholders/#entity-extractor)
 
 Same shape as [`clickEntity`](#activator-clickentity) above. The only difference: this one fires only when the player is sneaking (Shift held) at the moment of the click. Example:
 
@@ -254,7 +272,7 @@ Block click activators handles clocking on block (right and left click). THere a
 
 ### Activator `clickBlock`
 
-**Extractor type**: `extractor-block`
+**Extractor type**: [`extractor-block`](/docs/en/general/placeholders/#block-extractor)
 
 In this code block you can specify location of some world's block. If player click on this block, menu will be opened.
 
@@ -292,7 +310,7 @@ clickBlock: [
 
 ### Activator `clickBlockType`
 
-**Extractor type**: `extractor-block`
+**Extractor type**: [`extractor-block`](/docs/en/general/placeholders/#block-extractor)
 
 In this code block you can specify type of some world's block. If player click on block of specified type, menu will be opened. Example:
 
@@ -311,7 +329,7 @@ clickBlockType: [
 
 ## Activators `button`, `lever`, `plate`
 
-**Extractor type**: `extractor-block`
+**Extractor type**: [`extractor-block`](/docs/en/general/placeholders/#block-extractor)
 
 A `button`, `lever` and `plate` activators has same format. Below is example for buttons:
 
@@ -378,5 +396,5 @@ activators {
 ```
 
 :::note
-This activator works only for MC 1.9+
+Only works on MC 1.9+ - that's the version that [introduced the off-hand](https://minecraft.wiki/w/Off-hand) and the `F` key for swapping items between the main hand and the off-hand.
 :::

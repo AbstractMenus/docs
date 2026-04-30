@@ -147,4 +147,4 @@ Method names and signatures are stable across the 2.0 line.
 
 When your addon's `onDisable` runs, AbstractMenus drops every provider you registered automatically. You don't (and can't) call `unregisterAll` yourself — the public `ProviderRegistry` interface deliberately doesn't expose it. One addon can't wipe another's providers.
 
-For Path 1 addons, "disable" means your `JavaPlugin.onDisable`. Note that AbstractMenus's auto-cleanup only fires for addons it's tracking through its `AddonManager`, which means Path 2 only. For Path 1, the registration sits in the owner-tracking map until AbstractMenus itself shuts down. Re-registering under the same id from a fresh `onEnable` overwrites the live entry, so this isn't a leak in practice.
+For Path 1, cleanup is automatic: AbstractMenus tracks the addon through its `AddonManager` and drops the registrations on disable. For Path 2, "disable" means `JavaPlugin.onDisable`, and auto-cleanup doesn't fire — your registration sits in the owner-tracking map until AbstractMenus itself shuts down. Re-registering under the same id from a fresh `onEnable` overwrites the live entry, so this isn't a leak in practice.

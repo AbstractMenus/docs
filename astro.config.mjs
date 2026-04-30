@@ -45,6 +45,7 @@ export default defineConfig({
       sidebar: [
         {
           label: "Getting Started",
+          translations: { ru: "Начало работы" },
           items: [
             { slug: "start/installation" },
             { slug: "start/config" },
@@ -56,6 +57,7 @@ export default defineConfig({
         },
         {
           label: "Authoring menus",
+          translations: { ru: "Создание меню" },
           items: [
             { slug: "general/commands" },
             { slug: "general/menu-structure" },
@@ -70,6 +72,7 @@ export default defineConfig({
         },
         {
           label: "Techniques",
+          translations: { ru: "Приёмы" },
           items: [
             { slug: "advanced/logical" },
             { slug: "advanced/templates" },
@@ -81,6 +84,7 @@ export default defineConfig({
         },
         {
           label: "Reference",
+          translations: { ru: "Справочник" },
           items: [
             { slug: "general/cheatsheet" },
             { slug: "general/examples" },
@@ -88,6 +92,7 @@ export default defineConfig({
         },
         {
           label: "For Developers",
+          translations: { ru: "Для разработчиков" },
           items: [
             { slug: "developers/general" },
             { slug: "developers/addons" },
@@ -100,14 +105,7 @@ export default defineConfig({
           ],
         },
         {
-          label: "Demo",
-          collapsed: true,
-          items: [{ slug: "demo/components" }],
-        },
-        {
-          label: "Changelog",
-          link: "/en/changelog/",
-          translations: { ru: "/ru/changelog/" },
+          slug: "changelog",
           attrs: { "data-changelog-link": "true" },
         },
       ],

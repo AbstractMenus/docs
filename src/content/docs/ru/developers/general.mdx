@@ -1,0 +1,200 @@
+---
+title: С чего начать
+description: Подключи AbstractMenus в свою сборку, объяви зависимость и получи дескриптор API.
+---
+
+import { Steps, Tabs, TabItem, Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-developer">Разработчик аддонов</span></div>
+
+<Aside type="caution" title="Alpha API">
+AbstractMenus 2.0 находится в alpha. API может измениться до стабильного релиза. Зафиксируй конкретную версию `compileOnly` в сборке, чтобы свежая выборка не сломала проект.
+</Aside>
+
+У AbstractMenus 2.0 есть SPI: через него аддоны в рантайме регистрируют свои действия, правила, свойства предметов, активаторы, каталоги и хендлеры провайдеров (экономика, права, уровни, плейсхолдеры, скины). Встроенные типы тянут тот же SPI.
+
+Аддон можно поставить двумя способами - выбирай:
+
+<CardGrid>
+  <LinkCard
+    title="Путь 1 - аддон, загружаемый AM"
+    href="/docs/ru/developers/addons/#path-1"
+    description="Jar с addon.conf. Кладётся в plugins/AbstractMenus/addons/, загружается AbstractMenus."
+  />
+  <LinkCard
+    title="Путь 2 - плагин-как-аддон"
+    href="/docs/ru/developers/addons/#path-2"
+    description="Обычный Bukkit-плагин. Кладётся в plugins/, загружается Bukkit."
+  />
+</CardGrid>
+
+Дальше идут страницы про сам API. Про доставку (какой путь выбрать, формат манифеста, жизненный цикл) смотри [страницу аддонов](/docs/ru/developers/addons/).
+
+## Подключи API в свою сборку
+
+API AbstractMenus публикуется на [GitHub Packages](https://github.com/AbstractMenus/minecraft-plugin/packages) и собирается под каждый релиз на [JitPack](https://jitpack.io/#AbstractMenus/minecraft-plugin).
+
+<Aside type="note">
+JitPack доступен анонимно. GitHub Packages требует Personal Access Token со скоупом `read:packages` - даже для публичных пакетов, это ограничение GitHub. Если есть весомая причина использовать GH Packages (например, корпоративный прокси с allowlist на `*.github.com`) - смотри настройку авторизации внизу страницы. В остальных случаях - JitPack.
+</Aside>
+
+<Tabs syncKey="build-tool">
+  <TabItem label="Gradle (Kotlin DSL)" icon="seti:gradle">
+    ```kotlin title="build.gradle.kts"
+    repositories {
+        maven("https://jitpack.io")
+    }
+
+    dependencies {
+        compileOnly("com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2")
+    }
+    ```
+  </TabItem>
+  <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+    ```groovy title="build.gradle"
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        compileOnly 'com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2'
+    }
+    ```
+  </TabItem>
+  <TabItem label="Maven" icon="seti:maven">
+    ```xml title="pom.xml"
+    <repositories>
+      <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io</url>
+      </repository>
+    </repositories>
+
+    <dependencies>
+      <dependency>
+        <groupId>com.github.AbstractMenus</groupId>
+        <artifactId>minecraft-plugin</artifactId>
+        <version>2.0.0-alpha.2</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+    ```
+  </TabItem>
+</Tabs>
+
+artifactId - `minecraft-plugin`, по имени репозитория. JitPack кладёт мульти-модульные Gradle-проекты под одну корневую координату; внутри jar - модуль `api`.
+
+<Aside type="caution">
+API тянет Adventure (`net.kyori.adventure.text.*`). Paper уже идёт с Adventure внутри, так что там всё работает само. На обычном Spigot Adventure придётся шейдить или подключать руками.
+</Aside>
+
+## Объяви зависимость в plugin.yml (только Путь 2)
+
+Плагины-как-аддоны (Путь 2) объявляют AbstractMenus жёсткой зависимостью - тогда Bukkit гарантирует, что твой `onEnable` запустится после того, как AbstractMenus уже поднялся.
+
+```yaml title="plugin.yml" ins={3-4}
+name: MyAddon
+version: 1.0.0
+depend:
+  - AbstractMenus
+```
+
+Если плагин должен подниматься и без AbstractMenus, ставь `softdepend:` - и тогда обмазывай вызовы API проверкой `Bukkit.getPluginManager().getPlugin("AbstractMenus") != null`.
+
+У аддонов Пути 1 `plugin.yml` нет вообще - вместо него `addon.conf` с полем `pluginDependencies`. См. [страницу аддонов](/docs/ru/developers/addons/).
+
+## Получи экземпляр API
+
+Точка входа - [`AbstractMenusApi`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/AbstractMenusApi.java). Берётся через статический `get()`:
+
+```java
+import ru.abstractmenus.api.AbstractMenusApi;
+
+AbstractMenusApi api = AbstractMenusApi.get();
+```
+
+Если AbstractMenus ещё не включился - вернёт `null`. С `depend: [AbstractMenus]` в манифесте к моменту твоего `onEnable` он точно поднят.
+
+В аддонах Пути 1 `get()` дёргать вообще не нужно - API прилетает параметром в методы жизненного цикла:
+
+```java
+public final class MyAddon implements MenuExtension {
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        // api уже инициализирован
+    }
+}
+```
+
+## Что выставляет API
+
+```java
+api.actions();         // TypeRegistry<Action>
+api.rules();           // TypeRegistry<Rule>
+api.activators();      // TypeRegistry<Activator>
+api.itemProperties();  // TypeRegistry<ItemProperty>
+api.catalogs();        // TypeRegistry<Catalog<?>>
+
+api.providers();       // ProviderRegistry - экономика, права, уровни, плейсхолдеры, скины
+api.serializers();     // общие HOCON NodeSerializers
+api.variables();       // VariableManager - чтение/запись персональных и глобальных переменных
+
+api.openMenu(activator, ctx, player, menu);
+api.getOpenedMenu(player);
+api.loadMenus();
+
+api.apiVersion();      // строка версии для диагностики
+api.getPlugin();       // сырой хэндл Bukkit Plugin
+```
+
+Под каждый реестр, менеджер и хелпер есть отдельная страница в этом разделе.
+
+<CardGrid>
+  <LinkCard title="Поставка аддона" href="/docs/ru/developers/addons/" description="Путь 1 vs Путь 2, жизненный цикл MenuExtension, манифест addon.conf." />
+  <LinkCard title="Кастомные типы" href="/docs/ru/developers/own-types/" description="Опиши и зарегистрируй свои действия, правила, свойства предметов, активаторы, каталоги." />
+  <LinkCard title="Хендлеры провайдеров" href="/docs/ru/developers/handlers/" description="Подключи свой бэкенд экономики/прав/плейсхолдеров/скинов/уровней." />
+  <LinkCard title="Сериализаторы" href="/docs/ru/developers/serializers/" description="HOCON-десериализация для своих типов." />
+  <LinkCard title="Variables API" href="/docs/ru/developers/variables/" description="Чтение и запись персональных и глобальных переменных программно." />
+  <LinkCard title="Утилиты" href="/docs/ru/developers/utils/" description="Хелперы цвета, подстановка плейсхолдеров, планировщик." />
+  <LinkCard title="Миграция 1.x → 2.0" href="/docs/ru/developers/migration/" description="Соответствие старых вызовов API (Types, Handlers, AbstractMenusProvider) новым." />
+</CardGrid>
+
+## Опционально: GitHub Packages вместо JitPack
+
+Если по какой-то причине GitHub Packages обязателен (например, политика CI):
+
+<Steps>
+
+1. Сгенерируй [Personal Access Token (classic)](https://github.com/settings/tokens) со скоупом `read:packages`.
+
+2. Сложи учётку в `~/.gradle/gradle.properties`:
+
+   ```properties title="~/.gradle/gradle.properties"
+   gpr.user=your-github-username
+   gpr.token=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
+
+3. Добавь репозиторий и переключи координату на родную `ru.abstractmenus:api`:
+
+   ```groovy title="build.gradle"
+   repositories {
+       maven {
+           url = uri('https://maven.pkg.github.com/AbstractMenus/minecraft-plugin')
+           credentials {
+               username = providers.gradleProperty('gpr.user')
+                       .orElse(providers.environmentVariable('GITHUB_ACTOR')).getOrNull()
+               password = providers.gradleProperty('gpr.token')
+                       .orElse(providers.environmentVariable('GITHUB_TOKEN')).getOrNull()
+           }
+       }
+       // JitPack всё ещё нужен для транзитивной зависимости api
+       // com.github.AbstractMenus:hocon:
+       maven { url 'https://jitpack.io' }
+   }
+
+   dependencies {
+       compileOnly 'ru.abstractmenus:api:2.0.0-alpha.2'
+   }
+   ```
+
+</Steps>

@@ -1,0 +1,233 @@
+---
+title: Поставка аддона
+description: Два пути доставки аддона AbstractMenus - jar, загружаемый AM, или плагин-как-аддон, - и общие для них хуки жизненного цикла.
+---
+
+import { Aside, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-developer">Разработчик аддонов</span></div>
+
+<Aside type="caution" title="Alpha API">
+AbstractMenus 2.0 находится в alpha. API может измениться до стабильного релиза. Зафиксируй конкретную версию `compileOnly` в сборке, чтобы свежая выборка не сломала проект.
+</Aside>
+
+Аддон - это всё, что регистрирует типы или провайдеры в AbstractMenus. Встроенные действия, правила и остальное регистрируются через тот же SPI (Service Provider Interface - стандартный Java-механизм, через который плагин даёт сторонним jar'ам регистрировать свои реализации общих интерфейсов), что и внешний аддон. Никакого "привилегированного" пути для встроенного кода нет.
+
+Поставлять можно двумя способами. Выбирай по ситуации.
+
+| | Путь 1 - аддон, загружаемый AM | Путь 2 - плагин-как-аддон |
+|---|---|---|
+| Jar кладётся в | `plugins/AbstractMenus/addons/` | `plugins/` |
+| Загружается | AbstractMenus | Bukkit |
+| Манифест | `addon.conf` (HOCON) | `plugin.yml` |
+| Главный класс наследует | только `MenuExtension` (конструктор без аргументов) | `JavaPlugin` + `MenuExtension` |
+| Видно в `/plugins` | Нет | Да |
+| Видно в `/am addons list` | Да | Да (с тегом `[as-plugin]`) |
+| Перезагрузка в рантайме | `/am addons reload <name>` | `/reload` (весь сервер) |
+| Отдельный classloader на jar | Да (изолированный, child-first) | Нет (общий с Bukkit) |
+| Порядок межплагинных зависимостей | `pluginDependencies:` в addon.conf | граф `depend:` Bukkit |
+
+**Бери Путь 1**, если аддон - чистое расширение AM (мост к провайдеру, кастомное действие, кастомное правило). Аддон можно перезагружать без рестарта сервера, classloader изолирован (твои зависимости не конфликтуют с чужими), а имена типов не пересекаются с Bukkit-плагинами.
+
+**Бери Путь 2**, если аддон одновременно полноценный Bukkit-плагин: вешает свои Bukkit-листенеры, владеет командами, выставляет API для других плагинов или ему нужен `depend:` в Bukkit для жёсткой очерёдности.
+
+Для простого моста к провайдеру подойдут оба пути. В качестве примера - [PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon), он специально лежит в двух ветках, чтобы можно было сравнить.
+
+:::tip[По умолчанию выбирай Путь 1 (`as-addon`)]
+Если нет конкретной нужды в Bukkit-листенерах, командах или публичном API для других плагинов - бери `as-addon`. Он чище и удобнее в эксплуатации. На `as-plugin` переходи только когда без Bukkit-функционала действительно не обойтись.
+:::
+
+## Жизненный цикл MenuExtension
+
+Оба пути реализуют [`MenuExtension`](https://github.com/AbstractMenus/minecraft-plugin/blob/master/api/src/main/java/ru/abstractmenus/api/MenuExtension.java). У него три хука жизненного цикла и три метода метаданных.
+
+```java
+public interface MenuExtension {
+    default void onLoad(AbstractMenusApi api)    {}
+    void onEnable(AbstractMenusApi api);
+    default void onDisable(AbstractMenusApi api) {}
+
+    default String name()             { return getClass().getSimpleName(); }
+    default String version()          { return "unknown"; }
+    default String targetApiVersion() { return null; }
+}
+```
+
+- **`onLoad`** дёргается у каждого расширения *до* того, как у любого расширения вызвался `onEnable`. Сюда складывай настройку, которой не важен порядок. Типы здесь не регистрируй - остальные расширения ещё могут быть не загружены.
+- **`onEnable`** дёргается в порядке зависимостей. Тут уже регистрируй типы и провайдеры.
+- **`onDisable`** дёргается при остановке сервера или `/am addons reload`. Регистрации типов и провайдеров AbstractMenus снесёт сам. Тебе остаётся подчистить то, чего он не видит: Bukkit-листенеры, задачи планировщика, JDBC-коннекты, файлы, потоки.
+
+Все три хука выполняются в главном потоке сервера.
+
+<a id="path-1"></a>
+
+## Путь 1 - аддон, загружаемый AM
+
+Реализуешь `MenuExtension` напрямую. Никакого `JavaPlugin`, никакого `plugin.yml`. Кидаешь jar с `addon.conf` в корне.
+
+```java title="MyAddon.java"
+package com.example.myaddon;
+
+import ru.abstractmenus.api.AbstractMenusApi;
+import ru.abstractmenus.api.MenuExtension;
+
+public final class MyAddon implements MenuExtension {
+
+    public MyAddon() {
+        // Обязательный конструктор без аргументов. AbstractMenus создаёт
+        // класс рефлексией после успешного парсинга addon.conf.
+    }
+
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+    }
+
+    @Override
+    public String name()    { return "MyAddon"; }
+
+    @Override
+    public String version() { return "1.0.0"; }
+}
+```
+
+```hocon title="addon.conf"
+name             = "MyAddon"
+version          = "1.0.0"
+main             = "com.example.myaddon.MyAddon"
+authors          = ["yourname"]
+description      = "Добавляет в AbstractMenus кастомный тип действия."
+targetApiVersion = "2.0.0"
+
+# Имена других AM-загружаемых аддонов, которые должны включиться раньше этого.
+# AbstractMenus делает топосорт графа зависимостей и сообщает о циклах.
+addonDependencies = []
+
+# Bukkit-плагины, которые должны присутствовать и быть включены. Если хотя бы
+# одного нет, AbstractMenus пропускает аддон (с warning).
+pluginDependencies = []
+
+# Bukkit-плагины, с которыми этот аддон опционально интегрируется. Отсутствие
+# soft-зависимости даёт уведомление в лог, но не блокирует аддон.
+pluginSoftDependencies = []
+```
+
+Готовый jar кидай в `plugins/AbstractMenus/addons/`. AbstractMenus подцепит его на старте либо в рантайме через `/am addons rescan`.
+
+### Справка по полям addon.conf
+
+| Поле | Обязательное | Тип | Заметки |
+|---|---|---|---|
+| `name` | Да | string | Отображаемое имя. Показывается в `/am addons list`. Должно быть уникальным среди всех загруженных аддонов. |
+| `version` | Да | string | Произвольная строка версии. |
+| `main` | Да | string | Полное имя класса. Должен реализовывать `MenuExtension` и иметь конструктор без аргументов. |
+| `authors` | Нет | string\[\] или string | Пустой список, если отсутствует. |
+| `description` | Нет | string | Пусто, если отсутствует. |
+| `targetApiVersion` | Нет | string | Только диагностика. Пишется в лог при включении, показывается в `/am addons info`. |
+| `addonDependencies` | Нет | string\[\] или string | Имена других аддонов, загружаемых AM. Сортируются в порядок включения через DAG. |
+| `pluginDependencies` | Нет | string\[\] или string | Имена Bukkit-плагинов. Жёстко обязательны. |
+| `pluginSoftDependencies` | Нет | string\[\] или string | Имена Bukkit-плагинов. Опциональны. |
+
+Любое из этих полей-списков принимает и HOCON-список, и одиночную строку - её плагин сам обернёт в список.
+
+<a id="path-2"></a>
+
+## Путь 2 - плагин-как-аддон
+
+Делаешь так, чтобы твой `JavaPlugin` ещё и реализовывал `MenuExtension`. Bukkit дёрнет родной `onEnable` плагина, а ты оттуда прокинешь вызов в SPI-хук.
+
+```java title="MyAddon.java"
+package com.example.myaddon;
+
+import org.bukkit.plugin.java.JavaPlugin;
+import ru.abstractmenus.api.AbstractMenusApi;
+import ru.abstractmenus.api.MenuExtension;
+
+public final class MyAddon extends JavaPlugin implements MenuExtension {
+
+    @Override
+    public void onEnable() {
+        AbstractMenusApi api = AbstractMenusApi.get();
+        if (api == null) {
+            getLogger().severe("AbstractMenus API not available - disabling.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        onEnable(api);
+    }
+
+    @Override
+    public void onEnable(AbstractMenusApi api) {
+        api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+        // ... зарегистрируй остальные свои типы и провайдеры
+    }
+
+    @Override
+    public String name()    { return "MyAddon"; }
+
+    @Override
+    public String version() { return getPluginMeta().getVersion(); }
+}
+```
+
+```yaml title="plugin.yml"
+name: MyAddon
+version: 1.0.0
+main: com.example.myaddon.MyAddon
+api-version: '1.21'
+depend:
+  - AbstractMenus
+```
+
+`depend: [AbstractMenus]` гарантирует, что AbstractMenus включится раньше твоего `onEnable`. Если твоя регистрация на старте дёргает API других плагинов (`PlayerPoints`, `WorldGuard` и т.п.) - дописывай и их.
+
+## Разрешение зависимостей
+
+При загрузке аддонов AbstractMenus делает следующее:
+
+1. Открывает каждый jar из `plugins/AbstractMenus/addons/`. Парсит и валидирует `addon.conf`. На битые ругается в лог и пропускает.
+2. Проверяет `pluginDependencies` каждого аддона. Нет обязательной (`required`) зависимости - аддон уходит в FAILED, чтобы админы сервера увидели это в `/am addons list`. По опциональным (`softdepend`) просто пишется уведомление.
+3. Топологически сортирует граф `addonDependencies`. Циклы валят весь батч с понятной ошибкой. Аддоны с неудовлетворёнными зависимостями помечаются по отдельности - включая транзитивные сбои: A → B → отсутствующая C, и в FAILED уходят и A, и B.
+4. Этап 1: вызывается `onLoad` каждого аддона.
+5. Этап 2: вызывается `onEnable` в порядке зависимостей.
+6. Парсит меню. Зарегистрированные тобой типы теперь резолвятся из HOCON.
+
+Если `onEnable` кидает исключение, AbstractMenus откатывает все регистрации, что аддон успел сделать, и ставит его в FAILED. Остальные аддоны продолжают работать как обычно.
+
+## Чистка по владельцу
+
+Каждый вызов `register(...)` принимает экземпляр `MenuExtension` последним параметром - это и есть "владелец" регистрации, то есть тот аддон, который её сделал:
+
+```java
+api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+//                                                                            ^^^^
+//                                                                            owner - твой аддон
+```
+
+Когда твой аддон выключается, AbstractMenus снимает все типы и провайдеры, которые он зарегистрировал. Сам ты `unregisterAll` не зовёшь - его и нет в публичном API, чтобы один аддон не мог стереть регистрации другого.
+
+Для Пути 1 это работает автоматически: AbstractMenus сам ведёт жизненный цикл такого аддона через свой `AddonManager` и при выключении подчищает все его регистрации. Для Пути 2 "выключение" - это `onDisable` у `JavaPlugin`, и под автоматическую чистку он не попадает: регистрация остаётся в карте владельцев до остановки самого AbstractMenus. Ничего страшного: следующий `onEnable` перетрёт запись по тому же id.
+
+## Дерево команд /am addons
+
+Аддонами Пути 1 админы сервера управляют через `/am addons`:
+
+```text
+/am addons list                    Список всех загруженных аддонов (Путь 1, Путь 2, встроенные)
+/am addons info <name>             Полные метаданные: статус, версия, зависимости, ошибка
+/am addons load <name>             Загрузить jar Пути 1 из addons/, который ещё не загружен
+/am addons reload <name>           Выключить, пересобрать classloader, заново включить аддон Пути 1
+/am addons rescan                  Просканировать addons/ на новые jar и подгрузить ещё не загруженные
+```
+
+`reload` и `load` работают только для Пути 1 - им нужен jar в `addons/`. `info` работает для всех трёх типов.
+
+## Пример реализации
+
+[PlayerPointsAddon](https://github.com/AbstractMenus/PlayerPointsAddon) - маленький пример аддона, регистрирует PlayerPoints как провайдера экономики. В репозитории три ветки:
+
+- [`master`](https://github.com/AbstractMenus/PlayerPointsAddon/tree/master) - только README, обзор для сравнения.
+- [`as-addon`](https://github.com/AbstractMenus/PlayerPointsAddon/tree/as-addon) - реализация Пути 1.
+- [`as-plugin`](https://github.com/AbstractMenus/PlayerPointsAddon/tree/as-plugin) - реализация Пути 2.
+
+Обе рабочие ветки регистрируют один и тот же провайдер через один и тот же SPI - разница в основном в обвязке жизненного цикла.

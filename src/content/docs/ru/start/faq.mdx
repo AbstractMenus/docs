@@ -1,0 +1,110 @@
+---
+title: FAQ
+description: Часто задаваемые вопросы про AbstractMenus, со ссылками на нужные страницы документации.
+---
+
+import { Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-operator">Администратор сервера</span> <span class="audience-tag audience-author">Автор меню</span> <span class="audience-tag audience-developer">Разработчик аддонов</span></div>
+
+Частые вопросы и ссылки на страницу с полным ответом. Если чего-то нет в списке - используй поиск (правый верхний угол).
+
+<Aside type="tip">
+Вопроса здесь нет? Задай его в [Discord-канале](https://discord.gg/4VGP3Gv).
+</Aside>
+
+## Поддерживает ли AbstractMenus YAML-конфиги?
+
+Нет. Только HOCON. Прочти [Формат HOCON](/docs/ru/start/hocon/) - если знаешь JSON, ты уже знаешь 90% HOCON.
+
+## Где можно использовать плейсхолдеры?
+
+Почти везде: в действиях, правилах, заголовках меню, свойствах предметов. Если параметр ждёт число, плейсхолдер должен подставлять число. В остальных случаях работают строки.
+
+## Мои плейсхолдеры PlaceholderAPI не работают
+
+1. `/am reload`.
+2. Проверь, что скачал **expansion** PlaceholderAPI для нужных плейсхолдеров. Для `%player_*%`:
+
+   ```text
+   /papi ecloud download Player
+   /papi reload
+   ```
+
+## С какими плагинами AbstractMenus интегрируется?
+
+Список интеграций на [главной](/docs/#external-plugin-support). Vault, PlaceholderAPI, LuckPerms, WorldGuard, Citizens, HeadDatabase, MMOItems, SkinsRestorer, ItemsAdder, Oraxen.
+
+## Два предмета в одном слоте - какой победит?
+
+**Последний** в списке, чьи правила прошли. Используй это специально - например, для кнопок с гейтом по уровню или правам.
+
+## Как открывать меню по команде, по использованию предмета, по входу в регион, по клику на NPC?
+
+Это активаторы - один на файл, несколько на меню. См. [активаторы](/docs/ru/general/activators/).
+
+## Как запретить открывать меню без права?
+
+Поставь проверку в корневых `rules` меню, а сообщение - в `denyActions`:
+
+```hocon "permission"
+rules { permission: "i.am.admin" }
+denyActions { message: "&cНе разрешено." }
+```
+
+[Открыть справку по правилам](/docs/ru/general/menu-structure/).
+
+## Разный вид предмета в зависимости от правил?
+
+Это `bindings`. См. [справку по биндингам](/docs/ru/general/menu-structure/#binding-button-properties-to-rules).
+
+## Один предмет на много слотов?
+
+Слот принимает число, диапазон (`0-8`) или матрицу. См. [форматы слотов](/docs/ru/general/item-format/#slot).
+
+## Голова со скином смотрящего?
+
+```hocon
+skullOwner: "%player_name%"
+```
+
+## Предметы, обновляющиеся по таймеру?
+
+`updateInterval` в корне меню. См. [авто-обновление](/docs/ru/general/menu-structure/#auto-refresh).
+
+## Комбинации правил AND/OR/NOT?
+
+Да - логические обёртки и инверсия правила. См. [логические структуры](/docs/ru/advanced/logical/).
+
+## Постоянное состояние, общее для меню?
+
+Переменные. Создавай/редактируй/удаляй через [действия с переменными](/docs/ru/general/actions/), читай через [плейсхолдеры переменных](/docs/ru/general/variables/).
+
+## Как установить аддон?
+
+Аддоны бывают двух видов. **Plugin-as-addons** кладутся в `plugins/` как обычный Bukkit-плагин. **AM-loaded аддоны** кладутся в `plugins/AbstractMenus/addons/` и управляются через `/am addons`. Разница описана в [Поставке аддонов](/docs/ru/developers/addons/).
+
+## Несколько плагинов экономики - какой выберет AbstractMenus?
+
+Тот, который закреплён в `config.conf`:
+
+```hocon
+providers {
+  economy = "vault"
+}
+```
+
+Поставь `"auto"` (значение по умолчанию), чтобы решал приоритет. Аддоны обычно регистрируются с приоритетом 100, встроенный провайдер Vault - с 50, поэтому если не закрепить Vault явно, выигрывает аддон. Переопределение на уровне действия (`provider: "..."` внутри HOCON) всегда бьёт значение из конфига. См. [хендлеры провайдеров](/docs/ru/developers/handlers/).
+
+## Click cooldown vs click debounce - в чём разница?
+
+`clickCooldown` на предмете задаёт автор меню (например, "у этой кнопки кулдаун 2 секунды"). Серверные пороги `clickDebounce` - страховка от пакетов-дубликатов, которые шлёт клиент Minecraft. Они срабатывают только при `clickCooldown > 0`. Чтобы обойти и то, и другое, поставь на предмете `clickCooldown: 0`. См. [установку](/docs/ru/start/config/).
+
+## Куда дальше
+
+<CardGrid>
+  <LinkCard title="Формат HOCON" href="/docs/ru/start/hocon/" description="Синтаксис конфига. JSON с комментариями, include и подстановками." />
+  <LinkCard title="Как создать меню" href="/docs/ru/start/how-to/" description="Пошаговая сборка первого меню." />
+  <LinkCard title="Советы" href="/docs/ru/start/tips/" description="Что ускоряет работу при написании меню." />
+  <LinkCard title="Примеры" href="/docs/ru/general/examples/" description="Готовые меню, которые можно копировать к себе." />
+</CardGrid>

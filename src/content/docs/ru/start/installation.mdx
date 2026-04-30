@@ -1,0 +1,67 @@
+---
+title: Установка
+description: Закинь jar, если нужно - настрой config.conf, готово.
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-operator">Администратор сервера</span></div>
+
+## Требования
+
+- Paper или Folia, Minecraft **1.20.6 или новее** (рекомендуется 1.21.x)
+- **Java 21**
+
+AbstractMenus не тащит с собой Adventure - он использует копию, которая идёт в Paper. На чистом Spigot не заработает.
+
+## Установка
+
+<Steps>
+
+1. Скачай `AbstractMenus-<version>.jar` со [страницы релизов](https://github.com/AbstractMenus/minecraft-plugin/releases).
+
+2. Закинь в папку `plugins/` сервера.
+
+3. Запусти сервер. На первом запуске AbstractMenus создаст такие файлы:
+
+   ```text
+   plugins/AbstractMenus/
+     ├── config.conf            основная конфигурация
+     ├── animated_heads.conf    описания анимаций голов
+     ├── menus/                 твои файлы меню (один или больше .conf)
+     │   └── menu.conf          стартовое меню
+     ├── addons/                jar-ы аддонов (опционально)
+     └── variables.db           SQLite-хранилище для /var и /varp
+   ```
+
+4. Запусти `/am addons list`. Должен появиться `AbstractMenus-Core` с тегом `[built-in]`. Это плагин регистрирует свои встроенные типы через тот же SPI, что и внешние аддоны - проверка пройдена.
+
+</Steps>
+
+## Настройка
+
+`plugins/AbstractMenus/config.conf` хранит все серверные настройки: провайдеры по умолчанию, пороги дебаунса кликов, включение MiniMessage, BungeeCord, формат времени. Полный разбор ключей - в [справочнике config.conf](/docs/ru/start/config/).
+
+После правок запусти `/am reload`.
+
+## Файлы первого запуска
+
+| Файл | Что это |
+|---|---|
+| `config.conf` | Ключи выше. Отредактируй, потом `/am reload`. |
+| `animated_heads.conf` | Переиспользуемые описания анимации голов. На них ссылается плейсхолдер `%hanim_:<name>:<id>%` (см. [плейсхолдеры](/docs/ru/general/placeholders/)). |
+| `menus/menu.conf` | Пример меню, открывается через `/am open menu`. Можно удалить, когда сделаешь свои. |
+| `variables.db` | SQLite. Не редактируй вручную. |
+| `addons/` | Сюда кладутся [jar-ы аддонов](/docs/ru/developers/addons/). |
+
+## Обновление
+
+Замени jar и перезапусти. Файлы меню и `config.conf` переживают обновления. Заметки про миграцию для ломающих релизов - в [changelog](/changelog/).
+
+## Удаление
+
+Убери jar из `plugins/`. Если нужно стереть и состояние - удали папку `plugins/AbstractMenus/`.
+
+<Aside type="caution">
+Не удаляй `variables.db`, если в нём лежат данные игроков, которые им важны - этот файл единственная копия.
+</Aside>

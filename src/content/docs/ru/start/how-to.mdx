@@ -1,0 +1,230 @@
+---
+title: Как создать меню
+description: Короткий тур по AbstractMenus - собери шапку, добавь активатор, поставь кнопку и закрой её правилами.
+---
+
+import { Steps, FileTree, Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-author">Автор меню</span></div>
+
+Короткий тур по базовым возможностям. К концу страницы у тебя будет рабочее меню: открывается по команде, на кнопке висит действие, которое забирает деньги и выдаёт предмет.
+
+<Aside type="tip">
+Для `.conf` файлов открывай нормальный редактор (Sublime Text, VS Code, IntelliJ) - подойдёт любой с подсветкой HOCON. Блокнотоподобные редакторы постоянно ломают фигурные скобки и кавычки.
+</Aside>
+
+## Где лежат меню
+
+Все файлы меню - в `plugins/AbstractMenus/menus/`. Плагин обходит папку рекурсивно, так что вложенные подпапки для организации - ок. *Имя* файла (без расширения) становится уникальным id меню.
+
+<FileTree>
+
+- plugins/AbstractMenus
+  - config.conf глобальный конфиг плагина
+  - menus
+    - menu.conf создаётся при первом запуске
+    - shop.conf
+    - casino
+      - blackjack.conf вложенные папки норм
+      - slots.conf
+  - variables.db **SQLite, не редактировать вручную**
+
+</FileTree>
+
+## Шаг за шагом: твоё первое меню
+
+<Steps>
+
+1. **Создай файл**
+
+   Сделай `plugins/AbstractMenus/menus/menu.conf`. Два обязательных ключа - `title` и `size`.
+
+   ```hocon title="menus/menu.conf"
+   title: "My first menu"
+   size: 6
+   ```
+
+   - `title` - показывается сверху инвентаря.
+   - `size` - количество строк инвентаря (от 1 до 6).
+
+   Запусти `/am reload`. В консоли появится:
+
+   ```text
+   [AbstractMenus] Loaded 1 menus
+   ```
+
+2. **Добавь активатор, чтобы игроки могли открыть меню**
+
+   Активатор - всё, что открывает меню: команда, использование предмета, заход на сервер, вход в регион и так далее. Самый простой - `command`:
+
+   ```hocon title="menus/menu.conf" ins={4-6}
+   title: "My first menu"
+   size: 6
+
+   activators {
+     command: "mymenu"
+   }
+   ```
+
+   `/am reload`, потом в чате: `/mymenu`. Откроется пустое меню.
+
+   ![Пустое меню, которое мы создали](/docs/img/howto_empty.png)
+
+3. **Поставь кнопку**
+
+   Кнопки описываются в списке `items: [...]`. У каждой записи обязательно есть `slot` и `material`.
+
+   ```hocon title="menus/menu.conf" ins={8-14}
+   title: "My first menu"
+   size: 6
+
+   activators {
+     command: "mymenu"
+   }
+
+   items: [
+     {
+       slot: 0
+       material: DIAMOND_SWORD
+       name: "&6Excalibur"
+     }
+   ]
+   ```
+
+   ![Меню с кнопкой Excalibur](/docs/img/howto_excalibur.png)
+
+   - `slot` - индекс ячейки, считается с 0. Кроме числа, бывают [диапазоны и матрицы](/docs/ru/general/item-format/#slot).
+   - `material` - имя материала Bukkit. [Полный список в Spigot Javadoc](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html).
+   - `name` - отображаемое имя. Поддерживает цветовые коды через `&` и плейсхолдеры.
+
+4. **Заставь кнопку что-то делать по клику**
+
+   Блок `click` - это список действий. Начни с `closeMenu`:
+
+   ```hocon title="menus/menu.conf" {12-14}
+   title: "My first menu"
+   size: 6
+
+   activators {
+     command: "mymenu"
+   }
+
+   items: [
+     {
+       slot: 0
+       material: DIAMOND_SWORD
+       name: "&6Excalibur"
+       click {
+         closeMenu: true
+       }
+     }
+   ]
+   ```
+
+   Перезагрузи, кликни по мечу - меню закроется. На разные кнопки мыши можно повесить разные действия. Полный список - в [типах кликов](/docs/ru/general/menu-structure/).
+
+</Steps>
+
+## Вариации
+
+### Показывать разные кнопки разным игрокам
+
+Добавь к предмету блок `rules`. Если в одном слоте лежит несколько предметов - выигрывает *последний*, чьи правила прошли:
+
+```hocon {7-12}
+items: [
+  {
+    slot: 0
+    material: IRON_SWORD
+    name: "&6Экскалибур"
+  },
+  {
+    slot: 0
+    material: DIAMOND_SWORD
+    name: "&6Экскалибур"
+    rules { level: 10 }
+  }
+]
+```
+
+Игрок 9 уровня видит железный меч. Игрок 10+ уровня - алмазный.
+
+<Aside>
+Когда несколько предметов делят слот, игрок видит **последний**, чьи правила прошли. Порядок важен.
+</Aside>
+
+### Списывать деньги по клику
+
+`click` принимает `rules` (проверка), а ещё ветки `actions` и `denyActions`:
+
+```hocon "100"
+items: [
+  {
+    slot: 0
+    material: DIAMOND_SWORD
+    name: "&6Экскалибур"
+    lore: "&7Цена: 100 монет"
+    click {
+      rules { money: 100 }
+      actions {
+        itemAdd { material: DIAMOND_SWORD, name: "&6Экскалибур" }
+        takeMoney: 100
+      }
+      denyActions {
+        sound: ENTITY_VILLAGER_NO
+      }
+    }
+  }
+]
+```
+
+Что происходит по клику:
+
+1. У игрока проверяется баланс - есть ли 100 монет.
+2. Если хватает - в инвентарь добавляется Excalibur и списывается 100 монет.
+3. Если нет - проигрывается звук недовольного жителя.
+
+Про вложенные деревья правил и инверсию - см. [логические структуры](/docs/ru/advanced/logical/).
+
+### Закрыть всё меню
+
+Правила в корне меню проверяются *до* открытия:
+
+```hocon ins={3-5,6-8}
+title: "Только для админов"
+size: 6
+rules {
+  permission: "i.am.admin"
+}
+denyActions {
+  message: "&cУ тебя нет прав на это действие!"
+}
+activators { command: "adminmenu" }
+```
+
+Игроки без `i.am.admin` получат сообщение вместо меню.
+
+## Куда дальше
+
+<CardGrid>
+  <LinkCard
+    title="Формат предмета"
+    href="/docs/ru/general/item-format/"
+    description="Все свойства предмета с примерами на HOCON."
+  />
+  <LinkCard
+    title="Активаторы"
+    href="/docs/ru/general/activators/"
+    description="Все события, по которым открывается меню."
+  />
+  <LinkCard
+    title="Правила"
+    href="/docs/ru/general/rules/"
+    description="Условия для открытия меню, показа предмета и запуска действий."
+  />
+  <LinkCard
+    title="Действия"
+    href="/docs/ru/general/actions/"
+    description="Всё, что можно запустить кликом или из проверки правила."
+  />
+</CardGrid>
