@@ -34,6 +34,15 @@ header.header {
   }
 }
 
+/* Theme picker: Starlight hardcodes width 6.25em on the <select>, which
+   truncates longer localised labels (e.g. ru "Светлая"). Let it size to
+   its widest option instead, with a min-width as a floor so it doesn't
+   shrink below the English layout. */
+starlight-theme-select select {
+  width: auto !important;
+  min-width: 6.25em;
+}
+
 /* Audience tags. Sit right under the page title so the reader can tell
    in a glance whether the page is meant for them. Three roles:
      - operator    (server admin, runs /am addons, edits config.conf)
