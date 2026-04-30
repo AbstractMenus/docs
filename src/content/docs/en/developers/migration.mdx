@@ -26,7 +26,7 @@ If your addon was written against the 1.x API (`AbstractMenusProvider`, `Abstrac
 
 `AbstractMenusApi` replaces both `AbstractMenusPlugin` and `AbstractMenusProvider`. The static `get()` lookup goes through Bukkit's `ServicesManager` the same way the old provider did.
 
-For Path 2 addons (new in 2.0), you don't call `get()` at all — the API is passed as a parameter to your `MenuExtension` lifecycle methods. See [addon delivery](/docs/en/developers/addons/).
+For Path 1 addons (new in 2.0), you don't call `get()` at all — the API is passed as a parameter to your `MenuExtension` lifecycle methods. See [addon delivery](/docs/en/developers/addons/).
 
 ## Type registration
 

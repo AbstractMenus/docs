@@ -136,7 +136,7 @@ In the game, it looks like this:
 
 Here, our `someItem` item was placed in 9 different frames. In each next frame, we've set the item position to the next slot. Since the `clear` parameter was set to `true` by default, the inventory clears before each frame.
 
-This is just the the simplest example of animation. If you wish, you can create truly complex and beautiful animations.
+This is the simplest example. With a bit of experimenting you can build much more elaborate animations.
 
 ### Static items
 
@@ -189,7 +189,7 @@ After we created frames, and saved all head textures, they can be added to the `
 
 To add your animation, create a [list of strings](/docs/en/start/hocon/) anywhere in the config, similar to the `anim_eye` block. Each next element in the list is the next frame. Head animation always looped. You should know it when you creating animation frames. After you've added all frames to the file, save it. The animation is created, now it needs to be added to the item.
 
-### Using added animation
+### Attaching the animation to an item
 
 Any item has a `texture` parameter. Thanks to a special placeholder, this parameter can be used in a new way. Example:
 

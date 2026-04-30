@@ -1,0 +1,148 @@
+---
+title: Миграция 1.x → 2.0
+description: Соответствие старых вызовов API (Types, Handlers, AbstractMenusProvider) новым.
+---
+
+import { Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+<div class="audience-tags"><span class="audience-tag audience-developer">Разработчик аддонов</span></div>
+
+<Aside type="caution" title="Alpha API">
+AbstractMenus 2.0 находится в alpha. API может измениться до стабильного релиза. Зафиксируй конкретную версию `compileOnly` в сборке, чтобы свежая выборка не сломала проект.
+</Aside>
+
+Если аддон писался под API 1.x (`AbstractMenusProvider`, `AbstractMenusPlugin`, `Types`, `Handlers`), на этой странице - таблица соответствий "старый вызов - чем заменить в 2.0".
+
+<Aside type="caution">
+2.0 ломает совместимость с 1.x по исходникам. Статические фасады (`Types`, `Handlers`, `AbstractMenusProvider`) выпилены целиком. Подними `compileOnly` до `com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2` и поправь места вызовов по списку ниже.
+</Aside>
+
+## Точка входа в API
+
+```diff lang="java"
+- AbstractMenusPlugin plugin = AbstractMenusProvider.get();
++ AbstractMenusApi api = AbstractMenusApi.get();
+```
+
+`AbstractMenusApi` заменяет и `AbstractMenusPlugin`, и `AbstractMenusProvider`. Статический `get()` ищет реализацию через Bukkit-овский `ServicesManager` - так же, как старый провайдер.
+
+В аддонах Пути 1 (он появился в 2.0) `get()` дёргать не нужно: API прилетает параметром в методы жизненного цикла `MenuExtension`. См. [поставка аддона](/docs/ru/developers/addons/).
+
+## Регистрация типов
+
+Каждый `Types.register*` переехал в типизированный реестр на `api`:
+
+```diff lang="java"
+- Types.registerAction("myAction", MyAction.class, new MyAction.Serializer());
++ api.actions().register("myAction", MyAction.class, new MyAction.Serializer(), this);
+
+- Types.registerRule("myRule", MyRule.class, new MyRule.Serializer());
++ api.rules().register("myRule", MyRule.class, new MyRule.Serializer(), this);
+
+- Types.registerActivator("myActivator", MyActivator.class, new MyActivator.Serializer());
++ api.activators().register("myActivator", MyActivator.class, new MyActivator.Serializer(), this);
+
+- Types.registerItemProperty("myProp", MyProp.class, new MyProp.Serializer());
++ api.itemProperties().register("myProp", MyProp.class, new MyProp.Serializer(), this);
+
+- Types.registerCatalog("my_catalog", MyCatalog.class, new MyCatalog.Serializer());
++ api.catalogs().register("my_catalog", MyCatalog.class, new MyCatalog.Serializer(), this);
+```
+
+Новый четвёртый параметр (`this`) - твой экземпляр `MenuExtension`. По нему AbstractMenus снимает твои регистрации при выключении аддона - руками `unregister` дёргать не надо.
+
+## Кастомный HOCON-сериализатор
+
+```diff lang="java"
+- Types.serializers().register(MyType.class, new MyTypeSerializer());
++ api.serializers().register(MyType.class, new MyTypeSerializer());
+```
+
+Сигнатура та же, поменялась только точка доступа. `api.serializers()` возвращает ту же коллекцию `NodeSerializers`.
+
+## Хендлеры (экономика/права/уровни/плейсхолдеры/скины)
+
+Статический `Handlers` выпилен. Каждая секция теперь - [`ProviderSection<T>`](/docs/ru/developers/handlers/) на `api.providers()`:
+
+```diff lang="java"
+- Handlers.setEconomyHandler(new MyEconomy());
++ api.providers().economy().register("myEcoId", new MyEconomy(), 100, this);
+
+- Handlers.getEconomyHandler();
++ api.providers().economy().resolve();
+
+- Handlers.getPermissionsHandler();
++ api.providers().permissions().resolve();
+
+- Handlers.getLevelHandler();
++ api.providers().levels().resolve();
+
+- Handlers.getPlaceholderHandler();
++ api.providers().placeholders().resolve();
+
+- Handlers.getSkinHandler();
++ api.providers().skins().resolve();
+```
+
+В 2.0 в одной секции может жить несколько провайдеров - поэтому регистрация принимает `id` и `priority`. Операторы фиксируют id из `config.conf` (`providers.economy = "vault"` или `"playerpoints"`), а меню могут точечно перебивать выбор через `provider: "..."`. Поведение 1.x ("побеждает единственный провайдер") тоже работает - когда он один.
+
+## Переменные
+
+```diff lang="java"
+- VariableManager vm = AbstractMenusProvider.get().getVariableManager();
++ VariableManager vm = api.variables();
+```
+
+Сигнатуры остались такими же - `createBuilder()`, `saveGlobal()`, операции на игрока - но методы для игрока переименованы: `savePlayer` → `savePersonal`, `getPlayer` → `getPersonal`, `deletePlayer` → `deletePersonal`. Поправь вызовы.
+
+## Жизненный цикл меню
+
+```diff lang="java"
+- AbstractMenusProvider.get().reloadMenus();
++ api.loadMenus();
+
+- AbstractMenusProvider.get().openMenu(player, menu);
++ api.openMenu(player, menu);
+```
+
+Обе формы остаются: двухаргументная (player + menu) и четырёхаргументная (activator + ctx + player + menu).
+
+## Планировщик на Folia
+
+1.x вышел ещё до Folia. Если ты гонял задачи через `Bukkit.getScheduler().runTaskLater(plugin, ...)` и аддон должен жить на Folia, переезжай на entity-aware планировщик для всего, что трогает игрока или другую сущность:
+
+```diff lang="java"
+- Bukkit.getScheduler().runTaskLater(plugin, () -> player.kick(reason), 20L);
++ BukkitTasks.runForEntityLater(player, () -> player.kick(reason), 20L);
+```
+
+`BukkitTasks` живёт в plugin-модуле, не в api jar, - импортируй из `ru.abstractmenus.util.bukkit.BukkitTasks`. Если на plugin-модуль не завязан, ветвись сам по детекту Folia и зови `Bukkit.getRegionScheduler()`/`getEntityScheduler()` напрямую.
+
+## Координата Maven/Gradle
+
+```diff
+- compileOnly 'com.github.AbstractMenus:api:1.16'
++ compileOnly 'com.github.AbstractMenus:minecraft-plugin:2.0.0-alpha.2'
+```
+
+artifactId - `minecraft-plugin`: JitPack публикует мульти-модульные Gradle-проекты под одной корневой координатой (имя репозитория). Внутри jar - модуль `api`.
+
+Если у тебя GitHub Packages, а не JitPack, родная координата - `ru.abstractmenus:api:2.0.0-alpha.2`. Подробная настройка - в [С чего начать](/docs/ru/developers/general/).
+
+## Что ушло насовсем
+
+| Убрано | Заменено на |
+|---|---|
+| `AbstractMenusPlugin` | `AbstractMenusApi` |
+| `AbstractMenusProvider` | `AbstractMenusApi.get()` |
+| `Types` (статический фасад) | `api.actions()`/`api.rules()`/`api.activators()`/`api.itemProperties()`/`api.catalogs()`/`api.serializers()` |
+| `Handlers` (статический фасад) | `api.providers().<section>()`, возвращающий `ProviderSection<T>` |
+| Adventure в составе плагина | Бери встроенный в Paper (compileOnly Paper API) |
+
+## Куда дальше
+
+<CardGrid>
+  <LinkCard title="Поставка аддона" href="/docs/ru/developers/addons/" description="2.0 даёт два пути: плагин-как-аддон, jar, загружаемый AM. Выбери один." />
+  <LinkCard title="Кастомные типы" href="/docs/ru/developers/own-types/" description="Обновлённые примеры для действий, правил, активаторов, свойств, каталогов." />
+  <LinkCard title="Хендлеры провайдеров" href="/docs/ru/developers/handlers/" description="ProviderRegistry, сосуществование нескольких провайдеров, резолв по приоритету." />
+</CardGrid>

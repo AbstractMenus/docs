@@ -152,8 +152,8 @@ Full reference with examples: [item format](/docs/en/general/item-format/).
 | `/am version` | Print version | [docs](/docs/en/general/commands/) |
 | `/am addons list` | List loaded addons | [docs](/docs/en/general/commands/#am-addons) |
 | `/am addons info <name>` | Addon metadata | [docs](/docs/en/general/commands/#am-addons) |
-| `/am addons load <name>` | Load a Path 2 addon | [docs](/docs/en/general/commands/#am-addons) |
-| `/am addons reload <name>` | Hot-reload a Path 2 addon | [docs](/docs/en/general/commands/#am-addons) |
+| `/am addons load <name>` | Load an addon | [docs](/docs/en/general/commands/#am-addons) |
+| `/am addons reload <name>` | Hot-reload an addon | [docs](/docs/en/general/commands/#am-addons) |
 | `/am addons rescan` | Pick up new jars in `addons/` | [docs](/docs/en/general/commands/#am-addons) |
 | `/var` subcommands | Manage global variables | [docs](/docs/en/general/commands/#var) |
 | `/varp` subcommands | Manage per-player variables | [docs](/docs/en/general/commands/#varp) |

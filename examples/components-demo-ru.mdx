@@ -1,0 +1,393 @@
+---
+title: Демо компонентов
+description: Сравнение чистого Markdown и компонентов Starlight плюс возможности Expressive Code.
+---
+
+import { Tabs, TabItem, Steps, FileTree, Badge, LinkCard, CardGrid, Aside } from "@astrojs/starlight/components";
+
+Каждое улучшение на странице показано дважды: сначала **версия на чистом Markdown**, потом **версия с компонентами**. Содержимое одинаковое, отличается только рендеринг.
+
+---
+
+## 1. Tabs
+
+### До (чистый Markdown)
+
+Для Maven добавь это:
+
+```xml
+<repositories>
+  <repository>
+    <id>jitpack</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+<dependencies>
+  <dependency>
+    <groupId>com.github.AbstractMenus</groupId>
+    <artifactId>api</artifactId>
+    <version>1.16</version>
+    <scope>provided</scope>
+  </dependency>
+</dependencies>
+```
+
+Для Gradle (Groovy):
+
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+dependencies {
+    compileOnly 'com.github.AbstractMenus:api:1.16'
+}
+```
+
+Для Gradle (Kotlin):
+
+```kotlin
+repositories {
+    maven("https://jitpack.io")
+}
+dependencies {
+    compileOnly("com.github.AbstractMenus:api:1.16")
+}
+```
+
+### После (`<Tabs>`)
+
+<Tabs syncKey="build-tool">
+  <TabItem label="Maven" icon="seti:maven">
+    ```xml
+    <repositories>
+      <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io</url>
+      </repository>
+    </repositories>
+    <dependencies>
+      <dependency>
+        <groupId>com.github.AbstractMenus</groupId>
+        <artifactId>api</artifactId>
+        <version>1.16</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+    ```
+  </TabItem>
+  <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+    ```groovy
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        compileOnly 'com.github.AbstractMenus:api:1.16'
+    }
+    ```
+  </TabItem>
+  <TabItem label="Gradle (Kotlin)" icon="seti:gradle">
+    ```kotlin
+    repositories {
+        maven("https://jitpack.io")
+    }
+    dependencies {
+        compileOnly("com.github.AbstractMenus:api:1.16")
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+`syncKey` синхронизирует все группы Tabs на странице - выбрав "Gradle (Kotlin)" один раз, ты обновишь все последующие сниппеты с тем же ключом.
+
+---
+
+## 2. Steps
+
+### До (чистый Markdown)
+
+1. Создай файл `.conf` внутри `plugins/AbstractMenus/menus/`.
+2. Добавь в файл `title` и `size`.
+3. Добавь блок `activators`, который описывает что открывает меню.
+4. Выполни `/am reload` на сервере.
+
+### После (`<Steps>`)
+
+<Steps>
+
+1. Создай файл `.conf` внутри `plugins/AbstractMenus/menus/`.
+
+2. Добавь `title` и `size` в файл:
+
+   ```hocon
+   title: "My first menu"
+   size: 6
+   ```
+
+3. Добавь блок `activators`, который описывает что открывает меню:
+
+   ```hocon
+   activators {
+     command: "mymenu"
+   }
+   ```
+
+4. Выполни `/am reload` на сервере, затем `/mymenu` в чате.
+
+</Steps>
+
+Вертикальная линия и пронумерованные кружки наглядно показывают, где заканчивается один шаг и начинается следующий. В шаг можно положить целые блоки кода и несколько абзацев.
+
+---
+
+## 3. FileTree
+
+### До (чистый Markdown)
+
+Структура папок плагина:
+
+```
+plugins/AbstractMenus/
+  config.conf
+  menus/
+    main.conf
+    shop.conf
+    casino/
+      blackjack.conf
+      slots.conf
+  variables.db
+```
+
+### После (`<FileTree>`)
+
+<FileTree>
+
+- plugins/AbstractMenus
+  - config.conf глобальный конфиг плагина
+  - menus
+    - main.conf
+    - shop.conf
+    - casino
+      - blackjack.conf
+      - slots.conf
+  - variables.db **SQLite, не редактировать вручную**
+
+</FileTree>
+
+Inline-аннотации уходят в правую колонку, папки сворачиваются по наведению, иконки подбираются по расширению файла автоматически.
+
+---
+
+## 4. Badge
+
+### До (чистый Markdown)
+
+Действие `takeMoney` *(с 1.16, требует Vault)* - снимает деньги с баланса игрока.
+
+### После (`<Badge>`)
+
+`takeMoney` <Badge text="с 1.16" variant="note" /> <Badge text="требует Vault" variant="caution" /> - снимает деньги с баланса игрока.
+
+Варианты: `note`, `tip`, `caution`, `danger`, `success`. Аккуратно встают рядом с заголовками и inline-ссылками.
+
+### Inline рядом с заголовком
+
+#### Действие `openMenu` <Badge text="core" variant="success" />
+
+Открывает другое меню, опционально для другого игрока.
+
+---
+
+## 5. LinkCard/CardGrid
+
+### До (чистый Markdown)
+
+Смотри также:
+- [Справочник по активаторам](/docs/ru/general/activators/)
+- [Справочник по правилам](/docs/ru/general/rules/)
+- [Формат предмета](/docs/ru/general/item-format/)
+
+### После (сетка `<LinkCard>`)
+
+<CardGrid>
+  <LinkCard
+    title="Активаторы"
+    href="/docs/ru/general/activators/"
+    description="Что открывает меню - команды, взаимодействия с предметами, входы в регионы, клики по NPC."
+  />
+  <LinkCard
+    title="Правила"
+    href="/docs/ru/general/rules/"
+    description="Условия, проверяемые перед открытием меню, показом предмета или запуском действия."
+  />
+  <LinkCard
+    title="Формат предмета"
+    href="/docs/ru/general/item-format/"
+    description="Все свойства, которые может нести предмет, с примерами на HOCON."
+  />
+</CardGrid>
+
+---
+
+## 6. Варианты Aside
+
+<Aside type="note">
+  Обычная заметка. Подходит для дополнительного контекста.
+</Aside>
+
+<Aside type="tip" title="Совет">
+  Совет с произвольным заголовком.
+</Aside>
+
+<Aside type="caution">
+  Предупреждение. Для вещей, на которых пользователи часто спотыкаются.
+</Aside>
+
+<Aside type="danger">
+  Опасность. Только для того, что ломает сервер или повреждает данные, если проигнорировать.
+</Aside>
+
+Шорткат `:::note` из обычного Markdown рендерится в тот же компонент, поэтому старые страницы продолжают работать.
+
+---
+
+## 7. Улучшения блоков кода (Expressive Code)
+
+### Подсветка строк
+
+Чтобы подсветить конкретные строки, перечисли их после тега языка:
+
+````md
+```hocon {2,4-6}
+title: "Shop"
+size: 3
+items: [
+  {
+    slot: 0
+    material: DIAMOND
+  }
+]
+```
+````
+
+```hocon {2,4-6}
+title: "Shop"
+size: 3
+items: [
+  {
+    slot: 0
+    material: DIAMOND
+  }
+]
+```
+
+### Diff-маркеры
+
+Маркеры `del` и `ins` показывают "до/после" в одном блоке:
+
+````md
+```hocon
+title: "My menu"
+size: 6
+activators {
+- command: "menu"
++ command: "mymenu"
+}
+```
+````
+
+```diff lang="hocon"
+  title: "My menu"
+  size: 6
+  activators {
+-   command: "menu"
++   command: "mymenu"
+  }
+```
+
+### Имя файла + рамка
+
+````md
+```hocon title="plugins/AbstractMenus/menus/main.conf"
+title: "Main menu"
+size: 6
+```
+````
+
+```hocon title="plugins/AbstractMenus/menus/main.conf"
+title: "Main menu"
+size: 6
+```
+
+### "ins/del" на уровне слов
+
+Ключевые слова `mark`, `ins`, `del` подсвечивают отдельные токены, а не целые строки:
+
+````md
+```hocon "DIAMOND_SWORD" del="material:" ins="type:"
+{
+  slot: 0
+  material: DIAMOND_SWORD
+  name: "Excalibur"
+}
+```
+````
+
+```hocon "DIAMOND_SWORD" del="material:" ins="type:"
+{
+  slot: 0
+  material: DIAMOND_SWORD
+  name: "Excalibur"
+}
+```
+
+---
+
+## 8. Комбинация: реальный раздел туториала
+
+Так выглядит Steps + Tabs + маркеры строк вместе:
+
+<Steps>
+
+1. **Подключи API к сборке**
+
+   <Tabs syncKey="build-tool">
+     <TabItem label="Gradle (Groovy)" icon="seti:gradle">
+       ```groovy
+       repositories {
+           maven { url 'https://jitpack.io' }
+       }
+       dependencies {
+           compileOnly 'com.github.AbstractMenus:api:1.16'
+       }
+       ```
+     </TabItem>
+     <TabItem label="Maven" icon="seti:maven">
+       ```xml
+       <dependency>
+         <groupId>com.github.AbstractMenus</groupId>
+         <artifactId>api</artifactId>
+         <version>1.16</version>
+         <scope>provided</scope>
+       </dependency>
+       ```
+     </TabItem>
+   </Tabs>
+
+2. **Объяви AbstractMenus как опциональную зависимость в `plugin.yml` (`softdepend`)**
+
+   ```yaml title="plugin.yml" {3-4}
+   name: MyPlugin
+   version: 1.0.0
+   depend:
+     - AbstractMenus
+   ```
+
+3. **Получи инстанс плагина**
+
+   ```java title="src/main/java/com/example/MyPlugin.java"
+   AbstractMenusPlugin plugin = AbstractMenusProvider.get();
+   ```
+
+</Steps>
+
+Сравни с той же последовательностью на [`/docs/ru/developers/general/`](/docs/ru/developers/general/), где ни один из этих компонентов не используется: текст плотнее и читать тяжелее.

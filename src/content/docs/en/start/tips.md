@@ -15,7 +15,7 @@ Small things that save time. Updated as more emerge.
 Author-time only. Don't leave the file watcher running on a production server — it's an extra IO listener for no benefit once menus stop changing.
 :::
 
-## Hot-load Path 2 addons
+## Hot-load addons
 
 Drop a new `addon.conf`-bearing jar into `plugins/AbstractMenus/addons/`, then run:
 
@@ -25,7 +25,7 @@ Drop a new `addon.conf`-bearing jar into `plugins/AbstractMenus/addons/`, then r
 
 The plugin picks up the new jar without a server restart. Use `/am addons reload <name>` to refresh an already-loaded addon after replacing its jar.
 
-Path 1 plugin-as-addons need a regular `/reload` or server restart — Bukkit owns their lifecycle.
+Plugin-as-addons need a regular `/reload` or server restart — Bukkit owns their lifecycle.
 
 ## MiniMessage when you need it
 

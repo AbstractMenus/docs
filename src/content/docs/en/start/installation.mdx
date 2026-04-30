@@ -5,7 +5,7 @@ description: Drop the jar in, configure config.conf if you need to, and you're d
 
 import { Steps, Aside } from "@astrojs/starlight/components";
 
-<div class="audience-tags"><span class="audience-tag audience-operator">Operator</span></div>
+<div class="audience-tags"><span class="audience-tag audience-operator">Server admin</span></div>
 
 ## Requirements
 
@@ -30,7 +30,7 @@ AbstractMenus does not bundle Adventure — it relies on the copy Paper ships. P
      ├── animated_heads.conf    head animation definitions
      ├── menus/                 your menu files (one or more .conf)
      │   └── menu.conf          a starter menu
-     ├── addons/                Path 2 addon jars (optional)
+     ├── addons/                addon jars (optional)
      └── variables.db           SQLite store for /var and /varp
    ```
 
@@ -52,7 +52,7 @@ After editing, run `/am reload`.
 | `animated_heads.conf` | Reusable head animation definitions referenced through the `%hanim_:<name>:<id>%` placeholder (see [placeholders](/docs/en/general/placeholders/)). |
 | `menus/menu.conf` | One sample menu opened by `/am open menu`. Delete it once you have your own menus. |
 | `variables.db` | SQLite. Don't edit manually. |
-| `addons/` | Drop Path 2 [addon jars](/docs/en/developers/addons/) here. |
+| `addons/` | Drop [addon jars](/docs/en/developers/addons/) here. |
 
 ## Updating
 
