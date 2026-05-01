@@ -1,0 +1,67 @@
+---
+title: Bungee Status
+description: Выбор сервера для сетей на BungeeCord/Velocity. Каждая плитка показывает живой онлайн и подключает игрока по клику.
+sidebar:
+  order: 4
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Сети на BungeeCord или Velocity отдают онлайн по серверам через plugin messages. AbstractMenus прокидывает их как плейсхолдеры `%bungee_<server>%`. Это меню использует их, чтобы собрать "выбор сервера" с живым онлайном и плитками "клик - подключиться".
+
+## Что показывает
+
+- Действие `bungeeConnect` для перехода между серверами
+- Плейсхолдер `%bungee_<server>%` для живого онлайна
+- Использование `glow: true`, чтобы выделить главную плитку (в нашем случае - лобби)
+- Связку `updateInterval` с bungee-плейсхолдерами, чтобы онлайн оставался свежим
+
+<MenuExample
+  path="state-and-vars/04-bungee-status"
+  lang="ru"
+  showShared={true}
+/>
+
+## Как работает
+
+Каждая плитка - обычный предмет с одним кастомным действием: `click { bungeeConnect: "lobby" }`. По клику плагин шлёт BungeeCord-сообщение о переходе, и прокси отправляет игрока на нужный бэкенд по имени.
+
+Плейсхолдер `%bungee_lobby%` спрашивает у BungeeCord-листенера "сколько игроков прямо сейчас на бэкенде `lobby`?" и рендерит число. С `updateInterval: 40` (2 секунды) онлайн обновляется, пока меню открыто.
+
+Чтобы счётчик работал:
+
+1. На сервере с AbstractMenus должно быть `bungeeCord: true` в `plugins/AbstractMenus/config.conf`.
+2. Прокси должен знать то же самое имя сервера в своём конфиге (`lobby` в `bungeeConnect: "lobby"` должно совпадать с зарегистрированным именем на прокси).
+3. BungeeCord plugin messaging должен быть включён с обеих сторон.
+
+## Добавить ещё серверов
+
+Каждая плитка независима. Скопируйте любой блок, поменяйте слот, имя, lore и две ссылки на имя сервера (`bungeeConnect` + плейсхолдер). Реальные имена бэкендов вместо `lobby` / `survival` и т.д.
+
+Для разнообразия меняйте `material:` под режим (TNT для "TNT Games", IRON_SWORD для "Battle Royale" и т.п.).
+
+## Показывать online/offline статус
+
+Чтобы зашейпить плитку по доступности сервера, используйте правило `bungeeIsOnline`:
+
+```hocon
+{
+  slot: 10
+  ...
+  rules {
+    bungeeIsOnline: "lobby"
+  }
+}
+```
+
+Если лобби оффлайн, предмет не отрендерится. Добавьте на тот же слот фолбек "offline" без правил с другим внешним видом (серая краска, текст "Сервер оффлайн") - получите паттерн dual-item из примера [Счётчик и тоггл](./counter-toggle).
+
+## Попробовать
+
+После установки example pack:
+
+1. Поднимите BungeeCord/Velocity-прокси с бэкендами по именам `lobby`, `survival`, `sw`, `bb`.
+2. Поставьте `bungeeCord: true` в `plugins/AbstractMenus/config.conf`.
+3. Положите бандл в `plugins/AbstractMenus/menus/example/`.
+4. `/am reload`.
+5. Введите `/ame_servers` в игре.

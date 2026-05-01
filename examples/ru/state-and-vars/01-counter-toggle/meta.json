@@ -1,0 +1,12 @@
+{
+  "title": "Счётчик и тоггл",
+  "category": "state-and-vars",
+  "level": "intermediate",
+  "features": ["incVarp", "decVarp", "setVarp", "removeVarp", "existVarp", "refreshMenu", "dual-item-display"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_counter",
+  "order": 1
+}

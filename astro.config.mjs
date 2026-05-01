@@ -1,4 +1,5 @@
 // @ts-check
+import path from "node:path";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import mdx from "@astrojs/mdx";
@@ -34,7 +35,10 @@ export default defineConfig({
         en: { label: "English", lang: "en" },
         ru: { label: "Русский", lang: "ru" },
       },
-      customCss: ["./src/styles/brand.css"],
+      customCss: [
+        "./src/styles/brand.css",
+        "./src/styles/examples.css",
+      ],
       expressiveCode: {
         themes: ["github-dark", "github-light"],
         shiki: {
@@ -46,6 +50,7 @@ export default defineConfig({
         {
           label: "Getting Started",
           translations: { ru: "Начало работы" },
+          collapsed: true,
           items: [
             { slug: "start/installation" },
             { slug: "start/config" },
@@ -58,6 +63,7 @@ export default defineConfig({
         {
           label: "Authoring menus",
           translations: { ru: "Создание меню" },
+          collapsed: true,
           items: [
             { slug: "general/commands" },
             { slug: "general/menu-structure" },
@@ -73,6 +79,7 @@ export default defineConfig({
         {
           label: "Techniques",
           translations: { ru: "Приёмы" },
+          collapsed: true,
           items: [
             { slug: "advanced/logical" },
             { slug: "advanced/templates" },
@@ -85,6 +92,7 @@ export default defineConfig({
         {
           label: "Reference",
           translations: { ru: "Справочник" },
+          collapsed: true,
           items: [
             { slug: "general/cheatsheet" },
             { slug: "general/examples" },
@@ -93,6 +101,7 @@ export default defineConfig({
         {
           label: "For Developers",
           translations: { ru: "Для разработчиков" },
+          collapsed: true,
           items: [
             { slug: "developers/general" },
             { slug: "developers/addons" },
@@ -102,6 +111,81 @@ export default defineConfig({
             { slug: "developers/variables" },
             { slug: "developers/utils" },
             { slug: "developers/migration" },
+          ],
+        },
+        {
+          label: 'Examples',
+          translations: { ru: 'Примеры' },
+          collapsed: true,
+          items: [
+            { slug: 'examples' },
+            { slug: 'examples/builder' },
+            {
+              label: 'Shops',
+              translations: { ru: 'Магазины' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/shops' },
+            },
+            {
+              label: 'Hub & Navigation',
+              translations: { ru: 'Хаб и навигация' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/hub-and-nav' },
+            },
+            {
+              label: 'Cosmetics',
+              translations: { ru: 'Косметика' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/cosmetics' },
+            },
+            {
+              label: 'Donate',
+              translations: { ru: 'Донат' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/donate' },
+            },
+            {
+              label: 'Casino & Games',
+              translations: { ru: 'Казино и игры' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/casino-and-games' },
+            },
+            {
+              label: 'Kits & Rewards',
+              translations: { ru: 'Киты и награды' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/kits-and-rewards' },
+            },
+            {
+              label: 'Admin Tools',
+              translations: { ru: 'Админ-инструменты' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/admin-tools' },
+            },
+            {
+              label: 'Info Pages',
+              translations: { ru: 'Инфо-страницы' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/info-pages' },
+            },
+            {
+              label: 'State & Variables',
+              translations: { ru: 'Состояние и переменные' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/state-and-vars' },
+            },
+            {
+              label: 'World Integrations',
+              translations: { ru: 'Интеграции мира' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/world-integrations' },
+            },
+            {
+              label: 'Snippets',
+              translations: { ru: 'Сниппеты' },
+              collapsed: true,
+              autogenerate: { directory: 'examples/snippets' },
+            },
           ],
         },
         {
@@ -115,7 +199,73 @@ export default defineConfig({
         baseUrl:
           "https://github.com/AbstractMenus/docs/edit/main/src/content/docs/",
       },
+      // Persist sidebar group open/closed state across page loads + a floating
+      // action button in the bottom-right of the sidebar that toggles all groups.
+      // Starlight's `collapsed: true` on each group makes them closed by default;
+      // this script remembers the user's manual toggles per group via localStorage.
+      head: [
+        {
+          tag: "script",
+          content: [
+            "(function(){",
+            "var KEY='ame-sidebar-groups';",
+            "function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return {};}}",
+            "function save(s){try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}}",
+            "var lang=document.documentElement.lang||'en';",
+            "var L=lang==='ru'?{expand:'Развернуть все',collapse:'Свернуть все'}:{expand:'Expand all',collapse:'Collapse all'};",
+            "var SVG_ATTRS='width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"';",
+            "var ICON_EXPAND='<svg class=\"sl-fab-icon sl-fab-icon-expand\" '+SVG_ATTRS+'><polyline points=\"7 6 12 11 17 6\"></polyline><polyline points=\"7 13 12 18 17 13\"></polyline></svg>';",
+            "var ICON_COLLAPSE='<svg class=\"sl-fab-icon sl-fab-icon-collapse\" '+SVG_ATTRS+'><polyline points=\"17 11 12 6 7 11\"></polyline><polyline points=\"17 18 12 13 7 18\"></polyline></svg>';",
+            "function init(){",
+            "var sidebar=document.querySelector('.sidebar-content');",
+            "if(!sidebar)return;",
+            "var groups=sidebar.querySelectorAll('details');",
+            "var seen={};var state=load();",
+            "groups.forEach(function(d){",
+            "var summary=d.querySelector(':scope > summary');if(!summary)return;",
+            "var label=(summary.textContent||'').trim();if(!label||seen[label])return;",
+            "seen[label]=true;",
+            "var isActive=d.querySelector('a[aria-current=\"page\"]');",
+            "if(!isActive&&label in state){d.open=state[label];}",
+            "d.addEventListener('toggle',function(){var s=load();s[label]=d.open;save(s);refreshFab();});",
+            "});",
+            "var existing=document.querySelector('.sl-fab');if(existing)existing.parentNode.removeChild(existing);",
+            "var btn=document.createElement('button');",
+            "btn.type='button';btn.className='sl-fab';",
+            "btn.setAttribute('aria-label',L.expand);",
+            "btn.innerHTML=ICON_EXPAND+ICON_COLLAPSE+'<span class=\"sl-fab-tooltip\" data-tt>'+L.expand+'</span>';",
+            "function refreshFab(){",
+            "var d=sidebar.querySelectorAll('details');var anyOpen=false;",
+            "d.forEach(function(x){if(x.open)anyOpen=true;});",
+            "btn.classList.toggle('is-collapse',anyOpen);",
+            "var tt=btn.querySelector('[data-tt]');",
+            "if(tt)tt.textContent=anyOpen?L.collapse:L.expand;",
+            "btn.setAttribute('aria-label',anyOpen?L.collapse:L.expand);",
+            "}",
+            "btn.addEventListener('click',function(){",
+            "var d=sidebar.querySelectorAll('details');var anyOpen=false;",
+            "d.forEach(function(x){if(x.open)anyOpen=true;});",
+            "var newOpen=!anyOpen;var s=load();",
+            "d.forEach(function(x){var sm=x.querySelector(':scope > summary');var lbl=sm?(sm.textContent||'').trim():'';x.open=newOpen;if(lbl)s[lbl]=newOpen;});",
+            "save(s);refreshFab();",
+            "});",
+            "var pane=document.querySelector('.sidebar-pane')||sidebar;",
+            "pane.appendChild(btn);",
+            "refreshFab();",
+            "}",
+            "if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}",
+            "})();",
+          ].join(""),
+        },
+      ],
     }),
     mdx(),
   ],
+  vite: {
+    resolve: {
+      alias: {
+        "@components": path.resolve("./src/components"),
+      },
+    },
+  },
 });

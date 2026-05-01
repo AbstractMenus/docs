@@ -1,0 +1,12 @@
+{
+  "title": "Случайный зачарователь",
+  "category": "casino-and-games",
+  "level": "advanced",
+  "features": ["draggable-slots", "placeItem", "placedItem-rule", "removePlaced", "setButton", "randActions", "changed_item-placeholders"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_enchanter",
+  "order": 5
+}

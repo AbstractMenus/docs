@@ -1,0 +1,54 @@
+---
+title: "HOCON template substitution"
+description: Define an item shape once, instantiate it many times with per-use overrides. The killer feature of HOCON.
+sidebar:
+  order: 10
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+HOCON supports `${name}` substitution - reference a previously-defined block by name. When followed by `{ ... overrides ... }`, the override merges on top of the substituted value. This is what makes the shared `_shared/templates.conf` and per-menu local templates work.
+
+<MenuExample path="snippets/10-template-substitution" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+# Define once
+prizeTile {
+  material: NETHER_STAR
+  lore: ["&7Click for a prize."]
+  click { actions { itemAdd { material: DIAMOND } } }
+}
+
+# Use multiple times with overrides
+items: [
+  ${prizeTile} { slot: 2, name: "&aCommon Prize" }
+  ${prizeTile} { slot: 4, name: "&6Rare Prize" }
+  ${prizeTile} { slot: 6, name: "&dEpic Prize" }
+]
+```
+
+Each instance starts as a copy of `prizeTile` (material, lore, click), then the override block adds slot and name. The result is three different items sharing structure but differing in identifying fields.
+
+## Merge semantics
+
+`${A} { B }` does a **deep object merge** - keys from B override keys from A, but nested objects merge recursively. So if A has `click.actions.sound: ${clickSound}` and B has `click.actions.message: "Hi"`, the merged result has both: `click.actions.{sound: ..., message: "Hi"}`.
+
+For lists, the override REPLACES the original list - it doesn't append. To extend a lore list:
+
+```hocon
+${prizeTile} {
+  lore: ${prizeTile.lore} [ "&7Extra line" ]
+}
+```
+
+The `${prizeTile.lore}` substitution gets the original lore array, then `[...]` appends new entries. See the [Daily Kit example](../kits-and-rewards/daily-kit-cooldown) for this pattern in action.
+
+## When to template
+
+- Item shape repeated 3+ times: extract a template
+- A click handler used in multiple items: extract `clickFoo {...}` and reference via `click: ${clickFoo}`
+- Cost or price data shared between display item and rule check: define once at file scope, reference in both spots
+
+If something is used twice and inlined still reads clearly, leave it inlined. Templates pay off when they reduce edit surface for repeated logic.

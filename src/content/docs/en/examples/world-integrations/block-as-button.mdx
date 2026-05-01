@@ -1,0 +1,57 @@
+---
+title: Block as Button
+description: Right-click any block of a chosen material to open a menu. The clickBlockType activator + block-context placeholders.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`clickBlockType` listens for right-clicks on any block of a given material, anywhere in the world. Different from `clickBlock` (which targets a specific block by coordinates). The opened menu can read the clicked block's position, world, type via `%activator_block_*%` placeholders.
+
+<MenuExample path="world-integrations/03-block-as-button" lang="en" showShared={true} />
+
+## What it teaches
+
+- The `clickBlockType` activator targeting a material
+- Reading the click context via `%activator_block_x%`, `%activator_block_y%`, `%activator_block_z%`, `%activator_block_world%`
+- Putting placeholders in the menu `title:` for dynamic titles per-click
+
+## Activator format
+
+```hocon
+activators {
+  clickBlockType: ["DIAMOND_BLOCK"]
+}
+```
+
+A list of materials. The menu opens when the player right-clicks any block whose type appears in the list. To add more triggers:
+
+```hocon
+activators {
+  clickBlockType: ["DIAMOND_BLOCK", "EMERALD_BLOCK", "BEACON"]
+}
+```
+
+Note this fires on EVERY block of the listed types - server-wide. For "specific block at known coordinates" (e.g., one signpost at the spawn area), use `clickBlock` instead with the world + coords.
+
+## Block context placeholders
+
+Inside the menu, `%activator_block_*%` exposes the clicked block:
+
+| Placeholder | Returns |
+|---|---|
+| `%activator_block_world%` | World name |
+| `%activator_block_x%` | X coordinate |
+| `%activator_block_y%` | Y coordinate |
+| `%activator_block_z%` | Z coordinate |
+| `%activator_block_type%` | Material name |
+
+The example uses these in the menu title - clicking different diamond blocks opens menus titled with each block's coords. Useful for "info about this specific signpost" UIs.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Place a diamond block somewhere in the world.
+4. Right-click it. The menu opens with the block's coordinates in the title.

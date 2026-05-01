@@ -1,0 +1,30 @@
+---
+title: "Rule: if (placeholder expression)"
+description: Compare placeholder values with operators like >=, ==, ||, &&. The general-purpose conditional rule.
+sidebar:
+  order: 4
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+When a built-in rule like `permission` or `money` doesn't fit, the `if` rule lets you write expressions over any placeholder. Supports `>`, `<`, `>=`, `<=`, `==`, `!=`, `===`, `!==`, `&&`, `||`, plus parentheses.
+
+<MenuExample path="snippets/04-rule-if-placeholder" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+rules {
+  if: "%player_level% >= 10"
+}
+```
+
+```hocon
+rules {
+  if: "(%player_lvl% == 5 || %player_lvl% == 10) && %player_world% == survival"
+}
+```
+
+Inside the expression, placeholders unwrap to their string or numeric values. Bare strings (no quotes needed) are compared with the operators. Use `===`/`!==` for case-insensitive matching of names.
+
+For complex math, use the `js` rule instead - it runs JavaScript expressions. `if` is faster and recommended for plain logic.

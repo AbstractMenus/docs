@@ -1,153 +1,23 @@
 ---
 title: Examples
-description: Reference menus you can copy-paste, with full HOCON inlined.
+description: A catalog of ready-to-use AbstractMenus menu examples - copy, drop in, customize.
 ---
 
-import { Aside, Code } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-import statsConf    from "../../../../examples/simple/stats.conf?raw";
-import serversConf  from "../../../../examples/simple/servers.conf?raw";
-import cakeShopConf from "../../../../examples/simple/cake_shop.conf?raw";
-import kitsConf     from "../../../../examples/medium/kits.conf?raw";
-import craftConf    from "../../../../examples/medium/craft.conf?raw";
-import shopConf     from "../../../../examples/medium/shop.conf?raw";
-import enhancerConf from "../../../../examples/advanced/enhancer.conf?raw";
-import enchanterConf from "../../../../examples/advanced/enchanter.conf?raw";
+The example catalog has moved. There's now a dedicated **Examples** section in the sidebar with ~14 menus organized by use case, each with its own page, syntax-highlighted code, badges for features and dependencies, plus single-file and zip-bundle download buttons.
 
-<div class="audience-tags"><span class="audience-tag audience-author">Menu author</span></div>
+Start at the [Examples landing page](/docs/en/examples/), or jump straight to a category:
 
-Sorted by complexity. Each menu's full HOCON is right here — copy the code into a file under `plugins/AbstractMenus/menus/` and run `/am reload`.
-
-<Aside type="note">
-Materials and placeholders target MC 1.20.6+, matching AbstractMenus 2.0.
-</Aside>
-
-## Simple
-
-### Player stats
-
-Reads vanilla statistics through PlaceholderAPI and renders four head items.
-
-**Requires:** PlaceholderAPI with the Player and Statistic expansions installed.
-
-![preview-stats](/docs/img/examples/stats.gif)
-
-<details>
-<summary>stats.conf</summary>
-<Code code={statsConf} lang="hocon" />
-</details>
-
-### BungeeCord servers selector
-
-Lobby-style server picker. Shows online status and player count for each backend.
-
-**Requires:** BungeeCord, PlaceholderAPI with Player and Bungee expansions.
-
-![preview-servers](/docs/img/examples/servers.gif)
-
-<details>
-<summary>servers.conf</summary>
-<Code code={serversConf} lang="hocon" />
-</details>
-
-### Cake shop
-
-Buy a cake for in-game currency.
-
-**Requires:** Vault plus an economy plugin.
-
-![preview-cakes](/docs/img/examples/cakes.gif)
-
-<details>
-<summary>cake_shop.conf</summary>
-<Code code={cakeShopConf} lang="hocon" />
-</details>
-
-## Medium
-
-### Daily kits
-
-Permission-gated kits with cooldown tracking via variables.
-
-**Requires:** LuckPerms.
-
-![preview-kits](/docs/img/examples/kits.gif)
-
-<details>
-<summary>kits.conf</summary>
-<Code code={kitsConf} lang="hocon" />
-</details>
-
-### Crafting
-
-Custom drag-and-drop crafting grid driven by `placedItem` rules.
-
-**Requires:** Nothing.
-
-![preview-craft](/docs/img/examples/craft.gif)
-
-<details>
-<summary>craft.conf</summary>
-<Code code={craftConf} lang="hocon" />
-</details>
-
-### Shop
-
-Multi-category paginated shop with bindings, lore variants, and discount logic.
-
-**Requires:** Vault plus an economy plugin.
-
-![preview-shop](/docs/img/examples/shop.gif)
-
-<details>
-<summary>shop.conf</summary>
-<Code code={shopConf} lang="hocon" />
-</details>
-
-## Advanced
-
-### Casino
-
-Slot-machine-style chance menu with animation frames and rewards.
-
-**Requires:** Vault plus an economy plugin.
-
-![preview-casino](/docs/img/examples/casino.gif)
-
-The casino spans multiple files. Source: [advanced/casino on GitHub](https://github.com/AbstractMenus/examples/tree/main/advanced/casino).
-
-### Admin panel
-
-Punish menu (kick / ban / mute) over an online-player catalog.
-
-**Requires:** Essentials (or any plugin that exposes those commands).
-
-![preview-admin](/docs/img/examples/padmin.gif)
-
-Multi-file. Source: [advanced/admin on GitHub](https://github.com/AbstractMenus/examples/tree/main/advanced/admin).
-
-### Item enhancer
-
-Click-driven item upgrade flow with variable-tracked level state.
-
-**Requires:** Nothing.
-
-![preview-enhancer](/docs/img/examples/enhancer.gif)
-
-<details>
-<summary>enhancer.conf</summary>
-<Code code={enhancerConf} lang="hocon" />
-</details>
-
-### Random enchanter
-
-Roll a random enchantment from a weighted table.
-
-**Requires:** Nothing.
-
-![preview-enchant](/docs/img/examples/enchant.gif)
-
-<details>
-<summary>enchanter.conf</summary>
-<Code code={enchanterConf} lang="hocon" />
-</details>
+<CardGrid>
+  <LinkCard title="Shops" href="/docs/en/examples/shops/" description="Cake Shop, multi-category shop with sub-shop navigation." />
+  <LinkCard title="Hub & Navigation" href="/docs/en/examples/hub-and-nav/" description="Main hub linking to all examples." />
+  <LinkCard title="Cosmetics" href="/docs/en/examples/cosmetics/" description="Skin chooser using setSkin." />
+  <LinkCard title="Casino & Games" href="/docs/en/examples/casino-and-games/" description="Roulette and a drag-and-drop random enchanter." />
+  <LinkCard title="Kits & Rewards" href="/docs/en/examples/kits-and-rewards/" description="Basic kit and a daily kit with temporal-var cooldown." />
+  <LinkCard title="Admin Tools" href="/docs/en/examples/admin-tools/" description="Online players browser using the PLAYERS catalog." />
+  <LinkCard title="Info Pages" href="/docs/en/examples/info-pages/" description="Read-only menus like server rules." />
+  <LinkCard title="State & Variables" href="/docs/en/examples/state-and-vars/" description="Counters, toggles, live stats boards, drag-and-drop enhancer." />
+  <LinkCard title="World Integrations" href="/docs/en/examples/world-integrations/" description="WorldGuard region-triggered welcome menu." />
+  <LinkCard title="Snippets" href="/docs/en/examples/snippets/" description="Tiny demos like inventory crafting." />
+</CardGrid>

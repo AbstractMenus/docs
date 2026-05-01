@@ -1,0 +1,65 @@
+---
+title: Цветные скины
+description: Выбор скина через setSkin от SkinsRestorer. Три предустановленных скина и кнопка сброса.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Действие `setSkin` меняет скин игрока через SkinsRestorer. В этом примере три готовых скина и кнопка сброса. Вызов `closeMenu` непосредственно перед `setSkin` обязателен: смена скина вызывает респаун игрока, и открытый инвентарь приведёт к крашу клиента.
+
+## Что показывает пример
+
+- Действие `setSkin` с параметрами `texture` + `signature`
+- Сокращение `resetSkin: true` для возврата стандартного скина
+- Почему `closeMenu` должен идти перед `setSkin` (респаун + открытый инвентарь = краш клиента)
+- Использование `PLAYER_HEAD` с полем `texture:` для отображения превью скина в качестве предмета меню
+
+<MenuExample
+  path="cosmetics/03-color-skins"
+  lang="ru"
+  showShared={true}
+/>
+
+## Важно: порядок действий
+
+Внутри блока `actions { ... }` ключи выполняются в том порядке, в котором они идут в файле. Документация плагина прямо требует ставить `closeMenu` перед `setSkin`:
+
+```text
+:::caution
+Before this action, you need to set the closeMenu action, because when the
+skin is changed, player respawning. If the menu is opened, it may cause a
+critical error for the client.
+:::
+```
+
+В каждом блоке click выше `closeMenu: 1` стоит первым, затем идёт `setSkin`. Не меняй порядок.
+
+## Где взять реальные texture и signature
+
+Заглушки в этом примере (`REPLACE_WITH_TEXTURE_BASE64_GOLD` и т.д.) сами по себе не сработают. Чтобы получить реальные значения:
+
+1. Зайди на [MineSkin.org](https://mineskin.org).
+2. Загрузи изображение или выбери готовый скин.
+3. Скопируй поле Texture Data в параметр `texture:`.
+4. Скопируй поле Texture Signature в параметр `signature:`.
+
+Оба поля - длинные base64-строки. Поле `texture` у отображаемого `PLAYER_HEAD` (превью) - это короткий хеш текстуры (та часть, что идёт после `http://textures.minecraft.net/texture/<hash>`).
+
+## Кастомизация
+
+Чтобы добавить новый скин, скопируй любой блок с предметом, поменяй `slot:`, `name:`, превью `texture:` и содержимое `setSkin`. Общий шаблон со звуком `${successSound}` сохраняет одинаковую звуковую обратную связь для всех вариантов.
+
+Если превью не нужно (скажем, хочешь использовать баннер вместо головы), убери поле `texture:` и поменяй `material:` на `RED_BANNER` или что подходит к стилю.
+
+## Попробовать
+
+После установки набора примеров:
+
+1. Поставь [SkinsRestorer](https://www.spigotmc.org/resources/2124/).
+2. Замени заглушки `REPLACE_WITH_*` на реальные texture/signature.
+3. Положи бандл в `plugins/AbstractMenus/menus/example/`.
+4. Выполни `/am reload`.
+5. Введи `/ame_skins` в игре.
+6. Кликни на скин. Перезайди, чтобы увидеть изменения.

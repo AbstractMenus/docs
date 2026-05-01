@@ -1,0 +1,24 @@
+---
+title: "Правило: permission"
+description: Ограничить клик одним правом. Минимальное демо правила permission.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Правило permission - самый частый ограничитель в любом меню: "разреши игроку это, только если у него есть право". В паре с `denyActions` даёт дружелюбный отказ.
+
+<MenuExample path="snippets/01-rule-permission" lang="ru" showShared={true} />
+
+## Как использовать
+
+```hocon
+click {
+  rules { permission: "myplugin.admin" }
+  actions { ... }
+  denyActions: ${denyNoPerm}
+}
+```
+
+Правило проходит, если у игрока есть указанное право. Чтобы ограничить по группе, а не по правилу, переключайтесь на правило `group` (работает с LuckPerms). Чтобы инвертировать (разрешить только тем, у кого права НЕТ), добавьте префикс `-`: `-permission: "..."`.

@@ -1,0 +1,37 @@
+---
+title: "Action: itemAdd"
+description: Give the player one or more items. Supports custom names, lore, enchantments, and any other item field.
+sidebar:
+  order: 6
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`itemAdd` adds an item (or list of items) to the player's inventory. The shape inside is the full item-definition spec - everything that works on a regular menu item works here too: material, name, lore, enchantments, custom NBT.
+
+<MenuExample path="snippets/06-action-give-item" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+actions {
+  itemAdd {
+    material: WOODEN_PICKAXE
+    name: "&aStarter Pickaxe"
+  }
+}
+```
+
+Multiple items via list:
+
+```hocon
+actions {
+  itemAdd: [
+    { material: BREAD, count: 16 }
+    { material: APPLE, count: 4 }
+    { material: GOLDEN_APPLE }
+  ]
+}
+```
+
+If the player's inventory is full, items overflow to the ground (vanilla behavior). To check inventory space first, gate the click with the `freeSlot` or `freeSlotCount` rules.

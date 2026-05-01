@@ -1,0 +1,56 @@
+---
+title: Global Stats Board
+description: Live-updating dashboard with player statistics and server status. Demonstrates placeholders + updateInterval refresh.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A read-only menu showing live data via PlaceholderAPI. The top row displays per-player stats (kills, deaths, hours played), the bottom row shows server-wide info (online count, time, TPS, current world). Values refresh every second thanks to `updateInterval: 20` (20 ticks = 1 second).
+
+## What it teaches
+
+- The `updateInterval` field for live menu refresh
+- PlaceholderAPI integration: `%statistic_*%`, `%server_*%`, `%player_*%`
+- Mixing per-player and server-wide data in one menu
+- Custom skull textures via the `texture:` field on PLAYER_HEAD
+
+<MenuExample
+  path="state-and-vars/03-global-stats-board"
+  lang="en"
+  showShared={true}
+/>
+
+## How updateInterval works
+
+`updateInterval: 20` tells the menu to re-evaluate placeholders every 20 server ticks (1 second). On each tick, every item's `name:` and `lore:` get re-rendered with current placeholder values. Players see counts increment in real time without closing/reopening.
+
+For static menus this field is unnecessary - they only render once on open. For dashboards with constantly-changing values (stats, online count), it's essential.
+
+Set this too low (e.g. `1` = every tick = 50ms) and you'll see CPU spikes from placeholder evaluation. `20` (1s) or `40` (2s) is the sweet spot for human-readable refresh.
+
+## Placeholder requirements
+
+This menu uses PlaceholderAPI placeholders from several expansions:
+
+- **`%statistic_*%`** - PlaceholderAPI's [Statistic expansion](https://api.extendedclip.com/expansions/statistic/). Install with `/papi ecloud download Statistic`.
+- **`%server_*%`** - PlaceholderAPI's built-in server placeholders. No extra expansion needed.
+- **`%player_*%`** - PlaceholderAPI's built-in player placeholders. No extra expansion needed.
+
+If a placeholder isn't resolved, it'll render as the literal `%xxx%` string in the menu - that's a sign the expansion isn't installed.
+
+## Adding more stats
+
+Pick a placeholder from the [PlaceholderAPI cloud](https://api.extendedclip.com/all/) and drop it into a new item's `lore`. The menu will pick up the live value on next refresh.
+
+For per-player vars from this plugin (not PAPI), use the `%varp_:name:default%` form - see the [Counter & Toggle](./counter-toggle) example.
+
+## Try it
+
+After installing the example pack:
+
+1. Install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) and the Statistic expansion (`/papi ecloud download Statistic`).
+2. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+3. `/am reload`.
+4. Type `/ame_stats` in-game. Watch the values refresh once per second.

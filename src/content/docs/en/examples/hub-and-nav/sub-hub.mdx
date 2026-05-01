@@ -1,0 +1,45 @@
+---
+title: Sub-Hub
+description: A secondary hub with a back-button pointing at the main hub. The standard "more options" menu.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+When the main hub gets crowded, split overflow features onto a secondary hub. This example follows the most common pattern: same layout as the main hub, but with a back button pointing at the parent.
+
+<MenuExample path="hub-and-nav/02-sub-hub" lang="en" showShared={true} />
+
+## What it teaches
+
+- The back-button pattern via `openMenu` to the parent's name
+- Distinguishing "back" (just go up the tree) from "close" (exit the menu UI)
+- Allowing the sub-hub to be opened directly via its own command in addition to chained navigation
+
+## Two ways to "go back"
+
+Approach 1 (used here): hard-code the parent name.
+
+```hocon
+{
+  slot: 18
+  material: ARROW
+  name: "&eBack to Main Hub"
+  click { openMenu: "ame_hub" }
+}
+```
+
+Cheap, simple, works. Limitation: if multiple menus chain into this sub-hub, the back button always lands on `ame_hub`, even if the player came from somewhere else.
+
+Approach 2 (see [Breadcrumb Chain](./breadcrumb-chain)): use `openMenuCtx` and let the activator context propagate the "previous menu" through the chain. The back button then dynamically returns to wherever the player came from.
+
+For 95% of menus, hard-coding parent is fine. Reserve `openMenuCtx` for genuinely deep menu trees.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_hub` to start at the main hub, or `/ame_subhub` to land here directly.
+4. Click any tile to open its target menu.
+5. Click "Back to Main Hub" to return.

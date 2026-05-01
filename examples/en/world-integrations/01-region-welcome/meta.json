@@ -1,0 +1,12 @@
+{
+  "title": "Region Welcome",
+  "category": "world-integrations",
+  "level": "intermediate",
+  "features": ["regionJoin", "openMenu", "WorldGuard-integration"],
+  "dependencies": ["WorldGuard"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "(on region enter)",
+  "order": 1
+}

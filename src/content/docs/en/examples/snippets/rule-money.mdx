@@ -1,0 +1,29 @@
+---
+title: "Rule: money"
+description: Gate a click on the player having enough currency. Pair with takeMoney to actually charge.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The `money` rule asks the configured economy provider "does this player have at least N?". If yes, the click's actions run; if no, `denyActions` runs.
+
+<MenuExample path="snippets/02-rule-money" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+click {
+  rules { money: 50 }
+  actions {
+    takeMoney: 50
+    itemAdd { ... }
+  }
+  denyActions: ${denyNoMoney}
+}
+```
+
+The rule only checks balance - it doesn't deduct. The `takeMoney` action does the actual charge. This separation lets you use `money` as a pure visual gate (showing different items based on balance) without spending the player's coins.
+
+Use the object form `money: { amount: 50, provider: "vault" }` to pin to a specific economy provider when multiple are registered.

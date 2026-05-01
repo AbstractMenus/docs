@@ -1,0 +1,38 @@
+---
+title: Breadcrumb Chain
+description: Three nested menus with manual back-navigation. The simplest pattern for menu trees.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Three menus chained together with `openMenu`, each level having a back button to the previous one. Demonstrates how to build menu trees several levels deep without anything fancier than the basic openMenu action.
+
+<MenuExample path="hub-and-nav/03-breadcrumb-chain" lang="en" showShared={true} />
+
+## What it teaches
+
+- Building deeper menu trees with manual openMenu chains
+- Per-level back buttons hard-coded to the parent
+
+## Manual vs context-aware back
+
+Each level's back button hard-codes the parent menu name:
+
+```hocon
+{ slot: 0, name: "&eBack to Level 2", click { openMenu: "ame_chain_l2" } }
+```
+
+Simple, predictable, works for tree structures where every menu has exactly one parent. Trade-off: if `ame_chain_l2` is opened from multiple parents (say, both Level 1 AND a sub-hub), the back button always returns to Level 1, ignoring where the player actually came from.
+
+For DAG-shaped menu graphs where a menu can be reached from multiple places and back should respect the actual arrival path, use `openMenuCtx` instead. It propagates context through the menu chain. See the [activator/menu input docs](/docs/en/advanced/input/) for `openMenuCtx` mechanics.
+
+For 95% of menus a simple tree is fine - hard-coded back buttons keep things predictable.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_chain` in-game.
+4. Click "Go deeper" twice. Click back twice.

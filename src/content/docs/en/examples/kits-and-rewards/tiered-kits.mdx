@@ -1,0 +1,35 @@
+---
+title: Tiered Kits
+description: Three kit tiers (Default / VIP / Elite), each gated by a permission. No cooldown - the kits can be claimed repeatedly.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A simpler counterpart to [Daily Kit with Cooldown](./daily-kit-cooldown). Same tier idea (default / VIP / Elite) but no temporal-var lockout - the kits can be claimed any time. Useful for "starter packs" or "always-available perks for premium ranks".
+
+<MenuExample path="kits-and-rewards/03-tiered-kits" lang="en" showShared={true} />
+
+## What it teaches
+
+- Click-level permission gates with `rules { permission: "..." }`
+- Composing `denyActions: ${denyNoPerm}` from shared templates for the rejection
+- The `itemAdd: [ ... ]` list form for delivering a multi-item bundle
+
+## Why no dual-item display here?
+
+This menu shows ALL three kits to everyone. The VIP and Elite kits are visible regardless of whether the player can claim them - the rule check happens on click, not on display. If a regular player clicks VIP, they hit `denyActions` and see the "no permission" message.
+
+This is intentional UX. Players see what they could unlock - it's a soft sales pitch for the donate ranks. The dual-item pattern (hide locked tiles entirely) is what [Tiered Donate Ranks](../donate/tiered-ranks) uses; pick whichever fits your server.
+
+## Add a tier
+
+Copy any kit block, change the slot, name, lore, permission node, and itemAdd contents. For more visual variety, swap `material:` per tier (NETHERITE_SWORD for Mythic etc.).
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_kit_tiers` in-game.
+4. The Default kit works for anyone. Grant yourself `abstractmenus.vip` or `abstractmenus.elite` to claim the others.

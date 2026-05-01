@@ -1,0 +1,12 @@
+{
+  "title": "Правило: money",
+  "category": "snippets",
+  "level": "beginner",
+  "features": ["money-rule", "takeMoney"],
+  "dependencies": ["Vault"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_snip_money",
+  "order": 2
+}

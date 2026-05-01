@@ -1,0 +1,65 @@
+---
+title: Item Enhancer
+description: Drop a vanilla item, get an upgraded version. Demonstrates drag-and-drop slots paired with the oneof rule for conditional transformations.
+sidebar:
+  order: 5
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A "fixed-table" enhancement menu: stone becomes coal ore, apple becomes golden apple, wooden sword becomes diamond sword, wooden axe becomes diamond axe. Built around the `oneof` rule which short-circuits on the first matching condition - the perfect fit for "switch on item type, do different thing".
+
+## What it teaches
+
+- The `oneof` rule type and its short-circuit "first match wins" semantics
+- Per-branch actions inside oneof entries (each entry has its own `actions {}`)
+- Drag-and-drop slots and the `placedItem` rule for input matching
+- Combining drag-and-drop primitives (`placeItem`, `removePlaced`, `setButton`) into a transformation pipeline
+- Templates for reusable rule and action shapes (`${inputSlotRule}`, `${outputAction}`)
+
+<MenuExample
+  path="state-and-vars/05-item-enhancer"
+  lang="en"
+  showShared={true}
+/>
+
+## Why state-and-vars?
+
+This example is filed under state-and-vars because the drag-and-drop machinery is itself a form of menu state - the items physically held in slots 2 and 6 are session-local "variables" of the menu. It doesn't use `setVar`/`setVarp`, but the conceptual pattern (read the slot's state, branch on it, mutate it) is the same.
+
+## How `oneof` works
+
+`oneof` is a logical rule wrapper that takes a list of entries. It walks the list top-to-bottom and stops on the first whose own rule matches. The matching entry's `actions {}` block is then run.
+
+```hocon
+oneof: [
+  { placedItem: { slot: 2, material: STONE }, actions { placeItem: { ..., material: COAL_ORE } } }
+  { placedItem: { slot: 2, material: APPLE }, actions { placeItem: { ..., material: GOLDEN_APPLE } } }
+  ...
+]
+```
+
+If none of the entries match, the entire `oneof` evaluates false. The outer click block then runs `denyActions` instead of the success path.
+
+This is cleaner than nested `if`/`and`/`or` for switch-like logic.
+
+## Adding a new recipe
+
+Append to the `oneof` list in `enhanceRules`:
+
+```hocon
+{ placedItem: ${inputSlotRule} { material: COAL }
+  actions { placeItem: ${outputAction} { material: DIAMOND } } }
+```
+
+The `${inputSlotRule}` and `${outputAction}` substitutions keep the slot numbers in one place - if you reorganize the menu layout, only the two anchor blocks change, not every recipe entry.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_enhancer` in-game.
+4. Drag a stone block into the left slot.
+5. Click "Enhance!". A coal ore appears in the right slot.

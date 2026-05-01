@@ -1,0 +1,37 @@
+---
+title: "Action: randActions"
+description: Pick one entry at random from a list of action groups. Each entry is independent.
+sidebar:
+  order: 8
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`randActions` takes a list of action groups and picks exactly one at random to execute. Each entry is a full self-contained group - sounds, messages, items, anything goes.
+
+<MenuExample path="snippets/08-action-rand-actions" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+randActions: [
+  { message: "Outcome A" }
+  { message: "Outcome B" }
+  { message: "Outcome C" }
+]
+```
+
+Each entry has equal probability by default. To **weight** outcomes, repeat them - an entry appearing twice is twice as likely:
+
+```hocon
+randActions: [
+  { message: "Common outcome" }
+  { message: "Common outcome" }
+  { message: "Common outcome" }
+  { message: "Rare outcome" }
+]
+```
+
+Above: 3-in-4 chance of "Common", 1-in-4 chance of "Rare".
+
+For one-of-N display (which item shows up) instead of one-of-N action, use the `chance` rule on items - see [Rule: chance](./rule-chance).

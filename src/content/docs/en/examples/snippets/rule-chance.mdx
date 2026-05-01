@@ -1,0 +1,27 @@
+---
+title: "Rule: chance"
+description: Probabilistic display - the item shows up only N% of the time the menu is opened.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`chance: 30` means "33 times out of 100, this rule passes". Useful for rare loot displays, lottery tickets, or any "sometimes you see X" UI.
+
+<MenuExample path="snippets/03-rule-chance" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+{
+  slot: 4
+  material: NETHER_STAR
+  name: "&dRare item"
+  rules { chance: 30 }
+}
+```
+
+The rule rolls when the menu is rendered (on open and on each `updateInterval` tick if set). For a fallback item that shows the OTHER 70% of the time, add a second item at the same slot with no rules - the dual-item pattern handles it.
+
+For weighted random outcomes after a click (not display), use `randActions` instead - see [Action: randActions](./action-rand-actions).

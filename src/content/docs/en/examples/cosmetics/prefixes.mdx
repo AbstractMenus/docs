@@ -1,0 +1,68 @@
+---
+title: Prefixes
+description: A prefix selector that puts the player in a LuckPerms group. Mutual-exclusion via removeGroup-then-addGroup in a bulk action.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A different approach from [Tags](./tags). Instead of writing meta values, this menu manages LuckPerms group membership. Each prefix corresponds to one group; selecting a prefix removes the player from the other prefix groups and adds them to the chosen one. Mutual exclusion built in.
+
+<MenuExample path="cosmetics/02-prefixes" lang="en" showShared={true} />
+
+## What it teaches
+
+- The `addGroup` / `removeGroup` actions for LuckPerms group membership
+- Using `bulk` to run multiple removeGroups + addGroup in one click
+- Permission-gated upgrades to higher-tier prefixes
+
+## Why bulk
+
+Each prefix selection runs three actions in sequence:
+
+```hocon
+bulk: [
+  { removeGroup: "ame_prefix_member" }
+  { removeGroup: "ame_prefix_donor" }
+  { addGroup: "ame_prefix_admin" }
+]
+```
+
+We can't write `removeGroup: ...` twice at the top level of an `actions {}` block - HOCON object keys must be unique. `bulk` wraps the action sequence, letting each entry be its own action group.
+
+This pattern (remove-all-others, add-this-one) ensures the player is in exactly one prefix group at a time. Without the removes, players accumulate group memberships and end up with multiple stacked prefixes.
+
+## Tags vs Prefixes pattern
+
+Two ways to manage chat prefix:
+
+- **Tags** (lpMetaSet) - flexible, fine-grained, no group hierarchy. Best for purely cosmetic symbols.
+- **Prefixes** (addGroup) - integrates with LuckPerms groups, inherits perms from the group, plays nice with chat plugins that read `%luckperms_prefix%`. Best when the prefix should also imply other permissions.
+
+Most servers want the latter for the actual chat name color, and the former for an additional decorative tag.
+
+## Setup
+
+Create the LuckPerms groups before this menu works:
+
+```text
+/lp creategroup ame_prefix_member
+/lp group ame_prefix_member meta addprefix 50 "&a[Member] "
+
+/lp creategroup ame_prefix_donor
+/lp group ame_prefix_donor meta addprefix 100 "&6[Donor] "
+
+/lp creategroup ame_prefix_admin
+/lp group ame_prefix_admin meta addprefix 1000 "&c[Admin] "
+```
+
+The numeric weight (`50`, `100`, `1000`) controls priority when a player has multiple prefixes - higher wins. Since this menu enforces exactly one prefix per player, weight doesn't matter much, but it's good practice to set them.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. Create the three groups above.
+3. `/am reload`.
+4. Type `/ame_prefixes` in-game.
+5. Click any prefix. Verify with `/lp user <you> info` (you'll see one of the prefix groups in your group list).

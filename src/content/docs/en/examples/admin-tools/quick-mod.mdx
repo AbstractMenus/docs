@@ -1,0 +1,76 @@
+---
+title: Quick Mod
+description: An admin-only quick-actions menu - gamemode shortcuts, broadcast, online-players browser, teleport to spawn.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A toolbox menu for admins. The menu itself is gated at the top level via `rules: ${rulesAdmin}` - non-admins running `/ame_mod` are blocked from opening at all (no need to gate every individual click).
+
+<MenuExample path="admin-tools/02-quick-mod" lang="en" showShared={true} />
+
+## What it teaches
+
+- **Menu-level rules**: top-level `rules: ...` blocks the open instead of just hiding items
+- The `setGamemode` action with vanilla mode names
+- The `broadcast` action for server-wide chat
+- The `command` action with `player:` (run as the player) vs `console:` (run as console)
+- Chaining hubs: this admin menu opens [Online Players](./online-players) for finer-grained moderation
+
+## Menu-level vs item-level rules
+
+Two ways to gate access:
+
+**Menu-level** (this example):
+
+```hocon
+rules: ${rulesAdmin}
+```
+
+At the top of the file. If the rule fails when the activator fires, the menu doesn't open at all.
+
+**Item-level**:
+
+```hocon
+{
+  slot: 4
+  ...
+  click {
+    rules { permission: "..." }
+    actions { ... }
+  }
+}
+```
+
+Inside an item's click block. The menu opens for everyone, but specific items are gated.
+
+For an admin toolbox, menu-level is right - non-admins shouldn't see the layout. For a shop with VIP items, item-level is right - everyone should see what's available.
+
+## command action
+
+`command` runs server commands via the action handler:
+
+```hocon
+command {
+  player: "spawn"           # runs /spawn as the player
+}
+```
+
+Or as console:
+
+```hocon
+command {
+  console: "kick %ctg_player_name%"   # runs /kick ... from console
+}
+```
+
+`player:` form respects the player's permissions - they need to be allowed to use the command. `console:` form bypasses permissions (use carefully). For admin commands like /ban, prefer `console:` from a permission-gated menu to avoid double-checking the same auth twice.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Grant yourself `abstractmenus.admin` (the `rulesAdmin` shared template references this node).
+4. Type `/ame_mod` in-game.

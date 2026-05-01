@@ -1,0 +1,48 @@
+---
+title: "Rules: and / or"
+description: Logical wrappers for combining multiple rules. and = all match. or = at least one matches.
+sidebar:
+  order: 5
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The default `rules { ... }` block already ANDs everything inside. The explicit `and` wrapper is mostly useful inside `or` (since you can't otherwise nest AND inside OR). The `or` wrapper passes when any of its child rules pass.
+
+<MenuExample path="snippets/05-rule-and-or" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+rules {
+  or {
+    permission: "vip"
+    money: 1000
+  }
+}
+```
+
+This passes if the player has the VIP permission **OR** has $1000+. Either condition is enough.
+
+```hocon
+rules {
+  or: [
+    {
+      and {
+        permission: "vip"
+        money: 100
+      }
+    }
+    {
+      and {
+        permission: "admin"
+        gamemode: CREATIVE
+      }
+    }
+  ]
+}
+```
+
+Nested form: passes if (VIP and $100+) OR (admin and creative mode). Each entry in the `or:` list is a separate rule group.
+
+There's also `oneof` (matches first true entry, short-circuits) - see the [Item Enhancer example](../state-and-vars/item-enhancer) for that.

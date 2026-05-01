@@ -1,0 +1,37 @@
+---
+title: "Действие: itemAdd"
+description: Выдать игроку один или несколько предметов. Поддерживает имя, лор, чары и любые другие поля предмета.
+sidebar:
+  order: 6
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`itemAdd` добавляет предмет (или список предметов) в инвентарь игрока. Внутри принимается полная спецификация предмета - всё, что работает на обычном предмете меню, работает и здесь: material, name, lore, enchantments, кастомный NBT.
+
+<MenuExample path="snippets/06-action-give-item" lang="ru" showShared={true} />
+
+## Как использовать
+
+```hocon
+actions {
+  itemAdd {
+    material: WOODEN_PICKAXE
+    name: "&aStarter Pickaxe"
+  }
+}
+```
+
+Несколько предметов через список:
+
+```hocon
+actions {
+  itemAdd: [
+    { material: BREAD, count: 16 }
+    { material: APPLE, count: 4 }
+    { material: GOLDEN_APPLE }
+  ]
+}
+```
+
+Если инвентарь игрока полон, лишние предметы выпадают на землю (стандартное поведение). Чтобы заранее проверить место в инвентаре, ограничьте клик правилом `freeSlot` или `freeSlotCount`.

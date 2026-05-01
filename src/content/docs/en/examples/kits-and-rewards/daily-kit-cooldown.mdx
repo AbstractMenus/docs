@@ -1,0 +1,89 @@
+---
+title: Daily Kit with Cooldown
+description: Daily-claimable kits using temporal variables. The "::1d" suffix on setVarp auto-expires the cooldown after 24 hours.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The classic daily kit pattern: a player claims a kit, gets locked out for 24 hours, then can claim again. Built with temporal variables (auto-expire after a duration), the dual-item pattern (different visual when on cooldown), and template substitution to share kit metadata between both states.
+
+## What it teaches
+
+- The temporal variable shorthand: `setVarp: "name::value::1d"` (auto-expires after 1 day)
+- The `%varpt_:name%` placeholder for "time remaining" display
+- Template substitution: `${defaultKitTemplate}` reused across READY and COOLDOWN states
+- Lore extension: `lore: ${defaultKitTemplate.lore} [ ... extra lines ... ]` appends to the template's lore
+- The `group:` rule for LuckPerms-based gating on the VIP kit
+
+<MenuExample
+  path="kits-and-rewards/02-daily-kit-cooldown"
+  lang="en"
+  showShared={true}
+/>
+
+## How temporal variables work
+
+`setVarp: "ame_kit_default::1::1d"` parses as:
+
+- **Variable name**: `ame_kit_default`
+- **Value**: `1` (we don't use the value, just the existence)
+- **Duration**: `1d` (one day - other units: `s`, `m`, `h`, `d`, `w`)
+
+After 24 hours, the variable is auto-removed. The `existVarp` rule then evaluates to false, the cooldown item disappears, and the READY item shows again.
+
+The `%varpt_:ame_kit_default%` placeholder returns the time-to-expire as a human-readable string ("23h 47m" or similar). Useful for showing "available in X" messages.
+
+## Template substitution + lore extension
+
+Each kit defines its slot, material, name, and base lore once at the top of the file:
+
+```hocon
+defaultKitTemplate {
+  slot: 11
+  material: WOODEN_SWORD
+  name: "&aDefault Kit"
+  lore: [ "&7Includes:", "&7- Leather armor set", ... ]
+}
+```
+
+Both the READY and the COOLDOWN item references this template:
+
+```hocon
+# READY: extends lore with a "Click to claim" line
+${defaultKitTemplate} {
+  lore: ${defaultKitTemplate.lore} [ "", "&aClick to claim" ]
+  click { ... claim logic ... }
+}
+
+# COOLDOWN: extends lore with the time-remaining line
+${defaultKitTemplate} {
+  material: GRAY_DYE
+  lore: ${defaultKitTemplate.lore} [ "", "&cAvailable in &e%varpt_:ame_kit_default%" ]
+  rules { existVarp: "ame_kit_default" }
+}
+```
+
+The `${defaultKitTemplate.lore} [ ... ]` syntax: take the existing lore array, append the new entries. No copy-paste of the base lore.
+
+When the var doesn't exist, the COOLDOWN item's `existVarp` rule fails, so it doesn't render. The READY item (no rules) takes its place. When the var exists, COOLDOWN renders, READY is suppressed by the dual-slot tie-breaker.
+
+## Customizing
+
+Add more kit tiers by:
+
+1. Add a `xxxKitTemplate` block at the top with `slot:`, `material:`, `name:`, base `lore:`.
+2. Add a READY item using the template + `click { ... }` with the kit contents and a unique `setVarp` name.
+3. Add a COOLDOWN item using the template + `rules { existVarp: "..." }` with the matching var name.
+
+For per-tier permission gates, add `rules { group: "tier_name" }` to the click block (or use `permission: "..."` for a simpler check).
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_daily_kit` in-game.
+4. Claim the default kit. The item turns gray and shows "Available in 23h 59m..."

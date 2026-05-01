@@ -1,153 +1,23 @@
 ---
 title: Примеры
-description: Готовые меню для копирования с полным HOCON внутри.
+description: Каталог готовых меню AbstractMenus - бери, копируй, подстраивай под себя.
 ---
 
-import { Aside, Code } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-import statsConf    from "../../../../examples/simple/stats.conf?raw";
-import serversConf  from "../../../../examples/simple/servers.conf?raw";
-import cakeShopConf from "../../../../examples/simple/cake_shop.conf?raw";
-import kitsConf     from "../../../../examples/medium/kits.conf?raw";
-import craftConf    from "../../../../examples/medium/craft.conf?raw";
-import shopConf     from "../../../../examples/medium/shop.conf?raw";
-import enhancerConf from "../../../../examples/advanced/enhancer.conf?raw";
-import enchanterConf from "../../../../examples/advanced/enchanter.conf?raw";
+Каталог примеров переехал. Теперь есть отдельный раздел **Примеры** в сайдбаре - ~14 меню, разложенных по категориям использования. У каждого своя страница с подсвеченным кодом, бейджами фич и зависимостей, кнопками скачать одиночный файл или zip-бандл.
 
-<div class="audience-tags"><span class="audience-tag audience-author">Автор меню</span></div>
+Начни со [страницы каталога](/docs/ru/examples/), либо сразу прыгай в нужную категорию:
 
-Отсортировано по сложности. Полный HOCON каждого меню прямо здесь - скопируй код в файл в `plugins/AbstractMenus/menus/` и выполни `/am reload`.
-
-<Aside type="note">
-Материалы и плейсхолдеры рассчитаны на MC 1.20.6+, под AbstractMenus 2.0.
-</Aside>
-
-## Простые
-
-### Статистика игрока
-
-Читает ванильную статистику через PlaceholderAPI и рисует четыре головы.
-
-**Требуется:** PlaceholderAPI с установленными расширениями Player и Statistic.
-
-![preview-stats](/docs/img/examples/stats.gif)
-
-<details>
-<summary>stats.conf</summary>
-<Code code={statsConf} lang="hocon" />
-</details>
-
-### Селектор серверов BungeeCord
-
-Лобби-стайл выбор сервера. Показывает онлайн-статус и количество игроков на каждом бэкенде.
-
-**Требуется:** BungeeCord, PlaceholderAPI с расширениями Player и Bungee.
-
-![preview-servers](/docs/img/examples/servers.gif)
-
-<details>
-<summary>servers.conf</summary>
-<Code code={serversConf} lang="hocon" />
-</details>
-
-### Магазин тортов
-
-Покупка торта за внутриигровую валюту.
-
-**Требуется:** Vault и плагин экономики.
-
-![preview-cakes](/docs/img/examples/cakes.gif)
-
-<details>
-<summary>cake_shop.conf</summary>
-<Code code={cakeShopConf} lang="hocon" />
-</details>
-
-## Средние
-
-### Ежедневные киты
-
-Киты с проверкой прав и кулдауном через переменные.
-
-**Требуется:** LuckPerms.
-
-![preview-kits](/docs/img/examples/kits.gif)
-
-<details>
-<summary>kits.conf</summary>
-<Code code={kitsConf} lang="hocon" />
-</details>
-
-### Крафт
-
-Кастомная сетка крафта с drag-and-drop, работающая через правила `placedItem`.
-
-**Требуется:** Ничего.
-
-![preview-craft](/docs/img/examples/craft.gif)
-
-<details>
-<summary>craft.conf</summary>
-<Code code={craftConf} lang="hocon" />
-</details>
-
-### Магазин
-
-Многокатегорийный пагинированный магазин с биндингами, вариантами лора и логикой скидок.
-
-**Требуется:** Vault и плагин экономики.
-
-![preview-shop](/docs/img/examples/shop.gif)
-
-<details>
-<summary>shop.conf</summary>
-<Code code={shopConf} lang="hocon" />
-</details>
-
-## Продвинутые
-
-### Казино
-
-Меню в стиле игрового автомата с кадрами анимации и наградами.
-
-**Требуется:** Vault и плагин экономики.
-
-![preview-casino](/docs/img/examples/casino.gif)
-
-Казино состоит из нескольких файлов. Исходники: [advanced/casino на GitHub](https://github.com/AbstractMenus/examples/tree/main/advanced/casino).
-
-### Админ-панель
-
-Меню наказаний (kick/ban/mute) поверх каталога онлайн-игроков.
-
-**Требуется:** Essentials (или любой плагин, выдающий эти команды).
-
-![preview-admin](/docs/img/examples/padmin.gif)
-
-Несколько файлов. Исходники: [advanced/admin на GitHub](https://github.com/AbstractMenus/examples/tree/main/advanced/admin).
-
-### Усилитель предмета
-
-Прокачка предмета по кликам, состояние уровня хранится в переменных.
-
-**Требуется:** Ничего.
-
-![preview-enhancer](/docs/img/examples/enhancer.gif)
-
-<details>
-<summary>enhancer.conf</summary>
-<Code code={enhancerConf} lang="hocon" />
-</details>
-
-### Случайное зачарование
-
-Выбивает случайное зачарование из таблицы с весами.
-
-**Требуется:** Ничего.
-
-![preview-enchant](/docs/img/examples/enchant.gif)
-
-<details>
-<summary>enchanter.conf</summary>
-<Code code={enchanterConf} lang="hocon" />
-</details>
+<CardGrid>
+  <LinkCard title="Магазины" href="/docs/ru/examples/shops/" description="Cake Shop, мультикатегорийный шоп с подменю." />
+  <LinkCard title="Хаб и навигация" href="/docs/ru/examples/hub-and-nav/" description="Главный хаб со ссылками на остальные примеры." />
+  <LinkCard title="Косметика" href="/docs/ru/examples/cosmetics/" description="Выбор скина через setSkin." />
+  <LinkCard title="Казино и игры" href="/docs/ru/examples/casino-and-games/" description="Рулетка и drag-and-drop рандомный энчантер." />
+  <LinkCard title="Киты и награды" href="/docs/ru/examples/kits-and-rewards/" description="Базовый кит и ежедневный кит с кулдауном через temporal-vars." />
+  <LinkCard title="Админ-инструменты" href="/docs/ru/examples/admin-tools/" description="Браузер онлайн-игроков на PLAYERS каталоге." />
+  <LinkCard title="Инфо-страницы" href="/docs/ru/examples/info-pages/" description="Read-only меню вроде правил сервера." />
+  <LinkCard title="Состояние и переменные" href="/docs/ru/examples/state-and-vars/" description="Счётчики, тогглы, live stats board, drag-and-drop enhancer." />
+  <LinkCard title="Интеграции мира" href="/docs/ru/examples/world-integrations/" description="WorldGuard region welcome меню." />
+  <LinkCard title="Сниппеты" href="/docs/ru/examples/snippets/" description="Маленькие демо вроде inventory crafting." />
+</CardGrid>

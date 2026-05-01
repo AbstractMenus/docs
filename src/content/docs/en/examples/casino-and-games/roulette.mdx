@@ -1,0 +1,88 @@
+---
+title: Roulette
+description: An 8-frame animated roulette that slows down toward the end, plus a random prize awarded via randActions when the animation finishes.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Open the menu and an item icon flips through Diamond → Emerald → Gold → Diamond..., progressively slowing down. When it stops, the player gets a random reward (or nothing). Demonstrates the AnimatedMenu format with `frames`, the slowdown effect via increasing `delay`, and `onAnimEnd` for "what happens after the animation".
+
+## What it teaches
+
+- The `frames` block as an alternative to `items` for animated menus
+- Per-frame `delay:` (in ticks) and `clear: false` to preserve static items
+- The static `items:` block working alongside `frames`
+- `onAnimEnd` hook for triggering actions when the animation completes
+- `randActions` for picking one of N outcomes at random
+- Designing the animation pacing - rapid frames at start, slow at the end
+
+<MenuExample
+  path="casino-and-games/01-roulette"
+  lang="en"
+  showShared={true}
+/>
+
+## How AnimatedMenu works
+
+When a menu file has a `frames:` block at the root, the plugin treats it as an animated menu. `frames` replaces the usual single-pass `items` rendering with a sequence of frames played in order.
+
+Each frame has:
+
+- **`delay:`** ticks before this frame plays (default 20 = 1 second)
+- **`clear:`** whether to clear the inventory before this frame's items render (default `true`)
+- **`items:`** the items to add for this frame
+- Optional `rules`, `onStart`, `onEnd`
+
+A static `items:` block at the root works alongside frames. With `clear: false` on frames, those static items persist - exactly what we want for borders and the close button.
+
+## The slowdown trick
+
+Roulettes feel right when they slow down at the end. We do this with progressively bigger `delay:` values:
+
+```hocon
+frames: [
+  { delay: 2,  ... }   # 0.1s - very fast
+  { delay: 2,  ... }
+  { delay: 2,  ... }
+  { delay: 2,  ... }
+  { delay: 4,  ... }   # starts slowing
+  { delay: 6,  ... }
+  { delay: 10, ... }
+  { delay: 20, ... }   # 1s - dramatic pause on final frame
+]
+```
+
+Total: roughly 2.4 seconds. The final NETHER_STAR frame holds for a full second while `onAnimEnd` fires the prize.
+
+## Awarding the prize
+
+`onAnimEnd` runs after the last frame finishes. It contains a `randActions` block that picks one of four outcomes at random:
+
+```hocon
+onAnimEnd {
+  randActions: [
+    { sound: ${successSound}, itemAdd { material: DIAMOND }, message: "..." }
+    { sound: ${successSound}, itemAdd { material: EMERALD, count: 2 }, message: "..." }
+    ...
+    { sound: ${failSound}, message: "&7Better luck next time." }
+  ]
+}
+```
+
+Each entry has its own actions block. One is picked uniformly at random. The "no win" outcome is just a sound + message with no `itemAdd`.
+
+## Customizing
+
+To weight outcomes differently, repeat them. An outcome appearing twice in the list is twice as likely. To change the spin duration, edit the `delay:` values - the total spin time is the sum of all delays.
+
+To change what items appear during the spin, swap the `material:` in each frame's items. They're decorative - the actual prize comes from `onAnimEnd`, not from "where the spin lands".
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_roulette` in-game. Watch the spin, see what you win.

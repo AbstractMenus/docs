@@ -1,0 +1,66 @@
+---
+title: Tags
+description: A tag selector that writes a custom symbol to the player's LuckPerms meta. Free tags for everyone, a VIP-gated crown tag for premium players.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Most servers display a chat tag (a small symbol next to the player's name) by reading from a `LuckPerms` meta key. This menu lets players pick which tag they want by writing the chosen symbol to that meta key. Pair with a chat-format plugin that reads `%luckperms_meta_ame_tag%` (or whatever your chat formatter expects) and the tag shows up in chat.
+
+<MenuExample path="cosmetics/01-tags" lang="en" showShared={true} />
+
+## What it teaches
+
+- The `lpMetaSet` action with a `metaList` of key/value pairs
+- The `lpMetaRemove` action for clearing a tag
+- Mixing free tags with permission-gated premium tags in one menu
+- The dual-action pattern: `actions { ... } denyActions: ${denyNoPerm}` for the VIP-only tag
+
+## How LuckPerms meta works
+
+`lpMetaSet` writes one or more meta values onto the player's LuckPerms profile:
+
+```hocon
+lpMetaSet {
+  metaList: [
+    { key: "ame_tag", value: "&c♥" }
+  ]
+}
+```
+
+The meta key (`ame_tag` here) is a string of your choosing - pick something server-specific. The value is the actual content (a colored symbol in this example). Multiple meta keys can be set in one action:
+
+```hocon
+metaList: [
+  { key: "prefix",    value: "&7[Member]" },
+  { key: "ame_tag",   value: "&c♥" },
+  { key: "show_role", value: "true" }
+]
+```
+
+`lpMetaRemove` takes a string list of keys to delete:
+
+```hocon
+lpMetaRemove: ["ame_tag"]
+```
+
+These actions only work when LuckPerms is the active permissions provider. If a different provider is active, the action logs a warning and does nothing - so the menu won't crash, just won't apply the tag.
+
+## Showing the tag in chat
+
+Setting the meta is half the work. The chat formatter has to read it. Most chat plugins (DeluxeChat, ChatFormatter, etc.) accept PlaceholderAPI `%luckperms_meta_<key>%` placeholders in their format string:
+
+```yaml
+chatformat: "&8[%luckperms_meta_ame_tag%&8] &f%player_name%: %message%"
+```
+
+Once that's in your chat plugin's config, restart, and the tag appears next to the player's name.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_tags` in-game.
+4. Click any free tag - the meta is set. Verify with `/lp user <you> meta info` (you'll see `ame_tag` in the list).

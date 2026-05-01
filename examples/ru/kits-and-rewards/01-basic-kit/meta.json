@@ -1,0 +1,12 @@
+{
+  "title": "Базовый кит",
+  "category": "kits-and-rewards",
+  "level": "beginner",
+  "features": ["itemAdd", "giveXp", "sound", "message", "closeMenu-delay"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_kit",
+  "order": 1
+}

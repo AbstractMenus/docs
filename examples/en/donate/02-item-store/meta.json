@@ -1,0 +1,12 @@
+{
+  "title": "Item Store",
+  "category": "donate",
+  "level": "intermediate",
+  "features": ["money-rule", "takeMoney", "itemAdd-with-enchantments", "donor-currency"],
+  "dependencies": ["Vault"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_store",
+  "order": 2
+}

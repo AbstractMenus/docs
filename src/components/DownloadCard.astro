@@ -1,0 +1,173 @@
+---
+// DownloadCard.astro
+// Two download buttons: single menu.conf and full bundle (.zip via JSZip).
+// Bundle includes: menu.conf, local templates.conf (if exists), _shared/templates.conf (if uses_shared_templates), INSTALL.txt.
+
+interface Meta {
+  uses_shared_templates: boolean;
+  command: string;
+  title: string;
+}
+
+interface Props {
+  path: string;        // e.g. "shops/01-cake-shop"
+  lang: 'en' | 'ru';
+  meta: Meta;
+  hasLocalTemplates: boolean;
+}
+
+const { path, lang, meta, hasLocalTemplates } = Astro.props;
+
+// Use ?url import so Vite bundles the file into dist/_astro/ with a hashed name.
+// Without this, the literal `/examples/...` URL would 404 in production
+// because examples/ isn't under public/.
+const menuFileUrls = import.meta.glob('/examples/**/menu.conf', {
+  query: '?url',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+const menuKey = `/examples/${lang}/${path}/menu.conf`;
+const menuConfUrl = menuFileUrls[menuKey];
+if (!menuConfUrl) {
+  throw new Error(`DownloadCard: menu.conf URL not resolved for ${menuKey}`);
+}
+
+const docsLinkBase = `https://abstractmenus.github.io/docs/${lang}/examples`;
+
+// i18n. See backlog: i18n centralization for the wiki.
+const t = {
+  en: {
+    bundleBtn: '↓ Bundle (.zip)',
+    bundleIncludesShared: 'Bundle includes _shared/templates.conf and INSTALL.txt.',
+    bundleIncludesPlain: 'Bundle includes menu.conf and INSTALL.txt.',
+  },
+  ru: {
+    bundleBtn: '↓ Бандл (.zip)',
+    bundleIncludesShared: 'Бандл включает _shared/templates.conf и INSTALL.txt.',
+    bundleIncludesPlain: 'Бандл включает menu.conf и INSTALL.txt.',
+  },
+}[lang];
+---
+
+<div
+  class="download-card"
+  data-path={path}
+  data-lang={lang}
+  data-uses-shared={meta.uses_shared_templates ? '1' : '0'}
+  data-has-local-templates={hasLocalTemplates ? '1' : '0'}
+  data-command={meta.command}
+  data-title={meta.title}
+  data-docs-base={docsLinkBase}
+>
+  <div class="dl-row">
+    <a class="dl-btn dl-btn-primary" href={menuConfUrl} download="menu.conf">
+      ↓ menu.conf
+    </a>
+    <button class="dl-btn dl-btn-secondary" type="button" data-action="download-bundle">
+      {t.bundleBtn}
+    </button>
+  </div>
+  <p class="dl-hint">
+    {meta.uses_shared_templates ? t.bundleIncludesShared : t.bundleIncludesPlain}
+  </p>
+</div>
+
+<script>
+  import JSZip from 'jszip';
+
+  // Eager-load all conf files (Vite will tree-shake at runtime via reading on demand from object)
+  const confFiles = import.meta.glob('/examples/**/*.conf', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }) as Record<string, string>;
+
+  function makeInstallTxt(lang: string, category: string, command: string, title: string, docsLink: string): string {
+    const date = new Date().toISOString().slice(0, 10);
+    if (lang === 'ru') {
+      return [
+        `AbstractMenus - пример`,
+        `Сгенерировано: ${date}`,
+        ``,
+        `Включает: ${title}`,
+        ``,
+        `Установка:`,
+        `1. Распакуй эти папки в plugins/AbstractMenus/menus/example/`,
+        `2. /am reload`,
+        `3. /${command}`,
+        ``,
+        `Документация: ${docsLink}/${category}`,
+        ``,
+      ].join('\n');
+    }
+    return [
+      `AbstractMenus example pack`,
+      `Generated: ${date}`,
+      ``,
+      `Includes: ${title}`,
+      ``,
+      `Installation:`,
+      `1. Copy these folders into plugins/AbstractMenus/menus/example/`,
+      `2. /am reload`,
+      `3. /${command}`,
+      ``,
+      `Docs: ${docsLink}/${category}`,
+      ``,
+    ].join('\n');
+  }
+
+  document.querySelectorAll<HTMLDivElement>('.download-card').forEach((card) => {
+    const btn = card.querySelector<HTMLButtonElement>('[data-action="download-bundle"]');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+      const path = card.dataset.path!;
+      const lang = card.dataset.lang!;
+      const usesShared = card.dataset.usesShared === '1';
+      const hasLocalTemplates = card.dataset.hasLocalTemplates === '1';
+      const command = card.dataset.command!;
+      const title = card.dataset.title!;
+      const docsBase = card.dataset.docsBase!;
+
+      const category = path.split('/')[0];
+      const zip = new JSZip();
+
+      // 1. menu.conf at <category>/<menu>/menu.conf
+      const menuKey = `/examples/${lang}/${path}/menu.conf`;
+      const menuContent = confFiles[menuKey];
+      if (!menuContent) {
+        alert(`Error: menu.conf not found in bundle data.`);
+        return;
+      }
+      zip.file(`${path}/menu.conf`, menuContent);
+
+      // 2. local templates.conf if present
+      if (hasLocalTemplates) {
+        const tplKey = `/examples/${lang}/${path}/templates.conf`;
+        const tplContent = confFiles[tplKey];
+        if (tplContent) zip.file(`${path}/templates.conf`, tplContent);
+      }
+
+      // 3. shared templates.conf if uses_shared_templates
+      if (usesShared) {
+        const sharedKey = `/examples/${lang}/_shared/templates.conf`;
+        const sharedContent = confFiles[sharedKey];
+        if (sharedContent) zip.file(`_shared/templates.conf`, sharedContent);
+      }
+
+      // 4. INSTALL.txt at root of zip
+      zip.file('INSTALL.txt', makeInstallTxt(lang, category, command, title, docsBase));
+
+      // Generate and trigger download
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `abstractmenus-${path.replace(/\//g, '-')}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    });
+  });
+</script>

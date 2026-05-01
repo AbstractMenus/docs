@@ -1,0 +1,61 @@
+---
+title: Region Welcome
+description: Open a welcome menu automatically when a player enters a WorldGuard region. No command, the activator is the region itself.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A common server pattern: when a player walks into spawn, show a welcome screen with quick-access buttons (rules, hub, kit). The activator here is `regionJoin` from WorldGuard, not a command - the menu opens itself when the player crosses the region boundary.
+
+## What it teaches
+
+- The `regionJoin` activator (and its sibling `regionLeave`)
+- WorldGuard integration via region names
+- Combining a passive welcome with quick-action tiles that link to other menus
+
+<MenuExample
+  path="world-integrations/01-region-welcome"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+The activator block names one or more region IDs:
+
+```hocon
+activators {
+  regionJoin: ["spawn"]
+}
+```
+
+When the player enters the `spawn` region (defined in WorldGuard), the menu opens for them. Multiple region IDs can be listed; the menu opens whenever the player enters any of them.
+
+The menu has no money rules, no buy actions - it's a glorified bulletin board. The three quick-link tiles in the middle row each call `openMenu` to navigate the player to another example.
+
+## Region setup on the server
+
+This example assumes a WorldGuard region named `spawn` exists. Define it with:
+
+```text
+/rg define spawn
+```
+
+Then put this menu in `plugins/AbstractMenus/menus/example/world-integrations/01-region-welcome/menu.conf`, and `/am reload`. Walking into the region triggers the menu.
+
+## Related activators
+
+- **`regionLeave`** - same shape, fires when the player leaves the region. Useful for "say goodbye" or "warn before PvP" use cases.
+- **`clickEntity` / `clickNPC` / `clickBlock`** - other "the world triggers the menu" activators. See [Activators](/docs/en/general/activators/) for the full list.
+
+## Try it
+
+After installing the example pack:
+
+1. Install [WorldGuard](https://dev.bukkit.org/projects/worldguard).
+2. Create a region named `spawn` with `/rg define spawn`.
+3. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+4. `/am reload`.
+5. Walk into the region.

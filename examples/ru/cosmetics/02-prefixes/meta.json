@@ -1,0 +1,12 @@
+{
+  "title": "Префиксы",
+  "category": "cosmetics",
+  "level": "intermediate",
+  "features": ["addGroup", "removeGroup", "bulk-action", "permission-rule", "exclusive-selection"],
+  "dependencies": ["LuckPerms"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_prefixes",
+  "order": 2
+}

@@ -1,0 +1,67 @@
+---
+title: Bungee Status
+description: A server picker for BungeeCord/Velocity networks. Each tile shows live online counts and connects the player on click.
+sidebar:
+  order: 4
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Networks running BungeeCord or Velocity expose per-server online counts via plugin messages. AbstractMenus surfaces them as `%bungee_<server>%` placeholders. This menu uses them to build a "server picker" with live counts and click-to-connect tiles.
+
+## What it teaches
+
+- The `bungeeConnect` action for inter-server transfer
+- The `%bungee_<server>%` placeholder for live online counts
+- Using `glow: true` to make a featured tile stand out (lobby in this case)
+- Pairing `updateInterval` with bungee placeholders to keep counts fresh
+
+<MenuExample
+  path="state-and-vars/04-bungee-status"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+Each tile is a regular item with one custom action: `click { bungeeConnect: "lobby" }`. When clicked, the plugin sends a BungeeCord transfer plugin message and the proxy sends the player to the named backend server.
+
+The `%bungee_lobby%` placeholder asks the BungeeCord listener "how many players are on the `lobby` backend right now?" and renders the count. With `updateInterval: 40` (2 seconds), the count refreshes while the menu is open.
+
+For the count to work:
+
+1. The server running AbstractMenus needs `bungeeCord: true` in `plugins/AbstractMenus/config.conf`.
+2. The proxy needs the same server name in its config (the `lobby` in `bungeeConnect: "lobby"` must match the proxy's registered name).
+3. BungeeCord plugin messaging must be enabled on both ends.
+
+## Adding more servers
+
+Each tile is independent. Copy any block, change the slot, name, lore, and the two server name references (`bungeeConnect` + the placeholder). Real backend names go in instead of `lobby` / `survival` etc.
+
+For visual variety, swap `material:` per game mode (TNT for "TNT Games", IRON_SWORD for "Battle Royale", etc).
+
+## Showing online/offline status
+
+To gate a tile by whether the server is reachable, use the `bungeeIsOnline` rule:
+
+```hocon
+{
+  slot: 10
+  ...
+  rules {
+    bungeeIsOnline: "lobby"
+  }
+}
+```
+
+If lobby is offline, the item won't render. Add a fallback "offline" item at the same slot with no rules and a different look (gray dye, "Server is offline" text) to use the dual-item pattern from [Counter & Toggle](./counter-toggle).
+
+## Try it
+
+After installing the example pack:
+
+1. Run a BungeeCord/Velocity proxy with backends named `lobby`, `survival`, `sw`, `bb`.
+2. Set `bungeeCord: true` in `plugins/AbstractMenus/config.conf`.
+3. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+4. `/am reload`.
+5. Type `/ame_servers` in-game.

@@ -1,0 +1,51 @@
+---
+title: "Activator: clickItem"
+description: Open a menu when the player right-clicks a specific item in their hand. No command needed.
+sidebar:
+  order: 9
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`clickItem` opens the menu when the player right-clicks an item that matches the spec while holding it. Useful for "Magic Wand" UIs, custom-named tools that pop up menus, compass-based navigation, etc.
+
+<MenuExample path="snippets/09-activator-clickitem" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+activators {
+  clickItem {
+    material: NETHER_STAR
+    name: "&6Menu Wand"
+  }
+}
+```
+
+All listed properties must match for the activator to fire. The example above requires both the material AND the exact item name. If the player right-clicks a NETHER_STAR with a different name, nothing happens.
+
+For just material match, drop the `name:` field. For multiple item triggers, use a list:
+
+```hocon
+activators {
+  clickItem: [
+    { material: COMPASS }
+    { material: NETHER_STAR, name: "&6Menu Wand" }
+  ]
+}
+```
+
+The plugin sets `%activator_item_*%` placeholders inside the menu, exposing the clicked item's data. See [Activator context](/docs/en/general/activators/#activator-context-and-placeholders) for the full extractor table.
+
+## Other "by-the-world" activators
+
+Same shape, different sources:
+
+- `clickBlock` - click a specific block at known coordinates
+- `clickBlockType` - click any block of a given material
+- `clickEntity` / `shiftClickEntity` - click an entity (mob, armor stand, item frame)
+- `clickNPC` - click a Citizens NPC by id
+- `regionJoin` / `regionLeave` - WorldGuard region triggers
+- `button` / `lever` / `plate` - vanilla redstone interactables
+
+Mix and match in the same `activators {}` block - a menu can be opened via command, item-click, AND region-enter, all at once.

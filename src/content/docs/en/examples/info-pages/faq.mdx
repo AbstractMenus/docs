@@ -1,0 +1,49 @@
+---
+title: FAQ
+description: A list of questions, click each to open a sub-menu with the answer. Multi-menu file with a back-button on each answer page.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A FAQ is essentially a navigation tree: question list at the root, one sub-menu per answer. This example uses a `menus { ... }` multi-menu file to keep all four screens in one config, with `openMenu` calls to wire them together. The `${buttonBack}` shared button gets a per-page override to point back at the FAQ index.
+
+<MenuExample path="info-pages/03-faq" lang="en" showShared={true} />
+
+## What it teaches
+
+- Using `menus { ... }` to declare a hub + multiple answer screens in one file
+- Overriding shared template fields per use - `${buttonBack} { slot: 18, click { openMenu: "..." } }`
+- The "answer page" pattern: large lore item + back button, no other interactivity
+- One question pointing to a different existing menu (the rules question opens the [Server Rules](./rules) menu)
+
+## Why multi-menu files for FAQs
+
+A 10-question FAQ as 10 separate files is messy - 10 file paths, 10 `include` lines if shared templates. Bundling them in one `menus { ... }` block keeps related screens together and makes editing the FAQ a one-file operation.
+
+The naming convention matters: each menu gets a unique server-wide name. Pick `ame_faq`, `ame_faq_a1`, `ame_faq_a2` etc. so they don't collide with other example menus or the user's own configs.
+
+## Overriding `${buttonBack}`
+
+The shared `buttonBack` template defines an arrow item with `closeMenu: true`. For the FAQ, we want it to navigate back to the index instead. Override the click block per use:
+
+```hocon
+${buttonBack} { slot: 18, click { openMenu: "ame_faq" } }
+```
+
+The `${buttonBack}` brings in the material, name, lore. The override replaces the click block. Same pattern for any shared template you need to specialize per-callsite.
+
+## Adding a question
+
+Two edits per new question:
+
+1. In `ame_faq` items list, add a paper tile pointing at the new answer menu name.
+2. Add a new `ame_faq_aN` block at the bottom of the `menus { ... }` wrapper with the answer content.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_faq` in-game.
+4. Click any question. Read the answer. Click the back arrow to return.

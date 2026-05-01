@@ -181,3 +181,15 @@ customises
 organisation
 JDBC
 JPMS
+
+# Examples-pack vocabulary
+hotbar
+typoing
+respawns
+elytra
+callsite
+NETHERITE
+roleplay
+interactables
+Royale
+Votifier

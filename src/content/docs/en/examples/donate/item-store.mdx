@@ -1,0 +1,59 @@
+---
+title: Item Store
+description: A donor item store. Buy enchanted items, elytra, decorative heads with donor tokens (or any economy currency).
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The companion to [Tiered Donate Ranks](./tiered-ranks). Where the rank store sells permissions, this one sells items - things players can use directly. Same money/takeMoney pattern as a regular shop, but priced higher because it's intended to be paid for with donor currency rather than gameplay-earned coins.
+
+<MenuExample path="donate/02-item-store" lang="en" showShared={true} />
+
+## What it teaches
+
+- Custom-named, pre-enchanted items via `itemAdd { name: ..., enchantments { ... } }`
+- The `flags: HIDE_ATTRIBUTES` flag for tools/swords (otherwise vanilla shows damage range below name)
+- Pricing items in the donor currency band
+
+## Picking an economy provider
+
+By default, `takeMoney: 1000` uses whatever provider is configured at `config.conf providers.economy`. For a donor-token system you typically want this to route through a separate provider (like the [PlayerPoints addon](https://github.com/AbstractMenus/PlayerPointsAddon)) instead of the regular Vault economy.
+
+Two options:
+
+**1. Server-wide donor currency:** edit `config.conf` to make donor tokens the default economy. All `takeMoney` calls use it. Simplest if your whole server runs on tokens.
+
+**2. Per-action provider override:** keep Vault as default, but specify the donor provider on each action in this menu:
+
+```hocon
+takeMoney: { amount: 1000, provider: "playerpoints" }
+```
+
+This lets the regular shop continue using Vault while the donor store charges tokens.
+
+## Custom item shapes
+
+The Mythic Sword item demonstrates building a non-vanilla item via `itemAdd`:
+
+```hocon
+itemAdd {
+  material: NETHERITE_SWORD
+  name: "&dMythic Sword"
+  enchantments {
+    sharpness: 5
+    unbreaking: 3
+    mending: 1
+  }
+}
+```
+
+Any field that works on a menu display item works here too - lore, attribute modifiers, custom NBT, durability, model. See the [item format docs](/docs/en/general/item-format/) for the full list.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. `/eco give <you> 2000`.
+4. Type `/ame_store` in-game.

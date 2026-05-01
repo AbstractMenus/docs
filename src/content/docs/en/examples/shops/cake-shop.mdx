@@ -1,0 +1,48 @@
+---
+title: Cake Shop
+description: A minimal shop selling three items for in-game money.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Cake Shop is the smallest possible shop. Three items, three prices, one click to buy. Read this first if you've never written an AbstractMenus menu.
+
+## What it teaches
+
+- The `money` rule for "is the player rich enough?"
+- The `takeMoney` action to deduct cost
+- The `itemAdd` action to give the bought item
+- A `denyActions` block that fires when rules fail
+- Reusing shared templates via `${...}` substitution
+
+<MenuExample
+  path="shops/01-cake-shop"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+The menu has size 3 (a single chest row plus the 18-slot border above and below). Three rows of glass-pane border are added by referencing `${border_black}` from the shared templates and assigning a slot range.
+
+Each item slot defines a `click` block with two parts:
+
+1. **`rules`** - a list of conditions. Here, `money: 100` means "the player must have at least $100." If any rule fails, the actions in `denyActions` run instead.
+2. **`actions`** - the success path. We deduct money, give the item, play a confirmation sound, and send a chat message.
+
+The `denyActions: ${deny_no_money}` substitution pulls a pre-built action sequence from `_shared/templates.conf` that plays a deny sound and sends a "You don't have enough money" message. Reusable across all economy menus.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_cake_shop` in-game.
+
+## Next steps
+
+- See the [paginated shop](./paginated-shop) for handling many items across multiple pages.
+- See the [rank-gated shop](./rank-gated-shop) for permission-based pricing.

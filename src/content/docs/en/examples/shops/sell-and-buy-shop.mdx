@@ -1,0 +1,69 @@
+---
+title: Sell & Buy Shop
+description: One menu, two operations - left-click buys an item, right-click sells it. Asymmetric prices simulate a trader margin.
+sidebar:
+  order: 4
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A trader-style shop where each tile lets the player buy OR sell the same item, depending on which mouse button they click. Buy price is higher than sell price (the trader takes a margin). Demonstrates click-type discrimination at the same slot.
+
+<MenuExample path="shops/04-sell-and-buy-shop" lang="en" showShared={true} />
+
+## What it teaches
+
+- `click { left { ... } right { ... } }` for per-button-type behavior
+- Pairing the `money` rule with `takeMoney` for the buy path
+- Pairing the `inventoryItems` rule with `itemRemove` + `giveMoney` for the sell path
+- Asymmetric trader pricing (buy 20, sell 15)
+
+## How click types work
+
+A `click {}` block can have multiple sub-blocks, one per mouse-button type:
+
+```hocon
+click {
+  left  { rules { money: 20 }, actions { takeMoney: 20, itemAdd { ... } } }
+  right { rules { inventoryItems: [...] }, actions { itemRemove: [...], giveMoney: 15 } }
+}
+```
+
+When the player left-clicks, only the `left` sub-block runs. When they right-click, only `right`. This is different from a flat `click { rules: ..., actions: ... }` which fires for any click type.
+
+Available click types: `left`, `right`, `shift_left`, `shift_right`, `drop`. Add more sub-blocks for more button types - common pattern is `left` for primary action, `shift_left` for "do it 8x" or "advanced variant".
+
+## Why asymmetric prices
+
+Trader plugins usually buy items from players cheaper than they sell them. The spread (buy 20 - sell 15 = 5 margin) represents the trader's cut. This prevents players from infinitely cycling items through the shop for profit.
+
+For an arbitrage-proof shop:
+
+- buy_price > sell_price (always)
+- buy_price > sell_price for any chain through other shops too
+
+For a "fair price" UI (no margin), set both to the same value.
+
+## Inventory check on sell
+
+The right-click handler uses the `inventoryItems` rule to verify the player has the item to sell:
+
+```hocon
+right {
+  rules { inventoryItems: [{ material: WHEAT, count: 16 }] }
+  actions {
+    itemRemove: [{ material: WHEAT, count: 16 }]
+    giveMoney: 15
+  }
+}
+```
+
+If the player doesn't have 16 wheat, the rule fails, the actions don't fire, and the local `denyActions` shows a "you don't have enough to sell" message instead.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. `/eco give <you> 1000`.
+4. Type `/ame_buysell` in-game.
+5. Left-click wheat to buy. Right-click to sell back.

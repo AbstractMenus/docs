@@ -1,0 +1,12 @@
+{
+  "title": "Блок как кнопка",
+  "category": "world-integrations",
+  "level": "intermediate",
+  "features": ["clickBlockType-activator", "activator_block-placeholders", "no-command"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "(ПКМ по блоку)",
+  "order": 3
+}

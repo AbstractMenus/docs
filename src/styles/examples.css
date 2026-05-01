@@ -1,0 +1,544 @@
+/* src/styles/examples.css */
+
+.menu-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--sl-color-gray-6, #f5f5f5);
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.meta-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--sl-color-gray-5, #e5e5e5);
+  color: var(--sl-color-text);
+}
+
+.badge-level.badge-beginner    { background: #16a34a; color: white; }
+.badge-level.badge-intermediate { background: #f59e0b; color: white; }
+.badge-level.badge-advanced    { background: #dc2626; color: white; }
+
+.badge-version { background: var(--sl-color-gray-4); }
+
+.badge-feature { background: #1e40af; color: white; }
+.badge-dep     { background: #7c3aed; color: white; }
+
+/* "Open: /command [copy]" row */
+
+.meta-row-cmd {
+  align-items: center;
+}
+
+.meta-cmd {
+  background: var(--sl-color-bg-inline-code, rgb(128 128 128 / 12%));
+  border: 1px solid var(--sl-color-gray-5);
+  padding: 0.15rem 0.55rem;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  font-family: var(--sl-font-mono, monospace);
+}
+
+/* Ant Design-style ghost copy button: no border/bg, icon-only,
+   tooltip on hover, success color on copy. */
+.meta-cmd-copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sl-color-gray-2);
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.meta-cmd-copy:hover {
+  color: var(--sl-color-text-accent, var(--sl-color-text));
+}
+
+.meta-cmd-copy.copied {
+  color: #15803d;
+}
+
+/* Both SVGs stack on top of each other, opacity-swap avoids layout shift. */
+.meta-cmd-icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 16px;
+  height: 16px;
+  transition: opacity 0.15s ease;
+}
+
+.meta-cmd-icon-check { opacity: 0; }
+.meta-cmd-copy.copied .meta-cmd-icon-copy { opacity: 0; }
+.meta-cmd-copy.copied .meta-cmd-icon-check { opacity: 1; }
+
+/* Tooltip - hidden by default, shown on hover or while copied state is active */
+.meta-cmd-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.55rem;
+  background: var(--sl-color-bg-nav, #1f2937);
+  color: var(--sl-color-white, #fff);
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 100;
+}
+
+/* Tooltip arrow (small triangle pointing down to the button) */
+.meta-cmd-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--sl-color-bg-nav, #1f2937);
+}
+
+.meta-cmd-copy:hover .meta-cmd-tooltip,
+.meta-cmd-copy:focus-visible .meta-cmd-tooltip,
+.meta-cmd-copy.copied .meta-cmd-tooltip {
+  opacity: 1;
+}
+
+.meta-cmd-none {
+  font-style: italic;
+  color: var(--sl-color-gray-2);
+  font-size: 0.9rem;
+}
+
+.menu-example {
+  margin: 1.5rem 0;
+}
+
+.download-card {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  background: var(--sl-color-bg-inline-code, rgb(128 128 128 / 8%));
+}
+
+.dl-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dl-btn {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.4rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.dl-btn-primary {
+  background: var(--sl-color-accent, #f05454);
+  color: white;
+}
+
+.dl-btn-primary:hover { opacity: 0.9; }
+
+.dl-btn-secondary {
+  background: var(--sl-color-gray-5);
+  color: var(--sl-color-text);
+}
+
+.dl-btn-secondary:hover { background: var(--sl-color-gray-4); }
+
+.dl-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-2);
+}
+
+/* Pack Builder */
+
+.pack-builder {
+  margin: 1.5rem 0;
+}
+
+.pb-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  background: var(--sl-color-bg, white);
+  margin-bottom: 1rem;
+  position: sticky;
+  /* Sit below Starlight's top nav bar. Generous fallback for narrow widths
+     where --sl-nav-height isn't always set or reports wrong height. */
+  top: calc(var(--sl-nav-height, 5rem) + 1rem);
+  z-index: 10;
+}
+
+/* Starlight's nav height varies by breakpoint and so does our needed offset.
+   The default `top` works for desktop (>= ~880px) and mobile (< ~600px).
+   Mid-range widths use a single-line nav that's taller relative to its
+   declared --sl-nav-height value, so bump the offset there. */
+@media (min-width: 600px) and (max-width: 1100px) {
+  .pb-header {
+    top: calc(var(--sl-nav-height, 5rem) + 2rem);
+  }
+}
+
+/* All header items: identical height, internal flex centering */
+.pb-header > .dl-btn,
+.pb-header > .pb-summary {
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+  margin: 0;
+  line-height: 1;
+}
+
+.pb-summary {
+  flex: 1 1 8rem;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: var(--sl-color-gray-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-header [data-action="build-zip"] {
+  margin-left: auto;
+}
+
+/* Ghost icon button used for "expand/collapse all" - same shape as
+   MenuMeta's copy button (no border/bg, tooltip on hover). */
+.pb-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sl-color-gray-2);
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.pb-icon-btn:hover {
+  color: var(--sl-color-text-accent, var(--sl-color-text));
+}
+
+/* The two chevron icons are stacked; class flips which one is visible. */
+.pb-toggle-icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 16px;
+  height: 16px;
+  transition: opacity 0.15s ease;
+}
+
+.pb-toggle-icon-collapse { opacity: 0; }
+.pb-icon-btn.is-collapse .pb-toggle-icon-expand { opacity: 0; }
+.pb-icon-btn.is-collapse .pb-toggle-icon-collapse { opacity: 1; }
+
+.pb-icon-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.55rem;
+  background: var(--sl-color-bg-nav, #1f2937);
+  color: var(--sl-color-white, #fff);
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 100;
+}
+
+.pb-icon-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--sl-color-bg-nav, #1f2937);
+}
+
+.pb-icon-btn:hover .pb-icon-tooltip,
+.pb-icon-btn:focus-visible .pb-icon-tooltip {
+  opacity: 1;
+}
+
+/* Floating action button at the bottom-right of the sidebar - toggles all
+   groups expand/collapse. Inserted at runtime by the head script as the
+   last child of .sidebar-pane. */
+.sl-fab {
+  position: sticky;
+  bottom: 1rem;
+  margin-left: auto;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  background: var(--sl-color-bg-nav, var(--sl-color-bg, white));
+  color: var(--sl-color-gray-2);
+  border: 1px solid var(--sl-color-hairline-shade, var(--sl-color-gray-5));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.sl-fab:hover {
+  color: var(--sl-color-text-accent, var(--sl-color-text));
+  background: var(--sl-color-bg, white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18), 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.sl-fab:active {
+  transform: translateY(0);
+}
+
+.sl-fab-icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.sl-fab-icon-collapse { opacity: 0; }
+.sl-fab.is-collapse .sl-fab-icon-expand { opacity: 0; }
+.sl-fab.is-collapse .sl-fab-icon-collapse { opacity: 1; }
+
+.sl-fab-tooltip {
+  position: absolute;
+  right: calc(100% + 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.3rem 0.6rem;
+  background: var(--sl-color-bg-nav, #1f2937);
+  color: var(--sl-color-white, #fff);
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.sl-fab-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 4px solid transparent;
+  border-left-color: var(--sl-color-bg-nav, #1f2937);
+}
+
+.sl-fab:hover .sl-fab-tooltip,
+.sl-fab:focus-visible .sl-fab-tooltip {
+  opacity: 1;
+}
+
+.pb-cat {
+  margin: 0.5rem 0;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.pb-cat[open] {
+  background: var(--sl-color-bg-inline-code, rgb(128 128 128 / 4%));
+}
+
+.pb-cat summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.25rem 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  list-style: none; /* hide default ▶ disclosure triangle, we render our own */
+}
+
+.pb-cat summary::-webkit-details-marker {
+  display: none;
+}
+
+/* IDEA-style chevron that points right when collapsed, rotates 90deg when open. */
+.pb-cat-chevron {
+  flex-shrink: 0;
+  color: var(--sl-color-gray-2);
+  transition: transform 0.15s ease;
+}
+
+.pb-cat[open] .pb-cat-chevron {
+  transform: rotate(90deg);
+}
+
+.pb-cat-toggle {
+  margin-right: 0.25rem;
+  cursor: pointer;
+}
+
+.pb-cat-name {
+  flex: 1;
+  font-family: monospace;
+}
+
+.pb-cat-count {
+  font-size: 0.8rem;
+  color: var(--sl-color-gray-2);
+  font-weight: 400;
+}
+
+.pb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0 0 1.5rem;
+}
+
+.pb-list li {
+  margin: 0.25rem 0;
+}
+
+.pb-list label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.3rem;
+}
+
+.pb-list label:hover {
+  background: var(--sl-color-bg-inline-code, rgb(128 128 128 / 8%));
+}
+
+.pb-menu {
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+
+.pb-title {
+  flex: 1;
+  font-size: 0.9rem;
+  min-width: 10rem;
+}
+
+/* Category index table */
+
+.cat-index {
+  width: 100%;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  border-collapse: collapse;
+}
+
+.cat-index th,
+.cat-index td {
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.cat-index th {
+  font-weight: 600;
+  background: var(--sl-color-bg-inline-code, rgb(128 128 128 / 8%));
+}
+
+/* Don't use flex on the td - it breaks vertical-align: top on the cell.
+   Inline-block flow with margins respects the row's top-align rule. */
+.cat-features {
+  max-width: 18rem;
+}
+
+.cat-feature {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.35rem;
+  margin: 0 0.25rem 0.25rem 0;
+  border-radius: 0.25rem;
+  background: var(--sl-color-bg-inline-code, rgb(128 128 128 / 10%));
+  border: 1px solid var(--sl-color-gray-5);
+}
+
+.cat-more {
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-2);
+}
+
+.cat-none {
+  color: var(--sl-color-gray-3);
+}
+
+.cat-cmd {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}

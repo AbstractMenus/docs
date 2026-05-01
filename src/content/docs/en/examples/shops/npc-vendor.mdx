@@ -1,0 +1,65 @@
+---
+title: NPC Vendor
+description: A shop that opens when the player right-clicks a specific Citizens NPC. Same shop pattern as Cake Shop, different activator.
+sidebar:
+  order: 5
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`clickNPC` from Citizens is a popular activator on RPG servers. The player walks up to a vendor NPC, right-clicks, and a shop menu opens. The menu can read NPC context via `%activator_npc_*%` placeholders - this example puts the NPC's name in the menu title for a personal-feeling vendor.
+
+<MenuExample path="shops/05-npc-vendor" lang="en" showShared={true} />
+
+## What it teaches
+
+- The `clickNPC` activator with a Citizens NPC ID
+- The `%activator_npc_name%` placeholder for personalized titles
+- How activator-context placeholders propagate through to menu items
+
+## Setup
+
+This activator only works when [Citizens](https://www.spigotmc.org/resources/citizens.13811/) is installed and at least one NPC exists with the specified ID. To find a NPC's ID:
+
+1. Look at the NPC.
+2. Run `/npc sel`.
+3. Run `/npc` to see selected NPC info, including ID.
+
+Replace `clickNPC: [1]` with your actual NPC ID. For multiple NPCs that all open the same shop:
+
+```hocon
+clickNPC: [1, 5, 12]
+```
+
+## NPC context placeholders
+
+Inside the menu, `%activator_npc_*%` exposes the clicked NPC:
+
+| Placeholder | Returns |
+|---|---|
+| `%activator_npc_id%` | Numeric NPC ID |
+| `%activator_npc_name%` | NPC's display name |
+| `%activator_npc_world%` | World the NPC is in |
+
+The example uses `%activator_npc_name%` in the title, so the menu title becomes "Trader BlacksmithBob" or whatever the NPC is named.
+
+## Why this beats `command:` for vendors
+
+A `/shop` command is universal - everyone uses the same syntax to open the same menu. A right-click on an NPC ties the shop to a specific in-world location and gives the vendor visual personality. Players also can't accidentally open the shop from anywhere - they have to physically walk to the NPC. Better roleplay, less command spam.
+
+For a hybrid (open via NPC click OR command), put both in the activators block:
+
+```hocon
+activators {
+  command: "ame_vendor"
+  clickNPC: [1]
+}
+```
+
+## Try it
+
+1. Install Citizens.
+2. Spawn an NPC: `/npc create Bob` then look at it, `/npc sel`, `/npc` to confirm ID.
+3. Drop the bundle into `plugins/AbstractMenus/menus/example/`. Update `clickNPC: [1]` to your NPC's ID.
+4. `/am reload`.
+5. Right-click the NPC.

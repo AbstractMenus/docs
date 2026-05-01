@@ -1,0 +1,12 @@
+{
+  "title": "Tags",
+  "category": "cosmetics",
+  "level": "intermediate",
+  "features": ["lpMetaSet", "lpMetaRemove", "permission-rule", "VIP-tier"],
+  "dependencies": ["LuckPerms"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_tags",
+  "order": 1
+}

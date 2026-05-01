@@ -1,0 +1,24 @@
+---
+title: "Rule: permission"
+description: Gate a click on a single permission node. The minimal demo of the permission rule.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The permission rule is the most-used gate in any menu - "only let the player do this if they have the permission." Pair it with `denyActions` for a friendly rejection.
+
+<MenuExample path="snippets/01-rule-permission" lang="en" showShared={true} />
+
+## Usage
+
+```hocon
+click {
+  rules { permission: "myplugin.admin" }
+  actions { ... }
+  denyActions: ${denyNoPerm}
+}
+```
+
+The rule passes if the player has the named permission node. To gate by group instead of permission, swap to the `group` rule (works with LuckPerms). To invert (allow only those WITHOUT the permission), prefix with `-`: `-permission: "..."`.
