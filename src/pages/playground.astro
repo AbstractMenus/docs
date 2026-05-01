@@ -1,0 +1,92 @@
+---
+// Standalone playground page. Lives outside Starlight content layout to use
+// the full viewport. Loads main.ts via <script> for client-side editor init.
+const BASE = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HOCON Playground — AbstractMenus</title>
+    <meta
+      name="description"
+      content="Browser playground for AbstractMenus HOCON menu configs. Validate, share, learn."
+    />
+    <link rel="icon" href={`${BASE}favicon.ico`} />
+  </head>
+  <body>
+    <div class="pg-app" data-pg-root>
+      <header class="pg-header">
+        <a class="pg-brand" href={`${BASE}en/`}>
+          <span class="pg-brand-text">AbstractMenus</span>
+          <span class="pg-brand-sub">Playground</span>
+        </a>
+        <nav class="pg-mode-switch" role="tablist" aria-label="Playground mode">
+          <button type="button" class="pg-mode-btn is-active" data-mode="editor" role="tab" aria-selected="true">Editor</button>
+          <button type="button" class="pg-mode-btn" data-mode="tutorial" role="tab" aria-selected="false">Tutorial</button>
+        </nav>
+        <div class="pg-header-actions">
+          <button type="button" class="pg-icon-btn" data-action="theme-toggle" aria-label="Toggle theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="pg-main">
+        <section class="pg-pane pg-pane-editor" aria-label="Editor">
+          <div class="pg-editor-host" data-pg-editor></div>
+        </section>
+
+        <div class="pg-divider" data-pg-divider role="separator" aria-orientation="vertical"></div>
+
+        <section class="pg-pane pg-pane-output" aria-label="Output">
+          <nav class="pg-tabs" role="tablist">
+            <button type="button" class="pg-tab is-active" data-tab="errors" role="tab" aria-selected="true">Errors</button>
+            <button type="button" class="pg-tab" data-tab="json" role="tab" aria-selected="false">Resolved JSON</button>
+            <button type="button" class="pg-tab is-hidden" data-tab="tutorial" role="tab" aria-selected="false">Tutorial</button>
+          </nav>
+          <div class="pg-tab-panels">
+            <div class="pg-tab-panel is-active" data-panel="errors" role="tabpanel">
+              <p class="pg-empty">No errors. (Parser plugs in at M.3.)</p>
+            </div>
+            <div class="pg-tab-panel" data-panel="json" role="tabpanel">
+              <p class="pg-empty">Resolved JSON appears here once the parser is wired up.</p>
+            </div>
+            <div class="pg-tab-panel" data-panel="tutorial" role="tabpanel">
+              <p class="pg-empty">Tutorial mode lands at M.6.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="pg-footer">
+        <span class="pg-footer-status" data-pg-status>ready</span>
+        <div class="pg-footer-actions">
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="format" disabled title="Available at M.4">Format</button>
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="share" disabled title="Available at M.5">Share</button>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      import { boot } from '../lib/playground/main';
+      boot();
+    </script>
+
+    <style is:global>
+      @import '../styles/playground.css';
+    </style>
+  </body>
+</html>
