@@ -1,5 +1,6 @@
 import { createEditor } from './Editor';
 import { createPanels } from './Panels';
+import { createDivider } from './Divider';
 import type { PlaygroundMode, TabId } from './types';
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
@@ -38,8 +39,23 @@ export function boot(): void {
 
   bindModeSwitch(root, panels);
   bindThemeToggle(root);
+  bindDivider(root);
 
   (window as unknown as { __pg?: unknown }).__pg = { editor, panels };
+}
+
+function bindDivider(root: HTMLElement): void {
+  const main = root.querySelector<HTMLElement>('.pg-main');
+  const divider = root.querySelector<HTMLElement>('[data-pg-divider]');
+  if (!main || !divider) return;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  createDivider({
+    main,
+    divider,
+    axis: isMobile ? 'vertical' : 'horizontal',
+    minPct: 20,
+    maxPct: 80,
+  });
 }
 
 function bindModeSwitch(root: HTMLElement, panels: ReturnType<typeof createPanels>): void {
