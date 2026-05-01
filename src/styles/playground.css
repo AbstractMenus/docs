@@ -1,2 +1,249 @@
-/* Stub for Task 1.2 skeleton verification. Real impl in Task 1.4. */
-.pg-app { font-family: system-ui, sans-serif; }
+/* Standalone playground page styles. Scoped via the page <style is:global>
+   import in playground.astro. Not included in astro.config.mjs customCss
+   so they don't leak to the rest of the docs site. */
+
+:root {
+  --pg-bg: #0d1117;
+  --pg-bg-elev: #161b22;
+  --pg-bg-elev-2: #1f2630;
+  --pg-fg: #e6edf3;
+  --pg-fg-muted: #8b949e;
+  --pg-border: #30363d;
+  --pg-accent: #f05454;
+  --pg-accent-soft: rgba(240, 84, 84, 0.15);
+  --pg-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 0 0 1px var(--pg-border);
+  --pg-header-h: 56px;
+  --pg-footer-h: 36px;
+  --pg-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --pg-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root[data-theme="light"] {
+  --pg-bg: #ffffff;
+  --pg-bg-elev: #f6f8fa;
+  --pg-bg-elev-2: #eaeef2;
+  --pg-fg: #1f2328;
+  --pg-fg-muted: #59636e;
+  --pg-border: #d1d9e0;
+  --pg-accent: #d63b3b;
+  --pg-accent-soft: rgba(214, 59, 59, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--pg-bg);
+  color: var(--pg-fg);
+  font-family: var(--pg-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.pg-app {
+  display: grid;
+  grid-template-rows: var(--pg-header-h) 1fr var(--pg-footer-h);
+  height: 100vh;
+}
+
+/* Header */
+.pg-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  background: var(--pg-bg-elev);
+  border-bottom: 1px solid var(--pg-border);
+}
+.pg-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--pg-fg);
+}
+.pg-brand-text {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.pg-brand-sub {
+  font-size: 0.8rem;
+  color: var(--pg-fg-muted);
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--pg-border);
+  border-radius: 4px;
+}
+.pg-mode-switch {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  background: var(--pg-bg-elev-2);
+  border: 1px solid var(--pg-border);
+  border-radius: 6px;
+}
+.pg-mode-btn {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--pg-fg-muted);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pg-mode-btn.is-active {
+  background: var(--pg-accent);
+  color: white;
+}
+.pg-header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+.pg-icon-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--pg-border);
+  color: var(--pg-fg);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.pg-icon-btn:hover {
+  background: var(--pg-bg-elev-2);
+}
+
+/* Main two-pane */
+.pg-main {
+  display: grid;
+  grid-template-columns: 1fr 6px 1fr;
+  min-height: 0;
+}
+.pg-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--pg-bg);
+}
+.pg-divider {
+  background: var(--pg-border);
+  cursor: col-resize;
+}
+.pg-editor-host {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.pg-editor-host .cm-editor {
+  height: 100%;
+  font-family: var(--pg-mono);
+  font-size: 13px;
+}
+.pg-editor-host .cm-scroller {
+  font-family: var(--pg-mono);
+}
+
+/* Output pane */
+.pg-pane-output {
+  background: var(--pg-bg-elev);
+  border-left: 1px solid var(--pg-border);
+}
+.pg-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--pg-bg-elev);
+  border-bottom: 1px solid var(--pg-border);
+}
+.pg-tab {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--pg-fg-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.pg-tab.is-active {
+  color: var(--pg-fg);
+  border-bottom-color: var(--pg-accent);
+}
+.pg-tab.is-hidden {
+  display: none;
+}
+.pg-tab-panels {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.pg-tab-panel {
+  display: none;
+  padding: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.pg-tab-panel.is-active {
+  display: block;
+}
+.pg-empty {
+  color: var(--pg-fg-muted);
+  margin: 0;
+}
+
+/* Footer */
+.pg-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  background: var(--pg-bg-elev);
+  border-top: 1px solid var(--pg-border);
+  font-size: 0.8rem;
+  color: var(--pg-fg-muted);
+}
+.pg-footer-status {
+  font-family: var(--pg-mono);
+}
+.pg-footer-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.4rem;
+}
+.pg-btn {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--pg-border);
+  background: var(--pg-bg-elev-2);
+  color: var(--pg-fg);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pg-btn-secondary { background: var(--pg-bg-elev-2); }
+
+/* Mobile: stack panes vertically */
+@media (max-width: 768px) {
+  .pg-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 6px 1fr;
+  }
+  .pg-divider {
+    cursor: row-resize;
+  }
+  .pg-pane-output {
+    border-left: 0;
+    border-top: 1px solid var(--pg-border);
+  }
+  .pg-brand-sub {
+    display: none;
+  }
+}
