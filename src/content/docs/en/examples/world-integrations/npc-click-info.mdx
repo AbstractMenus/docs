@@ -1,0 +1,58 @@
+---
+title: NPC Click Info
+description: A generic info-and-actions menu opened by clicking any of several Citizens NPCs. Reads NPC context to personalize the menu.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Where [NPC Vendor](../shops/npc-vendor) is one specific NPC opening one specific shop, this menu is a generic "what's this NPC about" UI that any of several NPCs can trigger. The menu reads the clicked NPC's id/name/world via context placeholders and offers actions that work for any of them.
+
+<MenuExample path="world-integrations/02-npc-click-info" lang="en" showShared={true} />
+
+## What it teaches
+
+- Listing multiple NPC IDs in `clickNPC: [1, 2, 3]` so any of them opens this menu
+- Personalizing the menu via `%activator_npc_name%`, `%activator_npc_id%`, `%activator_npc_world%` in title, item names, and lore
+- Using `skullOwner: "%activator_npc_name%"` so the header item's player-head texture matches the clicked NPC's name
+- Routing different NPCs to different downstream menus (left as an exercise via the openMenu action)
+
+## NPC routing pattern
+
+The example's "Talk to vendor" tile opens `ame_shop` for any NPC. A real server might route differently per NPC:
+
+```hocon
+click {
+  actions {
+    rules {
+      and {
+        # Hypothetical: only NPC #2 opens the rare shop
+        if: "%activator_npc_id% == 2"
+      }
+      actions { openMenu: "ame_rare_shop" }
+      denyActions { openMenu: "ame_shop" }
+    }
+  }
+}
+```
+
+For more than 2 routes, use `oneof`:
+
+```hocon
+oneof: [
+  { if: "%activator_npc_id% == 1", actions { openMenu: "ame_blacksmith_shop" } }
+  { if: "%activator_npc_id% == 2", actions { openMenu: "ame_alchemy_shop"   } }
+  { if: "%activator_npc_id% == 3", actions { openMenu: "ame_armorer_shop"   } }
+]
+```
+
+`oneof` short-circuits on the first match, so each NPC ID hits exactly one branch.
+
+## Try it
+
+1. Install Citizens.
+2. Spawn three NPCs, note their IDs.
+3. Drop the bundle into `plugins/AbstractMenus/menus/example/`. Update `clickNPC: [1, 2, 3]` to your actual NPC IDs.
+4. `/am reload`.
+5. Right-click any of the NPCs. The menu opens with that NPC's data in the header.

@@ -1,0 +1,12 @@
+{
+  "title": "Vote Cooldown",
+  "category": "state-and-vars",
+  "level": "intermediate",
+  "features": ["incVar-global", "setVarp-temporal", "existVarp", "varpt-placeholder", "var-placeholder", "dual-item-display"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_vote",
+  "order": 2
+}

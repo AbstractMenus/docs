@@ -1,0 +1,65 @@
+---
+title: Color Skins
+description: A skin chooser menu using setSkin via SkinsRestorer. Three preset skins plus a reset to default.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The `setSkin` action swaps the player's skin through SkinsRestorer. This example shows three preset skins plus a reset button. The `closeMenu` call right before `setSkin` is mandatory - changing the skin respawns the player, and the open inventory would crash the client.
+
+## What it teaches
+
+- The `setSkin` action with `texture` + `signature` parameters
+- The `resetSkin: true` shortcut to restore default skin
+- Why `closeMenu` must run before `setSkin` (respawn + open inventory crashes the client)
+- Using `PLAYER_HEAD` with a `texture:` field to render a skin preview as the menu item
+
+<MenuExample
+  path="cosmetics/03-color-skins"
+  lang="en"
+  showShared={true}
+/>
+
+## Important: order of actions
+
+Inside the `actions { ... }` block, keys are executed in the order they appear in the file. The plugin docs explicitly require `closeMenu` before `setSkin`:
+
+```text
+:::caution
+Before this action, you need to set the closeMenu action, because when the
+skin is changed, player respawning. If the menu is opened, it may cause a
+critical error for the client.
+:::
+```
+
+In each item's click block above, `closeMenu: 1` comes first, then `setSkin`. Don't reorder.
+
+## Getting real texture and signature
+
+The placeholders in this example (`REPLACE_WITH_TEXTURE_BASE64_GOLD` etc.) won't work as-is. To get real values:
+
+1. Go to [MineSkin.org](https://mineskin.org).
+2. Upload an image or pick a preset.
+3. Copy the **Texture Data** field into the `texture:` parameter.
+4. Copy the **Texture Signature** field into the `signature:` parameter.
+
+The two fields are long base64 strings. The `texture` on the displayed `PLAYER_HEAD` (the preview) is the shorter texture-hash form (just the hash from the `http://textures.minecraft.net/texture/<hash>` URL).
+
+## Customizing
+
+To add more skin choices, copy any item block, change the `slot:`, `name:`, the preview `texture:`, and the `setSkin` payload. The shared template's `${successSound}` keeps the audio feedback consistent across choices.
+
+To skip the preview (use a non-head item like a banner), drop the `texture:` field and change `material:` to `RED_BANNER` or whatever fits the visual theme.
+
+## Try it
+
+After installing the example pack:
+
+1. Install [SkinsRestorer](https://www.spigotmc.org/resources/2124/).
+2. Replace the `REPLACE_WITH_*` placeholders with real texture/signature values.
+3. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+4. `/am reload`.
+5. Type `/ame_skins` in-game.
+6. Click a skin. Reconnect to see the change.

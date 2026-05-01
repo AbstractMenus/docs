@@ -1,0 +1,61 @@
+---
+title: Basic Kit
+description: A starter kit menu - one click hands the player a bundle of items plus XP. No cooldown, no rules, just rewards.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The simplest reward menu shape: a description card, a claim button, and a close button. Click the claim button to get a bundle of items, some XP, a sound effect, and a confirmation message.
+
+## What it teaches
+
+- Multiple actions in sequence inside one `click { actions { ... } }` block
+- The list-form of `itemAdd:` to give several items at once
+- `giveXp` action for vanilla XP points
+- Delayed `closeMenu: 20` (close after 20 ticks = 1 second, so the player sees the success message before the menu closes)
+
+<MenuExample
+  path="kits-and-rewards/01-basic-kit"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+The claim button's click block runs five actions in order:
+
+1. **`itemAdd: [ ... ]`** - the list form lets multiple items go into the player's inventory in one shot.
+2. **`giveXp: 50`** - adds 50 XP via the configured levels provider (vanilla XP by default).
+3. **`sound: ${successSound}`** - plays a success chime from shared templates.
+4. **`message:`** - confirmation in chat.
+5. **`closeMenu: 20`** - close after 20 ticks (1 second). Using a number instead of `true` adds the delay so the player perceives the actions completing.
+
+There are no cooldown checks here. Anyone can keep clicking and keep getting kits. To gate this with a cooldown, see the daily kit example which adds a `setVarp` timestamp + an `if` rule comparing it to the current time.
+
+## Customizing
+
+Swap any item in the `itemAdd` list with the materials you want. Add as many entries as you need. The `count:` field is optional - default is 1.
+
+For enchanted items, an `enchantments` field on the item works too:
+
+```hocon
+itemAdd: [
+  {
+    material: DIAMOND_SWORD
+    enchantments {
+      sharpness: 5
+      unbreaking: 3
+    }
+  }
+]
+```
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_kit` in-game.

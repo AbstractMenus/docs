@@ -1,0 +1,74 @@
+---
+title: Counter & Toggle
+description: Personal variables in action - a clickable counter and a stateful toggle, both persisted between sessions.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Two of the most common state primitives in any GUI: a numeric counter that goes up and down, and a binary toggle. Both demo the per-player variable system (`varp`) and the dual-item pattern for conditional display.
+
+## What it teaches
+
+- `incVarp` / `decVarp` / `removeVarp` for numeric mutations
+- `setVarp` with the `"name::value"` shorthand
+- The `%varp_:name:default%` placeholder syntax
+- The `existVarp` rule for "does this variable exist for this player"
+- The dual-item pattern: two items at the same slot, the first with rules, the second as fallback
+- `refreshMenu: true` so the display updates without closing and reopening
+
+<MenuExample
+  path="state-and-vars/01-counter-toggle"
+  lang="en"
+  showShared={true}
+/>
+
+## How the counter works
+
+The counter uses three actions and a placeholder:
+
+- `incVarp: "ame_counter"` adds 1 to the variable. If it doesn't exist, the plugin auto-initializes it to 0 first.
+- `decVarp: "ame_counter"` subtracts 1.
+- `removeVarp: "ame_counter"` deletes the variable - effectively a reset to "no counter".
+
+The display item shows `%varp_:ame_counter:0%`. The `:0` suffix is the default value: when the variable doesn't exist, the placeholder renders as `0` instead of an empty string.
+
+Every click action ends with `refreshMenu: true` so the display item updates immediately. Without this, the counter would only refresh when the menu's auto-update interval fires (or never, if `updateInterval` is unset).
+
+## How the toggle works
+
+The toggle uses the **dual-item pattern**: two items declared at the same slot, where the first one renders only when its rules pass, and the second one is the fallback.
+
+```hocon
+# Visible when toggle is set
+{ slot: 15, material: LIME_DYE, rules { existVarp: "ame_toggle" }, ... }
+
+# Visible when toggle is NOT set
+{ slot: 15, material: GRAY_DYE, ... }   # no rules = always passes
+```
+
+When the player has the `ame_toggle` variable set, the green item shows and clicking it removes the variable. When the variable doesn't exist, the gray item shows and clicking it sets the variable to "1" (the value doesn't matter for an existence check, just that the variable exists).
+
+This pattern is heavily used for things like "give item / already claimed", "VIP price / regular price", "muted / unmuted" - any binary state where the player should see different visuals.
+
+## Customizing
+
+To change the variable name, replace `ame_counter` and `ame_toggle` everywhere - in the actions, the `existVarp` rule, and the placeholder. Pick names with a server-specific prefix to avoid collisions with other menus.
+
+For a counter with a step bigger than 1, use the object form:
+
+```hocon
+incVarp: [
+  { name: "ame_counter", amount: 5 }
+]
+```
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_counter` in-game.
+4. Click around. The counter persists - close the menu, reopen, the value is still there.

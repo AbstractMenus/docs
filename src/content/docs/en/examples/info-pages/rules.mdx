@@ -1,0 +1,51 @@
+---
+title: Server Rules
+description: A read-only menu showing server rules. Players open it, scroll, close it. No interaction logic at all.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The simplest possible menu: just text. Four rules each rendered as a paper item with a multi-line lore explanation. No click handlers, no rules, no actions. The only interactive element is the close button.
+
+## What it teaches
+
+- Items without `click {}` are passive - players can mouse over them but clicks do nothing
+- Multi-line `lore: [ ... ]` for rich text on a single item
+- A 5-row menu with `size: 5` and how slot numbers map to rows
+- Mixing decorative borders with content
+
+<MenuExample
+  path="info-pages/01-rules"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+`size: 5` gives 45 slots (rows 0..4). The rules sit in the middle row (row 2, slots 18-26) at every-other-slot positions for breathing room.
+
+There are no `click` blocks on the rule items because there is nothing to click for. Players just hover to read the lore.
+
+The close button is the only interactive item, sourced from the shared `${buttonClose}` template.
+
+## Customizing
+
+To add a fifth rule, drop another paper item with a free slot in row 2 or row 3. Slot numbers go left-to-right within each row:
+
+- Row 0: 0-8 (top border in this example)
+- Row 1: 9-17
+- Row 2: 18-26 (rules)
+- Row 3: 27-35
+- Row 4: 36-44 (bottom border)
+
+To reword existing rules, just edit the `name:` and `lore:` fields. No code change required.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_rules` in-game.

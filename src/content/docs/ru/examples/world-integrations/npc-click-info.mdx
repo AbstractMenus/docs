@@ -1,0 +1,58 @@
+---
+title: Клик по NPC
+description: Универсальное меню с информацией и действиями, открывающееся по клику на любого из нескольких Citizens NPC. Читает контекст NPC, чтобы персонализировать меню.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Если [NPC-торговец](../shops/npc-vendor) - это один конкретный NPC, открывающий один конкретный магазин, то это меню - обобщённый интерфейс "что это за NPC", который может вызвать любой из нескольких NPC. Меню читает id, имя и мир кликнутого NPC через контекстные плейсхолдеры и предлагает действия, которые работают для любого из них.
+
+<MenuExample path="world-integrations/02-npc-click-info" lang="ru" showShared={true} />
+
+## Что показывает пример
+
+- Перечисление нескольких ID NPC в `clickNPC: [1, 2, 3]`, чтобы любой из них открывал это меню
+- Персонализацию меню через `%activator_npc_name%`, `%activator_npc_id%`, `%activator_npc_world%` в заголовке, именах предметов и lore
+- Использование `skullOwner: "%activator_npc_name%"`, чтобы текстура головы в заголовке соответствовала имени кликнутого NPC
+- Маршрутизацию разных NPC в разные меню (оставлено как упражнение через действие openMenu)
+
+## Паттерн маршрутизации NPC
+
+Плитка "Поговорить с торговцем" в примере открывает `ame_shop` для любого NPC. На реальном сервере можно маршрутизировать по-разному в зависимости от NPC:
+
+```hocon
+click {
+  actions {
+    rules {
+      and {
+        # Гипотетически: только NPC #2 открывает редкий магазин
+        if: "%activator_npc_id% == 2"
+      }
+      actions { openMenu: "ame_rare_shop" }
+      denyActions { openMenu: "ame_shop" }
+    }
+  }
+}
+```
+
+Для более чем 2 маршрутов используйте `oneof`:
+
+```hocon
+oneof: [
+  { if: "%activator_npc_id% == 1", actions { openMenu: "ame_blacksmith_shop" } }
+  { if: "%activator_npc_id% == 2", actions { openMenu: "ame_alchemy_shop"   } }
+  { if: "%activator_npc_id% == 3", actions { openMenu: "ame_armorer_shop"   } }
+]
+```
+
+`oneof` останавливается на первом совпадении, так что каждый ID NPC попадает ровно в одну ветку.
+
+## Попробовать
+
+1. Установите Citizens.
+2. Заспавните трёх NPC, запомните их ID.
+3. Положите бандл в `plugins/AbstractMenus/menus/example/`. Замените `clickNPC: [1, 2, 3]` на ваши реальные ID NPC.
+4. `/am reload`.
+5. Кликните правой кнопкой по любому из NPC. Меню откроется с данными этого NPC в заголовке.

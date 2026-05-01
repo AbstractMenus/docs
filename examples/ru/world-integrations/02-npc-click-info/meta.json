@@ -1,0 +1,12 @@
+{
+  "title": "Клик по NPC",
+  "category": "world-integrations",
+  "level": "intermediate",
+  "features": ["clickNPC-multiple-ids", "%activator_npc_*%-placeholders", "skullOwner-from-placeholder", "openMenu-routing"],
+  "dependencies": ["Citizens"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "(ПКМ по NPC)",
+  "order": 2
+}

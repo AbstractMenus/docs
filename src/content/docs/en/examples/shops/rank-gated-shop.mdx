@@ -1,0 +1,60 @@
+---
+title: Rank-Gated Shop
+description: A shop where VIPs see different prices than regular players. The dual-item HAS/NO_PERM pattern from real production servers.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Many real shops show different prices for different ranks - VIPs get a discount, donors see exclusive items, etc. The implementation uses two items at the same slot: the first carries a permission rule, the second is the fallback.
+
+<MenuExample path="shops/03-rank-gated-shop" lang="en" showShared={true} />
+
+## What it teaches
+
+- The dual-item display pattern with a permission rule
+- Per-rank pricing without `if` rule complexity
+- Reusable click handlers via `${discountClick}` / `${regularClick}` substitution
+- How rule short-circuiting and slot ordering interact
+
+## How dual-item works
+
+Two items declared at the same slot:
+
+```hocon
+# Variant A: shown only to VIPs
+{ slot: 13, name: "Golden Apple (VIP price)", rules { permission: "...vip" }, click: ${discountClick} }
+
+# Variant B: fallback for everyone else
+{ slot: 13, name: "Golden Apple",                                               click: ${regularClick} }
+```
+
+When the menu renders, the plugin walks the items list. For slot 13 it finds variant A, checks its rules, and either:
+
+- Uses A if the rule passes (VIP sees the discounted version)
+- Skips A and looks for the next definition at slot 13. Finds B. B has no rules. B renders.
+
+This is THE production pattern from real-world shops. It scales to many ranks (4-tier donate stores, etc.) by having one variant per rank, in priority order, with the highest-tier rule first.
+
+## Why this beats `if` for rank checks
+
+The `if` rule could express the same logic, but with two extra problems:
+
+1. The displayed item itself wouldn't change - just the click action. Visual differentiation requires dual items anyway.
+2. `if` is parsed as an expression on every render. Permission-based dual items are cheaper.
+
+Use `if` when comparing numeric/string values that can't be expressed as a built-in rule (level math, custom var values). Use dual-item permission for "this player is in tier X".
+
+## Customizing for more tiers
+
+Add more variants in priority order. Mythic > Donor > VIP > regular:
+
+```hocon
+{ slot: 13, ..., rules { permission: "myplugin.mythic" }, click: ${mythicClick} }
+{ slot: 13, ..., rules { permission: "myplugin.donor"  }, click: ${donorClick}  }
+{ slot: 13, ..., rules { permission: "myplugin.vip"    }, click: ${vipClick}    }
+{ slot: 13, ..., click: ${regularClick} }   # fallback - no rules
+```
+
+Order matters: highest-priority tier first. The first matching variant wins.

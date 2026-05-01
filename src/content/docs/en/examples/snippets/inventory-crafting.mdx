@@ -1,0 +1,79 @@
+---
+title: Inventory Crafting
+description: Craft items by consuming ingredients from the player's inventory. Demonstrates the inventoryItems rule paired with itemRemove + itemAdd actions.
+sidebar:
+  order: 11
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A workbench-style menu that "crafts" items: the player must hold the recipe ingredients in their inventory, clicking the recipe consumes them and gives back the crafted result. Different mechanism from drag-and-drop slots - this checks the player's regular inventory.
+
+## What it teaches
+
+- The `inventoryItems` rule for "does the player have these items"
+- `itemRemove` to consume the matching items
+- `itemAdd` to give the crafted output
+- Defining recipes as named blocks at file scope, referenced via `${name}` substitution
+
+<MenuExample
+  path="snippets/11-inventory-crafting"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+Each recipe defines an `output` (the crafted item) and a `requirements` list (the ingredients):
+
+```hocon
+helmetRecipe {
+  output {
+    material: LEATHER_HELMET
+    name: "&aHunter's Hat"
+    enchantments { durability: 2 }
+  }
+  requirements: [
+    { material: LEATHER, count: 5 }
+  ]
+}
+```
+
+The click block references both:
+
+```hocon
+click {
+  rules { inventoryItems: ${helmetRecipe.requirements} }
+  actions {
+    itemRemove: ${helmetRecipe.requirements}
+    itemAdd: ${helmetRecipe.output}
+    ...
+  }
+  denyActions: ${denyNotEnoughItems}
+}
+```
+
+This pattern keeps the recipe data in one place: the rule, the consumption, and the output all reference the same `helmetRecipe` block. Adding or editing a recipe means editing one block, not three.
+
+## Inventory crafting vs drag-and-drop
+
+Two distinct AbstractMenus patterns for "crafting":
+
+- **Inventory crafting** (this example): items stay in the player's normal inventory. The `inventoryItems` rule looks at the inventory, `itemRemove` deducts from it. Player never moves items.
+- **Drag-and-drop crafting**: the menu has draggable slots. Player physically drags items into them. Uses the `placeItem` action, `placedItem` rule, and the `draggable` field on items. See the [drag-and-drop docs](/docs/en/advanced/drag-and-drop/) for the alternative pattern.
+
+This snippet uses the inventory-crafting pattern because it composes well with shop-like UIs and doesn't need a custom slot configuration.
+
+## Adding more recipes
+
+Define a new `xxxRecipe` block at file scope with `output {}` and `requirements: [...]`. Add an item in the `items` list referencing it the same way the helmet does. Three places get the recipe: the display item, the rule, the actions. Keeping them all `${xxxRecipe.something}` means recipes can't drift out of sync.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Get 5 leather in your inventory.
+4. Type `/ame_craft` in-game.
+5. Click the helmet recipe. Leather consumed, hat appears.

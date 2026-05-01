@@ -1,0 +1,12 @@
+{
+  "title": "Магазин покупки и продажи",
+  "category": "shops",
+  "level": "intermediate",
+  "features": ["click-types-left-right", "money-rule", "inventoryItems-rule", "takeMoney", "giveMoney", "itemRemove", "asymmetric-prices"],
+  "dependencies": ["Vault"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_buysell",
+  "order": 4
+}

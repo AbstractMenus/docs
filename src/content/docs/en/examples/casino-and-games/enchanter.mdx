@@ -1,0 +1,78 @@
+---
+title: Random Enchanter
+description: A drag-and-drop enchant lottery. Drop a tool in, click "Enchant!", get a random enchantment back. Demonstrates draggable slots, placeItem, placedItem rules, and randActions.
+sidebar:
+  order: 5
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The most feature-dense menu in the pack. Combines drag-and-drop slots (the player physically places an item in the menu), the `placedItem` rule (check what's in a slot), `placeItem` action (write into a slot), `removePlaced` (clear a slot), `setButton` (replace a static item), and `randActions` (pick one outcome at random). All of it together gives the player a "throw an item in, gamble for an enchantment" experience.
+
+## What it teaches
+
+- The `draggable:` field with a matrix string defining which slots accept dropped items
+- The `placedItem` rule for checking the contents of a draggable slot
+- Inverted rules with the `-` prefix: `-placedItem { ... }` means "NOT placed"
+- The `placeItem` action for writing items into draggable slots
+- `removePlaced` to clear a draggable slot
+- `setButton` to overwrite a regular menu item dynamically
+- The `%changed_item_*%` placeholder family that captures what the player dragged
+- Composing `randActions` with `placeItem` for randomized outcomes
+
+<MenuExample
+  path="casino-and-games/05-enchanter"
+  lang="en"
+  showShared={true}
+/>
+
+## How drag-and-drop works
+
+The `draggable:` field on the menu root takes a matrix of strings, one per row, where `x` marks a slot players can drop items into. In this example slot 11 (input) and slot 15 (result) are draggable.
+
+```hocon
+draggable: [
+  "---------",
+  "--x---x--",
+  "---------"
+]
+```
+
+When a slot is draggable, the player can pick items up from their hotbar/inventory and drop them into that slot. The plugin tracks what's there separately from menu items - drag-and-drop slots are a different overlay on top of the menu grid.
+
+Inside actions, you can:
+
+- **`placedItem` rule** - check what's in a draggable slot. `placedItem { slot: 11, material: AIR }` evaluates true when slot 11 is empty.
+- **`-placedItem`** - inverted; same check, opposite result.
+- **`placeItem` action** - write an item into a draggable slot.
+- **`removePlaced` action** - clear a draggable slot.
+
+## How the random enchant works
+
+The enchant button's click runs three steps:
+
+1. **Rule check**: `-placedItem { slot: 11, material: AIR }` - "slot 11 is NOT empty". If the player hasn't dropped anything, fall through to denyActions.
+2. **`randActions`**: pick one entry at random from a list. Each entry calls `placeItem` to put a copy of the player's item (preserved via `%changed_item_serialized%`) into slot 15, with one of four enchant sets applied.
+3. **`removePlaced: 11`**: clear the input slot. The original item is gone, the enchanted copy is in slot 15.
+
+The deny path (when input is empty) plays a sound and uses `setButton: ${resultStub}` to reset the result-slot placeholder back to the gray pane.
+
+## Customizing
+
+To add another enchant outcome, append to the `randActions` list:
+
+```hocon
+{ placeItem: ${placeItemBase} { enchantments { mending: 1 } } }
+```
+
+Each outcome has equal weight by default. For weighted random, repeat outcomes (an item appearing twice in the list is twice as likely to be picked).
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_enchanter` in-game.
+4. Drag a sword/pickaxe into the left slot.
+5. Click "Enchant!". The result appears in the right slot with a random enchant.

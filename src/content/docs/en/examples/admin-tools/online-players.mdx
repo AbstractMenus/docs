@@ -1,0 +1,99 @@
+---
+title: Online Players
+description: Generated menu over the PLAYERS catalog. Browse online players as heads, left-click to teleport, shift-click to kick.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The headline use case for `GeneratedMenu`: a paginated browser of online players. Each head is auto-generated from the `PLAYERS` catalog with health and world info in the lore. Left-click teleports admin to the player, shift-click kicks them. Restricted to admins via the `rulesAdmin` shared snippet.
+
+## What it teaches
+
+- Building a generated menu with a catalog + matrix + templates
+- Using catalog placeholders (`%ctg_player_name%`, `%ctg_player_health%`, `%ctg_player_world%`)
+- Click-type discrimination: `click { left { ... } shift_left { ... } }`
+- The `command` action with `console:` to run server commands as console
+- Built-in pagination via `pageNext` / `pagePrev` (shared `${buttonNext}` and `${buttonPrev}`)
+- Pagination placeholders: `%page%`, `%pages_count%`, `%pages_total%`
+- Menu-level access restriction: top-level `rules: ${rulesAdmin}`
+
+<MenuExample
+  path="admin-tools/01-online-players"
+  lang="en"
+  showShared={true}
+/>
+
+## How GeneratedMenu pieces fit together
+
+Three blocks make a generated menu:
+
+```hocon
+catalog { type: PLAYERS }                  # the source of dynamic content
+
+matrix {                                   # how to lay it out
+  cells: [ "_________", "_xxxxxxx_", ... ]
+  templates {
+    "x" { ... item template ... }
+  }
+}
+
+items: [                                   # static items (borders, buttons, page counter)
+  ...
+]
+```
+
+The catalog produces a stream of objects. The matrix decides where each catalog entry goes (`x` cells consume catalog entries one by one). Static items in `items:` render on every page in the same positions.
+
+## Catalog placeholders
+
+Inside matrix templates, the current catalog object is exposed via `%ctg_<key>%`. For the `PLAYERS` catalog, the player object has `name`, `health`, `food_level`, `world`, `gamemode`, and a few others. Different catalog types expose different keys - see the [Generation docs](/docs/en/advanced/generation/) for a full table.
+
+## Click types
+
+The `click` block can specify per-button-type handlers:
+
+- **`left { ... }`** - left-click only
+- **`right { ... }`** - right-click only
+- **`shift_left { ... }`** - shift + left-click
+- **`shift_right { ... }`** - shift + right-click
+- **`drop { ... }`** - drop key (Q)
+
+If only one click variant is defined, other clicks are no-ops. This menu uses `left` for teleport and `shift_left` for kick - so a regular shift-left click won't accidentally teleport.
+
+## Pagination
+
+Generated menus paginate automatically when the catalog has more entries than fit. The `pageNext` and `pagePrev` actions move between pages. The shared `${buttonNext}` and `${buttonPrev}` templates wire those actions to ARROW items.
+
+If the menu fits on one page (catalog has fewer entries than matrix slots), the next/prev buttons still render but their actions are no-ops.
+
+The `%page%`, `%pages_count%`, and `%pages_total%` placeholders show pagination state - useful for "Page 2 / 5" titles or footer counters.
+
+## Customizing
+
+To restrict to a subset of players, add filters to the catalog:
+
+```hocon
+catalog {
+  type: PLAYERS
+  filters {
+    permission: "myserver.online_visible"
+    notWorld: ["staff_world"]
+  }
+}
+```
+
+To add more admin actions, extend the click block with `right`, `shift_right`, etc. - each pointing to its own command via the `command` action.
+
+To swap the catalog entirely (browse worlds, regions, online BungeeCord servers), change `catalog { type: ... }` to `WORLDS`, `BUNGEE_SERVERS`, or any other registered catalog type.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Make sure your account has the `abstractmenus.admin` permission.
+4. Type `/ame_online` in-game.
+5. Left-click a player head to teleport. Shift-left to kick.

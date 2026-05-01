@@ -1,0 +1,12 @@
+{
+  "title": "Bungee Status",
+  "category": "state-and-vars",
+  "level": "intermediate",
+  "features": ["bungeeConnect", "bungee-placeholders", "updateInterval", "glow"],
+  "dependencies": ["BungeeCord"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_servers",
+  "order": 4
+}

@@ -1,0 +1,37 @@
+---
+title: "Действие: randActions"
+description: Случайно выбрать одну запись из списка групп действий. Каждая запись независима.
+sidebar:
+  order: 8
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`randActions` принимает список групп действий и случайно выбирает ровно одну для выполнения. Каждая запись - самостоятельная группа: звуки, сообщения, предметы, что угодно.
+
+<MenuExample path="snippets/08-action-rand-actions" lang="ru" showShared={true} />
+
+## Как использовать
+
+```hocon
+randActions: [
+  { message: "Outcome A" }
+  { message: "Outcome B" }
+  { message: "Outcome C" }
+]
+```
+
+По умолчанию у каждой записи равная вероятность. Чтобы **взвесить** исходы, повторяйте их - запись, появившаяся дважды, имеет вдвое больше шансов:
+
+```hocon
+randActions: [
+  { message: "Common outcome" }
+  { message: "Common outcome" }
+  { message: "Common outcome" }
+  { message: "Rare outcome" }
+]
+```
+
+Сверху: 3 шанса из 4 на "Common", 1 из 4 на "Rare".
+
+Для одного из N в отображении (какой предмет показать), а не одного из N в действиях, используйте правило `chance` на предметах - смотрите [Правило: chance](./rule-chance).

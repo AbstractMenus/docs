@@ -1,0 +1,375 @@
+---
+// PackBuilder.astro
+// Lets the user pick any subset of example menus and build a custom zip bundle.
+// Reuses the JSZip pattern from DownloadCard but with multi-select UI.
+
+interface Meta {
+  title: string;
+  category: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  features: string[];
+  dependencies: string[];
+  min_plugin_version: string;
+  min_minecraft_version: string;
+  uses_shared_templates: boolean;
+  command: string;
+  order: number;
+}
+
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+// Load every meta.json across both locales, then filter.
+const metaFiles = import.meta.glob('/examples/**/meta.json', {
+  import: 'default',
+  eager: true,
+}) as Record<string, Meta>;
+
+const menus = Object.entries(metaFiles)
+  .filter(([path]) => path.includes(`/examples/${lang}/`))
+  .map(([path, meta]) => {
+    // /examples/en/shops/01-cake-shop/meta.json -> path: shops/01-cake-shop
+    const match = path.match(/\/examples\/[^/]+\/(.+)\/meta\.json$/);
+    const menuPath = match ? match[1] : '';
+    return { menuPath, meta };
+  })
+  .filter((m) => m.menuPath !== '');
+
+// Group by category
+type Entry = (typeof menus)[number];
+const byCategory: Record<string, Entry[]> = {};
+for (const m of menus) {
+  const cat = m.meta.category;
+  if (!byCategory[cat]) byCategory[cat] = [];
+  byCategory[cat].push(m);
+}
+for (const cat in byCategory) {
+  byCategory[cat].sort((a, b) => (a.meta.order ?? 0) - (b.meta.order ?? 0));
+}
+
+// Stable display order for categories
+const categoryOrder = [
+  'shops',
+  'hub-and-nav',
+  'cosmetics',
+  'donate',
+  'casino-and-games',
+  'kits-and-rewards',
+  'admin-tools',
+  'info-pages',
+  'state-and-vars',
+  'world-integrations',
+  'snippets',
+];
+const sortedCategories = categoryOrder.filter((c) => byCategory[c]);
+
+const totalCount = menus.length;
+
+// i18n. See backlog: i18n centralization for the wiki.
+const t = {
+  en: {
+    selectAll: 'Select all',
+    selectNone: 'Select none',
+    buildBtn: '↓ Build pack (.zip)',
+    summary: (sel: number, tot: number) => `${sel} / ${tot} selected`,
+    needsAtLeastOne: 'Select at least one menu first.',
+    levels: { beginner: 'beginner', intermediate: 'intermediate', advanced: 'advanced' },
+    expandAll: 'Expand all',
+    collapseAll: 'Collapse all',
+  },
+  ru: {
+    selectAll: 'Выбрать все',
+    selectNone: 'Снять всё',
+    buildBtn: '↓ Собрать бандл (.zip)',
+    summary: (sel: number, tot: number) => `выбрано ${sel} из ${tot}`,
+    needsAtLeastOne: 'Сначала выбери хотя бы одно меню.',
+    levels: { beginner: 'новичок', intermediate: 'средний', advanced: 'продвинутый' },
+    expandAll: 'Развернуть все',
+    collapseAll: 'Свернуть все',
+  },
+}[lang];
+
+// Pre-render summary template strings the client script will reuse.
+const summaryEmpty = t.summary(0, totalCount);
+const summaryFull  = t.summary(totalCount, totalCount);
+---
+
+<div
+  class="pack-builder"
+  data-lang={lang}
+  data-needs-at-least-one={t.needsAtLeastOne}
+  data-summary-empty={summaryEmpty}
+  data-summary-full={summaryFull}
+>
+  <div class="pb-header">
+    <button type="button" class="dl-btn dl-btn-secondary" data-action="select-all">{t.selectAll}</button>
+    <button type="button" class="dl-btn dl-btn-secondary" data-action="select-none">{t.selectNone}</button>
+    <button
+      type="button"
+      class="pb-icon-btn"
+      data-action="toggle-all"
+      data-label-expand={t.expandAll}
+      data-label-collapse={t.collapseAll}
+      aria-label={t.expandAll}
+    >
+      <svg class="pb-toggle-icon pb-toggle-icon-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="7 6 12 11 17 6"/>
+        <polyline points="7 13 12 18 17 13"/>
+      </svg>
+      <svg class="pb-toggle-icon pb-toggle-icon-collapse" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="17 11 12 6 7 11"/>
+        <polyline points="17 18 12 13 7 18"/>
+      </svg>
+      <span class="pb-icon-tooltip" data-tooltip>{t.expandAll}</span>
+    </button>
+    <span class="pb-summary" data-summary>{summaryEmpty}</span>
+    <button type="button" class="dl-btn dl-btn-primary" data-action="build-zip">{t.buildBtn}</button>
+  </div>
+
+  {sortedCategories.map((cat) => (
+    <details class="pb-cat" data-cat-name={cat}>
+      <summary>
+        <svg class="pb-cat-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+        <input type="checkbox" class="pb-cat-toggle" data-cat={cat} aria-label={`Toggle all ${cat}`} />
+        <span class="pb-cat-name">{cat}</span>
+        <span class="pb-cat-count">{byCategory[cat].length}</span>
+      </summary>
+      <ul class="pb-list">
+        {byCategory[cat].map((m) => (
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                class="pb-menu"
+                data-path={m.menuPath}
+                data-uses-shared={m.meta.uses_shared_templates ? '1' : '0'}
+                data-cat={cat}
+              />
+              <span class="pb-title">{m.meta.title}</span>
+              <span class={`badge badge-level badge-${m.meta.level}`}>{t.levels[m.meta.level]}</span>
+              {m.meta.dependencies.map((d) => (
+                <span class="badge badge-dep">{d}</span>
+              ))}
+            </label>
+          </li>
+        ))}
+      </ul>
+    </details>
+  ))}
+</div>
+
+<script>
+  import JSZip from 'jszip';
+
+  // Eager-load all .conf files; filtered later by selected paths.
+  const confFiles = import.meta.glob('/examples/**/*.conf', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }) as Record<string, string>;
+
+  function makeInstallTxt(lang: string, count: number, docsBase: string): string {
+    const date = new Date().toISOString().slice(0, 10);
+    if (lang === 'ru') {
+      return [
+        `AbstractMenus - кастомный набор примеров`,
+        `Сгенерировано: ${date}`,
+        `Включает меню: ${count}`,
+        ``,
+        `Установка:`,
+        `1. Распакуй эти папки в plugins/AbstractMenus/menus/example/`,
+        `2. /am reload`,
+        `3. /<command> для любого из включённых меню`,
+        ``,
+        `Документация: ${docsBase}`,
+        ``,
+      ].join('\n');
+    }
+    return [
+      `AbstractMenus example pack - custom bundle`,
+      `Generated: ${date}`,
+      `Includes: ${count} menus`,
+      ``,
+      `Installation:`,
+      `1. Copy these folders into plugins/AbstractMenus/menus/example/`,
+      `2. /am reload`,
+      `3. /<command> for any of the included menus`,
+      ``,
+      `Docs: ${docsBase}`,
+      ``,
+    ].join('\n');
+  }
+
+  // Per-category open/closed state, persisted in localStorage so the user's
+  // pick survives page reloads and (in browsers that share localStorage between
+  // locales) language switches.
+  const STORAGE_KEY = 'ame-pack-builder-cats';
+
+  function loadCatState(): Record<string, boolean> {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return typeof parsed === 'object' && parsed !== null ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveCatState(state: Record<string, boolean>) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // Ignore quota / private-mode failures
+    }
+  }
+
+  document.querySelectorAll<HTMLDivElement>('.pack-builder').forEach((root) => {
+    const lang = root.dataset.lang!;
+    const needsAtLeastOneMsg = root.dataset.needsAtLeastOne!;
+    const total = root.querySelectorAll('.pb-menu').length;
+    const summary = root.querySelector<HTMLSpanElement>('[data-summary]')!;
+    const allCheckboxes = root.querySelectorAll<HTMLInputElement>('.pb-menu');
+    const catToggles = root.querySelectorAll<HTMLInputElement>('.pb-cat-toggle');
+    const allDetails = root.querySelectorAll<HTMLDetailsElement>('.pb-cat');
+    const toggleAllBtn = root.querySelector<HTMLButtonElement>('[data-action="toggle-all"]');
+
+    // Restore per-category open state from localStorage.
+    const catState = loadCatState();
+    allDetails.forEach((d) => {
+      const cat = d.dataset.catName ?? '';
+      // Default closed unless the user explicitly opened it before.
+      d.open = cat in catState ? catState[cat] : false;
+    });
+
+    // When the user clicks a <details>, persist the new state.
+    allDetails.forEach((d) => {
+      d.addEventListener('toggle', () => {
+        const cat = d.dataset.catName ?? '';
+        const state = loadCatState();
+        state[cat] = d.open;
+        saveCatState(state);
+        updateToggleAllButton();
+      });
+    });
+
+    function updateToggleAllButton() {
+      if (!toggleAllBtn) return;
+      const anyOpen = Array.from(allDetails).some((d) => d.open);
+      const labelExpand = toggleAllBtn.dataset.labelExpand ?? 'Expand all';
+      const labelCollapse = toggleAllBtn.dataset.labelCollapse ?? 'Collapse all';
+      // Button shows the action it WILL perform on next click.
+      // Any open => next click collapses. None open => next click expands.
+      toggleAllBtn.classList.toggle('is-collapse', anyOpen);
+      const tooltip = toggleAllBtn.querySelector<HTMLSpanElement>('[data-tooltip]');
+      if (tooltip) tooltip.textContent = anyOpen ? labelCollapse : labelExpand;
+      toggleAllBtn.setAttribute('aria-label', anyOpen ? labelCollapse : labelExpand);
+    }
+
+    if (toggleAllBtn) {
+      toggleAllBtn.addEventListener('click', () => {
+        const anyOpen = Array.from(allDetails).some((d) => d.open);
+        const newOpen = !anyOpen; // collapse if any were open, otherwise expand all
+        const state = loadCatState();
+        allDetails.forEach((d) => {
+          d.open = newOpen;
+          state[d.dataset.catName ?? ''] = newOpen;
+        });
+        saveCatState(state);
+        updateToggleAllButton();
+      });
+    }
+
+    updateToggleAllButton();
+
+    function fmtSummary(sel: number): string {
+      return lang === 'ru' ? `выбрано ${sel} из ${total}` : `${sel} / ${total} selected`;
+    }
+
+    function updateSummary() {
+      const checked = root.querySelectorAll('.pb-menu:checked').length;
+      summary.textContent = fmtSummary(checked);
+
+      // Per-category toggle reflects whether all in that category are selected
+      catToggles.forEach((toggle) => {
+        const cat = toggle.dataset.cat!;
+        const items = root.querySelectorAll<HTMLInputElement>(`.pb-menu[data-cat="${cat}"]`);
+        const sel = root.querySelectorAll(`.pb-menu[data-cat="${cat}"]:checked`).length;
+        toggle.checked = sel === items.length && items.length > 0;
+        toggle.indeterminate = sel > 0 && sel < items.length;
+      });
+    }
+
+    allCheckboxes.forEach((cb) => cb.addEventListener('change', updateSummary));
+
+    catToggles.forEach((toggle) => {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+      toggle.addEventListener('change', () => {
+        const cat = toggle.dataset.cat!;
+        const items = root.querySelectorAll<HTMLInputElement>(`.pb-menu[data-cat="${cat}"]`);
+        items.forEach((item) => (item.checked = toggle.checked));
+        updateSummary();
+      });
+    });
+
+    root.querySelector('[data-action="select-all"]')!.addEventListener('click', () => {
+      allCheckboxes.forEach((cb) => (cb.checked = true));
+      updateSummary();
+    });
+
+    root.querySelector('[data-action="select-none"]')!.addEventListener('click', () => {
+      allCheckboxes.forEach((cb) => (cb.checked = false));
+      updateSummary();
+    });
+
+    root.querySelector('[data-action="build-zip"]')!.addEventListener('click', async () => {
+      const checked = root.querySelectorAll<HTMLInputElement>('.pb-menu:checked');
+      if (checked.length === 0) {
+        alert(needsAtLeastOneMsg);
+        return;
+      }
+
+      const zip = new JSZip();
+      let needsShared = false;
+
+      checked.forEach((cb) => {
+        const path = cb.dataset.path!;
+        if (cb.dataset.usesShared === '1') needsShared = true;
+
+        const menuKey = `/examples/${lang}/${path}/menu.conf`;
+        const menuContent = confFiles[menuKey];
+        if (menuContent) zip.file(`${path}/menu.conf`, menuContent);
+
+        const tplKey = `/examples/${lang}/${path}/templates.conf`;
+        if (confFiles[tplKey]) zip.file(`${path}/templates.conf`, confFiles[tplKey]);
+      });
+
+      if (needsShared) {
+        const sharedKey = `/examples/${lang}/_shared/templates.conf`;
+        const sharedContent = confFiles[sharedKey];
+        if (sharedContent) zip.file('_shared/templates.conf', sharedContent);
+      }
+
+      const docsBase = `https://abstractmenus.github.io/docs/${lang}/examples`;
+      zip.file('INSTALL.txt', makeInstallTxt(lang, checked.length, docsBase));
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `abstractmenus-custom-pack-${checked.length}menus.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    });
+
+    updateSummary();
+  });
+</script>

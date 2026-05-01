@@ -1,0 +1,12 @@
+{
+  "title": "Rank-Gated Shop",
+  "category": "shops",
+  "level": "intermediate",
+  "features": ["dual-item-display", "permission-rule", "money-rule", "discount-tier", "click-handler-template"],
+  "dependencies": ["Vault", "LuckPerms"],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_rank_shop",
+  "order": 3
+}

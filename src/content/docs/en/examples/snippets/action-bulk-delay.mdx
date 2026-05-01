@@ -1,0 +1,40 @@
+---
+title: "Actions: bulk + delay"
+description: Two action wrappers - bulk repeats action groups in sequence, delay defers actions by ticks.
+sidebar:
+  order: 7
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+`bulk` and `delay` are meta-actions that wrap other actions. `bulk` runs each entry in its list as a separate action group (so you can repeat actions of the same name). `delay` waits N ticks before running its wrapped block.
+
+<MenuExample path="snippets/07-action-bulk-delay" lang="en" showShared={true} />
+
+## bulk
+
+```hocon
+bulk: [
+  { message: "&e3..." }
+  { message: "&62..." }
+  { message: "&c1..." }
+]
+```
+
+Each list entry is a self-contained action group (same shape as the parent `actions {}`). All entries fire in order, immediately, on the same tick. Useful when you need three messages in sequence (you can't have three `message:` keys at the top of one actions block - HOCON object keys must be unique).
+
+## delay
+
+```hocon
+delay {
+  delay: 60
+  actions {
+    sound: ${successSound}
+    message: "&aBoom!"
+  }
+}
+```
+
+The outer `delay:` is in ticks (60 = 3 seconds). After that delay, the inner `actions {}` runs as a normal action group. Useful for countdowns, scheduled rewards, or staging visual effects.
+
+Inside `delay`, you can have rules and denyActions too - the delayed block is a full self-contained actions context.

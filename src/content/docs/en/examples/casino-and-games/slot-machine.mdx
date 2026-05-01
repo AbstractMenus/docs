@@ -1,0 +1,39 @@
+---
+title: Slot Machine
+description: Three reels spinning together. Animation-driven with weighted random outcome distribution.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A slot machine with three reels and four outcome tiers (miss / cherries / bells / jackpot). Closer to a real slot machine UX than [Roulette](./roulette) - more reels, more visual texture, more dramatic slowdown. Same `frames` + `onAnimEnd` + `randActions` building blocks.
+
+<MenuExample path="casino-and-games/02-slot-machine" lang="en" showShared={true} />
+
+## What it teaches
+
+- Multi-slot animation: each frame updates 3 reels at once
+- Weighted prize tables (3/1/1/1 in the randActions list ≈ 60/20/20/something)
+- Pairing animation visuals (the FINAL frame shows triple-stars) with the actual prize roll (independent in randActions)
+
+## Reels in lockstep
+
+Each frame's items list contains three items - one per reel. They all update on the same frame transition, so visually all three reels rotate together rather than independently.
+
+True independent reels would need three separate animated menus stacked, or extension code that drives each reel on its own clock. For a demo, lockstep reels are fine - the player gets the slot-machine feel without the engineering overhead.
+
+## Decoupling animation from outcome
+
+The visual frames show various symbol combinations. The actual prize is decided by `randActions` in `onAnimEnd`, completely independently of the last frame's symbols.
+
+This is intentional. If you tied the prize to the visual outcome (e.g., "you saw three cherries, you get cherries prize"), you'd need to control which symbol the animation lands on, which requires per-roll dynamic frames. Far more complex.
+
+The decoupled approach is what real slot machines actually do. The visuals are theater. The math is in the prize roll.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. `/eco give <you> 500`.
+4. Type `/ame_slots` in-game. Watch the spin. See the prize message.

@@ -1,0 +1,58 @@
+---
+title: Multi-Category Shop
+description: A hub menu with category tiles that open dedicated sub-shops, each demonstrating the buy pattern.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+When a shop has more items than fit comfortably on one page, the natural pattern is a hub plus per-category sub-shops. This example shows the structure with three menus in one file: a hub and two categories.
+
+## What it teaches
+
+- Multi-menu files using the `menus { ... }` wrapper
+- Cross-menu navigation via `openMenu`
+- Repeating the buy pattern across categories without duplication
+- Mixing static borders with shop items
+- The `flags: HIDE_ATTRIBUTES` shortcut for tool/weapon icons
+
+<MenuExample
+  path="shops/02-paginated-shop"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+The file uses the `menus { ... }` wrapper to declare three named menus:
+
+- `ame_shop` is the main hub. It carries the `command: "ame_shop"` activator and shows category tiles.
+- `ame_shop_food` and `ame_shop_tools` are sub-shops opened from the hub.
+
+Each tile in the hub is just an item with `click { openMenu: "ame_shop_food" }`. No money rule, no actions on top of the navigation. Sub-shops are reached by name reference.
+
+Within a sub-shop, the items follow the same pattern as the [Cake Shop](./cake-shop): `rules { money: ... }`, an `actions {}` block that takes the money and gives the item, and `denyActions: ${denyNoMoney}` from shared templates for the failure path.
+
+The back button uses `openMenu: "ame_shop"` to return to the hub. There's no built-in "back" verb. Navigating menus is just calling `openMenu` with the previous menu's name.
+
+## Scaling out
+
+Adding a new category is mechanical:
+
+1. Add a new tile to the hub items list with `click { openMenu: "ame_shop_<your_category>" }`.
+2. Copy any sub-shop block (e.g. `ame_shop_food`), rename it to `ame_shop_<your_category>`, swap the items.
+3. Reload the menu with `/am reload`.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_shop` in-game.
+
+## Next steps
+
+- See [Cake Shop](./cake-shop) for the simplest single-menu shop.
+- See the [generation docs](/docs/en/advanced/generation/) for pagination over a dynamic catalog (when items come from a code-side source like online players or worlds).

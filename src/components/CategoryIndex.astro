@@ -1,0 +1,121 @@
+---
+// CategoryIndex.astro
+// Auto-generates a table of every menu in a category for category landing pages.
+// Reads all meta.json files for the locale, filters by the given category,
+// renders a table with name (linked), level, features, requires, command.
+
+interface Meta {
+  title: string;
+  category: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  features: string[];
+  dependencies: string[];
+  command: string;
+  order: number;
+}
+
+interface Props {
+  category: string;
+  lang: 'en' | 'ru';
+}
+
+const { category, lang } = Astro.props;
+
+const metaFiles = import.meta.glob('/examples/**/meta.json', {
+  import: 'default',
+  eager: true,
+}) as Record<string, Meta>;
+
+const menus = Object.entries(metaFiles)
+  .filter(([path]) => path.includes(`/examples/${lang}/`))
+  .map(([path, meta]) => {
+    const match = path.match(/\/examples\/[^/]+\/(.+)\/meta\.json$/);
+    const menuPath = match ? match[1] : '';
+    return { menuPath, meta };
+  })
+  .filter((m) => m.meta.category === category)
+  .sort((a, b) => (a.meta.order ?? 0) - (b.meta.order ?? 0));
+
+// menuPath is like "shops/01-cake-shop". Extract the slug for the docs URL:
+// the docs page is /docs/<lang>/examples/<category>/<docsSlug>/.
+// docsSlug is just the menu folder name minus the leading "NN-" digits.
+function pathToDocsSlug(menuPath: string): string {
+  const last = menuPath.split('/').pop() ?? '';
+  return last.replace(/^\d+-/, '');
+}
+
+// i18n. See backlog: i18n centralization for the wiki.
+const t = {
+  en: {
+    name: 'Name',
+    level: 'Level',
+    features: 'Features',
+    requires: 'Requires',
+    command: 'Command',
+    levels: { beginner: 'beginner', intermediate: 'intermediate', advanced: 'advanced' },
+    empty: 'No menus in this category yet.',
+  },
+  ru: {
+    name: 'Имя',
+    level: 'Уровень',
+    features: 'Фичи',
+    requires: 'Требует',
+    command: 'Команда',
+    levels: { beginner: 'новичок', intermediate: 'средний', advanced: 'продвинутый' },
+    empty: 'В этой категории пока нет меню.',
+  },
+}[lang];
+
+// Detect command-style activator vs descriptive (clickItem/region/etc.)
+function isCommand(cmd: string): boolean {
+  return !cmd.startsWith('(');
+}
+---
+
+<table class="cat-index">
+  <thead>
+    <tr>
+      <th>{t.name}</th>
+      <th>{t.level}</th>
+      <th>{t.features}</th>
+      <th>{t.requires}</th>
+      <th>{t.command}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {menus.map((m) => (
+      <tr>
+        <td>
+          <a href={`/docs/${lang}/examples/${category}/${pathToDocsSlug(m.menuPath)}/`}>
+            {m.meta.title}
+          </a>
+        </td>
+        <td>
+          <span class={`badge badge-level badge-${m.meta.level}`}>{t.levels[m.meta.level]}</span>
+        </td>
+        <td class="cat-features">
+          {m.meta.features.slice(0, 4).map((f) => (
+            <code class="cat-feature">{f}</code>
+          ))}
+          {m.meta.features.length > 4 && <span class="cat-more">+{m.meta.features.length - 4}</span>}
+        </td>
+        <td>
+          {m.meta.dependencies.length === 0 ? (
+            <span class="cat-none">-</span>
+          ) : (
+            m.meta.dependencies.map((d) => <span class="badge badge-dep">{d}</span>)
+          )}
+        </td>
+        <td>
+          {isCommand(m.meta.command) ? (
+            <code class="cat-cmd">/{m.meta.command}</code>
+          ) : (
+            <span class="cat-none">{m.meta.command}</span>
+          )}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+{menus.length === 0 && <p><em>{t.empty}</em></p>}

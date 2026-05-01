@@ -1,0 +1,72 @@
+---
+title: Daily Lottery
+description: A jackpot lottery using a global variable as the prize pool. Each ticket either wins everything or adds to the pot.
+sidebar:
+  order: 4
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The most server-impacting menu in the casino category - a lottery with a real, growing jackpot. Each $100 ticket either wins the whole pot at 1-in-50 odds, or contributes $50 to it. The jackpot accumulates across all players, all sessions, until someone wins.
+
+<MenuExample path="casino-and-games/04-daily-lottery" lang="en" showShared={true} />
+
+## What it teaches
+
+- A global variable as a persistent prize accumulator
+- The `incVar` action with an explicit amount (not just +1)
+- Reading a global var inside another action: `giveMoney: "%var_:ame_lottery_jackpot:0%"`
+- Combining `bulk` with inline `rules { chance: ... } actions { ... } denyActions { ... }` for branching behavior
+- Server-wide announcement via `broadcast`
+
+## How the win/loss branch works
+
+Inside the click's `actions { }`, we use `bulk` to wrap a single conditional sub-action group:
+
+```hocon
+bulk: [
+  {
+    rules { chance: 2 }
+    actions {
+      # Win path
+      giveMoney: "%var_:ame_lottery_jackpot:0%"
+      setVar: "ame_lottery_jackpot::0"
+      ...
+    }
+    denyActions {
+      # Loss path
+      incVar { name: "ame_lottery_jackpot", amount: 50 }
+      ...
+    }
+  }
+]
+```
+
+`rules { chance: 2 }` rolls a 2% probability. If true, `actions` runs (pay out + reset jackpot). If false, `denyActions` runs (add $50 to jackpot).
+
+The `bulk` wrapper is here so this whole conditional is one entry in a list - lets us add more conditional outcomes later (10% chance for half-jackpot, etc.) by appending to the bulk list.
+
+## Reading vars in action arguments
+
+`giveMoney: "%var_:ame_lottery_jackpot:0%"` - the placeholder gets resolved to the current jackpot value (e.g., `5000`), and `giveMoney` receives that number. Combined with `setVar: "ame_lottery_jackpot::0"` immediately after, this is the "pay out then reset" pattern.
+
+Order matters: payout must happen before the reset, otherwise the player gets $0.
+
+## Caveats
+
+This is a self-contained demo. Real lottery systems usually want:
+
+- **Persistence**: ensure the jackpot var survives server restarts (covered by AbstractMenus's variable storage if `syncVariables: true` in config)
+- **Per-day limits**: temporal var per player (`setVarp ::1d`) to limit ticket purchases
+- **Admin reset/audit**: this menu has a basic admin reset; real ops want logged transactions
+- **Anti-cheat**: rate limiting + click debouncing already handled by the plugin's per-menu cooldowns
+
+For your production implementation, layer those on top of the pattern shown here.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. `/eco give <you> 5000`.
+4. Type `/ame_lottery` in-game.
+5. Buy 20-30 tickets. The jackpot grows. Eventually one of them wins.

@@ -1,0 +1,134 @@
+---
+// MenuMeta.astro
+// Renders metadata badges for an example menu.
+// Inputs: meta object + lang for label translation.
+
+interface Meta {
+  title: string;
+  category: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  features: string[];
+  dependencies: string[];
+  min_plugin_version: string;
+  min_minecraft_version: string;
+  uses_shared_templates: boolean;
+  command: string;
+  order: number;
+}
+
+interface Props {
+  meta: Meta;
+  lang: 'en' | 'ru';
+}
+
+const { meta, lang } = Astro.props;
+
+// i18n string tables. See backlog: i18n centralization for the wiki.
+const t = {
+  en: {
+    levels: { beginner: 'beginner', intermediate: 'intermediate', advanced: 'advanced' },
+    features: 'Features:',
+    requires: 'Requires:',
+    openWith: 'Open:',
+    copy: 'Copy',
+    copied: 'Copied',
+  },
+  ru: {
+    levels: { beginner: 'новичок', intermediate: 'средний', advanced: 'продвинутый' },
+    features: 'Фичи:',
+    requires: 'Требует:',
+    openWith: 'Открыть:',
+    copy: 'Скопировать',
+    copied: 'Скопировано',
+  },
+}[lang];
+
+// Render `/name` for actual command activators, or a plain descriptive hint for
+// menus opened via clickItem / regionJoin / clickNPC etc. (e.g. "(right-click NPC)")
+const isCommand = !meta.command.startsWith('(');
+---
+
+<div class="menu-meta">
+  <div class="meta-row">
+    <span class={`badge badge-level badge-${meta.level}`}>{t.levels[meta.level]}</span>
+  </div>
+
+  {meta.features.length > 0 && (
+    <div class="meta-row">
+      <span class="meta-label">{t.features}</span>
+      {meta.features.map((f) => (
+        <span class="badge badge-feature">{f}</span>
+      ))}
+    </div>
+  )}
+
+  {meta.dependencies.length > 0 && (
+    <div class="meta-row">
+      <span class="meta-label">{t.requires}</span>
+      {meta.dependencies.map((d) => (
+        <span class="badge badge-dep">{d}</span>
+      ))}
+    </div>
+  )}
+
+  <div class="meta-row meta-row-cmd">
+    <span class="meta-label">{t.openWith}</span>
+    {isCommand ? (
+      <>
+        <code class="meta-cmd">/{meta.command}</code>
+        <button
+          type="button"
+          class="meta-cmd-copy"
+          data-copy={`/${meta.command}`}
+          data-label-copy={t.copy}
+          data-label-copied={t.copied}
+          aria-label={t.copy}
+        >
+          <svg class="meta-cmd-icon meta-cmd-icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <svg class="meta-cmd-icon meta-cmd-icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="meta-cmd-tooltip" data-tooltip>{t.copy}</span>
+        </button>
+      </>
+    ) : (
+      <span class="meta-cmd-none">{meta.command}</span>
+    )}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.meta-cmd-copy').forEach((btn) => {
+    const tooltip = btn.querySelector<HTMLSpanElement>('[data-tooltip]');
+    const labelCopy = btn.dataset.labelCopy ?? 'Copy';
+    const labelCopied = btn.dataset.labelCopied ?? 'Copied!';
+    let timer: number | undefined;
+
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        // Fallback for non-secure contexts (no clipboard API)
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      if (tooltip) tooltip.textContent = labelCopied;
+      btn.classList.add('copied');
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        btn.classList.remove('copied');
+        if (tooltip) tooltip.textContent = labelCopy;
+      }, 1500);
+    });
+  });
+</script>

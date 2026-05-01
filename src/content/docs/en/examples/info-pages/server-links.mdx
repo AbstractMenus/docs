@@ -1,0 +1,51 @@
+---
+title: Server Links
+description: Click any tile to open a written book with a clickable external URL. Useful for Discord invites, website links, GitHub, donate page, etc.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Minecraft chat lets players click URLs in chat or written books. The simplest way to expose external links from a menu is to open a single-page book per link - the book renders the URL as clickable text right in the player's UI.
+
+<MenuExample path="info-pages/02-server-links" lang="en" showShared={true} />
+
+## Why books and not chat messages
+
+A chat message with a URL is fine but easy to scroll past. A written book opens in the player's view, looks more deliberate, and the URL is rendered as a big clickable button. For a "links" menu, books are the better UX.
+
+## openBook format
+
+```hocon
+openBook {
+  author: "MyTestServer"
+  title: "&5Discord"
+  pages: [
+    "Click the link below to open our invite:\n\nhttps://discord.gg/example"
+  ]
+}
+```
+
+`pages` is a list of strings; each string is one page. Newlines inside a string break to new lines on that page. Plain URLs become clickable automatically when Minecraft renders the book.
+
+For a multi-page resource catalog, list more strings:
+
+```hocon
+pages: [
+  "Page 1: Discord invite\nhttps://discord.gg/...",
+  "Page 2: Website\nhttps://example.org",
+  "Page 3: GitHub\nhttps://github.com/..."
+]
+```
+
+## Closing the menu
+
+Each click block calls `closeMenu: true` after opening the book. Otherwise the menu would stay open behind the book - confusing.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_links` in-game.
+4. Click any tile. A book opens with a clickable URL inside.

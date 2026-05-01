@@ -1,0 +1,12 @@
+{
+  "title": "Активатор: clickItem",
+  "category": "snippets",
+  "level": "intermediate",
+  "features": ["clickItem-activator", "no-command"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "(ПКМ по предмету)",
+  "order": 9
+}

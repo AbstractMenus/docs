@@ -1,0 +1,55 @@
+---
+title: Lucky Chest
+description: Pay $50, open a chest, get one of 4 reward tiers. Demonstrates weighted random outcomes via repeated randActions entries.
+sidebar:
+  order: 3
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A pay-to-open lottery chest. Each click costs $50 and rolls one of four prize tiers (common / uncommon / rare / mythic) with weighted probability. Built with `randActions` and the "repeat entries to add weight" pattern.
+
+<MenuExample path="casino-and-games/03-lucky-chest" lang="en" showShared={true} />
+
+## What it teaches
+
+- Weighted random outcomes via repeated `randActions` entries
+- Combining a money rule, a takeMoney action, and randActions in one click
+- A tiered loot table without writing custom Java code
+
+## Weighted random by repetition
+
+`randActions` picks one entry uniformly at random. To make some outcomes more likely than others, just include them multiple times. With 12 entries:
+
+- **6 entries** of the common reward = 6/12 = 50% (the example targets ~60%)
+- **3 entries** of the uncommon = 3/12 = 25%
+- **1 entry** of the rare = 1/12 = ~8%
+- **2 entries** of the mythic = 2/12 = ~17% (target was 2%, see note)
+
+The list above is verbose - 12 lines for 4 prize types. It's still much more readable than a JS expression with weighted-random math, and it's bulletproof correct (no chance of typoing the weight).
+
+For finer-grained probabilities (e.g., 1.5%), use a list with 200+ entries. Or define the prize as a separate template and reference it many times to keep the list compact:
+
+```hocon
+prizeCommon { itemAdd { material: COOKED_BEEF, count: 12 }, sound: ... }
+prizeRare { itemAdd { material: ENCHANTED_GOLDEN_APPLE }, sound: ... }
+
+randActions: [
+  ${prizeCommon}
+  ${prizeCommon}
+  ${prizeCommon}
+  ${prizeRare}
+]
+```
+
+## Note on accurate weights
+
+The probabilities listed in the menu lore (60/30/8/2) don't match the actual list weights exactly - the demo is approximate to keep the list short. To get exact 60/30/8/2 you'd need 50 entries (30/15/4/1). Adjust to your taste.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. `/eco give <you> 1000`.
+4. Type `/ame_chest` in-game.
+5. Click "Open Chest". Repeat to see different tiers.

@@ -1,0 +1,38 @@
+---
+title: Примеры
+description: Каталог готовых меню AbstractMenus - копируй, кидай в плагин, подгоняй под себя.
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Examples Pack - каталог из ~46 готовых меню, разложенных по типам использования. Каждое можно скачать одним `.conf` файлом или zip-бандлом для распаковки на сервере.
+
+## Как пользоваться
+
+У каждого меню своя страница: подсвеченный код, бейджи "что демонстрирует и какие плагины нужны", кнопка **Download** для одного файла, кнопка **Bundle** для zip с меню + общими шаблонами + `INSTALL.txt` с инструкцией.
+
+Структура zip совпадает со структурой на сервере, так что распаковка в `plugins/AbstractMenus/menus/example/` сразу даёт рабочий набор. У всех команд активаторов префикс `ame_` (например `/ame_cake_shop`) - не пересекается с твоими реальными командами.
+
+## Категории
+
+<CardGrid>
+  <LinkCard title="Магазины" href="/docs/ru/examples/shops/" description="Купи/продай меню, пагинация, ранг-гейтинг, NPC-вендоры." />
+  <LinkCard title="Хаб и навигация" href="/docs/ru/examples/hub-and-nav/" description="Главные хабы, под-хабы, цепочки навигации." />
+  <LinkCard title="Косметика" href="/docs/ru/examples/cosmetics/" description="Теги, префиксы, цветовые скины через шаблоны." />
+  <LinkCard title="Донат" href="/docs/ru/examples/donate/" description="Ранки и магазин предметов с HAS/NO_PERM вариантами." />
+  <LinkCard title="Казино и игры" href="/docs/ru/examples/casino-and-games/" description="Рулетки, слоты, lucky-chest, ежедневная лотерея." />
+  <LinkCard title="Киты и награды" href="/docs/ru/examples/kits-and-rewards/" description="Базовый кит, ежедневный с кулдауном, тиры под ранки." />
+  <LinkCard title="Админ-инструменты" href="/docs/ru/examples/admin-tools/" description="Список онлайн-игроков, быстрые действия модератора." />
+  <LinkCard title="Инфо-страницы" href="/docs/ru/examples/info-pages/" description="Правила, ссылки, страничный FAQ." />
+  <LinkCard title="Состояние и переменные" href="/docs/ru/examples/state-and-vars/" description="Счётчики, кулдауны, live-доска статов." />
+  <LinkCard title="Интеграции мира" href="/docs/ru/examples/world-integrations/" description="Region-on-enter, NPC-click, block-as-button." />
+  <LinkCard title="Сниппеты" href="/docs/ru/examples/snippets/" description="Маленькие демо одной фичи на каждое правило/действие/активатор." />
+</CardGrid>
+
+## Общие шаблоны
+
+Все меню могут опционально подключать `_shared/templates.conf` (~80 строк) с пресетами звуков, deny-блоков, бордеров, кнопок навигации, rule-шорткатов и общим хедером. Bundle сам добавляет файл в zip когда нужно.
+
+## Совместимость
+
+Все примеры рассчитаны на **AbstractMenus 2.0.0+** и **Minecraft 1.21+**. Бейджи на странице каждого меню перечисляют внешние плагины (Vault, LuckPerms, WorldGuard, Citizens и т.д.).

@@ -1,0 +1,56 @@
+---
+title: Vote Cooldown
+description: A daily-vote button that combines a global counter with a per-player 24-hour cooldown using temporal variables.
+sidebar:
+  order: 2
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A vote menu with two pieces of state: a global counter that everyone bumps up (server's all-time vote count) and a per-player temporal variable that locks them out for 24 hours after voting. Pairs `incVar` (global) with `setVarp ::1d` (personal temporal) for the typical "vote once a day" pattern.
+
+<MenuExample path="state-and-vars/02-vote-cooldown" lang="en" showShared={true} />
+
+## What it teaches
+
+- `incVar` for global counters that all players share
+- `setVarp` with the `::1d` temporal duration suffix
+- The `%var_:name:default%` placeholder for global vars (note: same colon-default syntax as varp)
+- Pairing global and personal vars in the same click handler
+- Dual-item display for the vote button (ON_COOLDOWN vs READY states)
+
+## Global vs personal
+
+Two var families:
+
+- **`var_*` / setVar / incVar** - global, server-wide. Everyone reads and writes the same value. Used here for the all-time vote total.
+- **`varp_*` / setVarp / incVarp** - per-player. Each player has their own copy. Used here for the cooldown lockout.
+
+When the click fires, both are touched in the same actions block:
+
+```hocon
+actions {
+  incVar: "ame_vote_total"     # global counter +1
+  setVarp: "ame_vote_cd::1::1d" # per-player 24h temporal lockout
+  ...
+}
+```
+
+The global counter increments forever. The per-player cooldown auto-expires after 1 day, opening the vote button again.
+
+## Real vote integration
+
+This example is a self-contained demo. To wire it to actual server voting (Votifier, MinecraftPocket, etc.):
+
+1. Don't have the player click the vote button - the external vote site/proxy fires the reward.
+2. Use the same `incVar` + `setVarp` pattern inside whatever Bukkit listener handles incoming votes.
+3. Set `iconmenu.canclaim` perm or similar gate, then this menu becomes a "claim your daily vote reward" button rather than a "vote" button.
+
+The plugin docs page on variables covers persistence options if you need cross-restart guarantees on the global counter.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_vote` in-game.
+4. Click the lime "Vote!" button. Counter goes up, the button turns gray with a 23h 59m countdown.

@@ -1,0 +1,12 @@
+{
+  "title": "Ссылки сервера",
+  "category": "info-pages",
+  "level": "intermediate",
+  "features": ["openBook", "external-links", "closeMenu-with-action"],
+  "dependencies": [],
+  "min_plugin_version": "2.0.0",
+  "min_minecraft_version": "1.21",
+  "uses_shared_templates": true,
+  "command": "ame_links",
+  "order": 2
+}

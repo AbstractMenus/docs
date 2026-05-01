@@ -1,0 +1,46 @@
+---
+title: Main Hub
+description: A launcher menu that opens any of the example pack menus from one place. The same pattern fits any "select a category" use case.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+A hub menu is just a list of buttons that each open another menu. Useful as a server's main `/menu` command or as a way to organize a large collection of sub-features. This example links to the other menus in the pack so you can use it as a launcher while exploring.
+
+## What it teaches
+
+- The `openMenu` action - the only thing the buttons do
+- A simple 3-row layout with borders, header item, and tile row
+- A reusable pattern for any "select a category" UI
+
+<MenuExample
+  path="hub-and-nav/01-main-hub"
+  lang="en"
+  showShared={true}
+/>
+
+## How it works
+
+Every tile is the same shape: an item with `material:`, `name:`, `lore:`, and a `click { openMenu: "ame_<name>" }`. There are no rules, no actions other than navigation, no money checks. The hub's job is just to dispatch.
+
+The header item at slot 4 is purely decorative - same as in [Cake Shop](../shops/cake-shop). No click handler.
+
+## Customizing
+
+To add a new tile:
+
+1. Pick a free slot (10-16 in this layout work well).
+2. Copy any tile block.
+3. Change `material:`, `name:`, `lore:`, and the `openMenu:` target.
+
+The hub has no dependency on which menus actually exist. If a tile points at a non-existent menu, clicking it just shows a "menu not found" warning - useful for staging future menus before they're built.
+
+## Try it
+
+After installing the example pack:
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_hub` in-game.

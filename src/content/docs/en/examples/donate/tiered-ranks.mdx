@@ -1,0 +1,46 @@
+---
+title: Tiered Donate Ranks
+description: A 4-tier donate store. Each tier shows differently to players who already own it vs. don't.
+sidebar:
+  order: 1
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+The standard donate store layout: rank tiles in increasing order, each one shows "Owned" if the player already has the permission, or the price + perks list if they don't. Built on the dual-item display pattern with one variant per rank state.
+
+<MenuExample path="donate/01-tiered-ranks" lang="en" showShared={true} />
+
+## What it teaches
+
+- Scaling the dual-item pattern across many tiers
+- Command aliases via `command: [..., ...]` (so both `/ame_donate` and `/ame_support` open it)
+- Per-rank perk listing in lore
+- Where to wire the actual purchase flow (this example just sends a chat message)
+
+## How the dual variants stack
+
+Each rank slot has two items declared. The HAS_RANK variant has `rules { permission: "myserver.rank.knight" }` and shows "Owned" + "Consider upgrading below." The NO_RANK variant has no rules and shows the perks + price.
+
+Same rendering rule as [Rank-Gated Shop](../shops/rank-gated-shop): walk items in declaration order; the first item at each slot whose rules pass renders. HAS_RANK is declared first, so when the player has the permission, that variant wins.
+
+## Wiring the purchase flow
+
+Real donate stores integrate with a payment processor. Common patterns:
+
+- **External URL**: send `&aVisit https://example.org/donate to purchase` in the click action. Player buys on the website, gets the rank via API.
+- **In-game currency**: gate with `money` rule and `takeMoney` action like a regular shop, then grant rank with `addGroup: "knight"`.
+- **Player Points / token system**: same as money but via a different provider. Pin the provider explicitly: `takeMoney: { amount: 5, provider: "playerpoints" }`.
+
+This example uses the URL pattern because it's the most generic. Swap the click block to fit your store.
+
+## Adding a fifth tier
+
+Copy any pair (HAS_RANK + NO_RANK) for a tier, change the slot to a free position (slots 27 or 29 in row 4 fit well), update the permission name, perks, and price.
+
+## Try it
+
+1. Drop the bundle into `plugins/AbstractMenus/menus/example/`.
+2. `/am reload`.
+3. Type `/ame_donate` or `/ame_support` in-game.
+4. Grant yourself a permission (e.g., `lp user <you> permission set myserver.rank.knight true`) to see the HAS_RANK variant render.

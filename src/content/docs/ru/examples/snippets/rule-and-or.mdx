@@ -1,0 +1,48 @@
+---
+title: "Правила: and / or"
+description: Логические обёртки для комбинирования правил. and = все совпадают. or = хотя бы одно совпадает.
+sidebar:
+  order: 5
+---
+
+import MenuExample from '@components/MenuExample.astro';
+
+Стандартный блок `rules { ... }` уже объединяет всё внутри по AND. Явная обёртка `and` нужна в основном внутри `or` (потому что иначе AND внутри OR не вложить). Обёртка `or` проходит, когда срабатывает любое из вложенных правил.
+
+<MenuExample path="snippets/05-rule-and-or" lang="ru" showShared={true} />
+
+## Как использовать
+
+```hocon
+rules {
+  or {
+    permission: "vip"
+    money: 1000
+  }
+}
+```
+
+Проходит, если у игрока есть право VIP **ИЛИ** $1000+. Достаточно любого из условий.
+
+```hocon
+rules {
+  or: [
+    {
+      and {
+        permission: "vip"
+        money: 100
+      }
+    }
+    {
+      and {
+        permission: "admin"
+        gamemode: CREATIVE
+      }
+    }
+  ]
+}
+```
+
+Вложенная форма: проходит, если (VIP и $100+) ИЛИ (админ и креативный режим). Каждый элемент списка `or:` - отдельная группа правил.
+
+Есть ещё `oneof` (срабатывает на первой истинной записи, прерывая дальнейшие проверки) - смотрите пример [Item Enhancer](../state-and-vars/item-enhancer).

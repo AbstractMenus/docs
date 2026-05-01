@@ -1,0 +1,44 @@
+---
+title: Pack Builder
+description: Pick which example menus to bundle into a custom zip. Mix-and-match across categories, get one download with everything you need.
+---
+
+import PackBuilder from '@components/PackBuilder.astro';
+
+Download multiple example menus as one zip without opening each menu's page individually. Tick the menus you want, hit "Build pack", get a single archive with proper folder structure ready to drop into your server.
+
+<PackBuilder lang="en" />
+
+## How to use
+
+1. Tick the menus you want.
+2. Use the per-category checkbox to select all in that category at once.
+3. "Select all" / "Select none" shortcuts at the top apply to everything.
+4. Click "Build pack (.zip)".
+5. Drop the zip into `plugins/AbstractMenus/menus/example/` on your server.
+6. `/am reload`.
+7. Run any of the bundled commands (each menu's name shows the command).
+
+The bundle uses the same folder structure as the wiki, so unzipping straight into `plugins/AbstractMenus/menus/example/` just works.
+
+## What's in the bundle
+
+For each selected menu:
+
+- `<category>/<menu>/menu.conf` - the menu configuration
+- `<category>/<menu>/templates.conf` - if the menu has local templates
+
+Plus, once across the whole bundle (only if any selected menu uses it):
+
+- `_shared/templates.conf` - shared sound, deny, border, button, rule snippets
+
+And:
+
+- `INSTALL.txt` - install steps with the date the bundle was generated
+
+## Tips
+
+- **Need just snippets**: the snippets category is small minimal demos, one feature each. Good for learning.
+- **Building a server out of the box**: pick a hub, a shop, kits, info pages, and one casino menu. About 10 menus covers a basic survival server.
+- **Just trying things**: start with the snippets and the foundation menus (cake-shop, main-hub, basic-kit, rules) to get a feel.
+- **Bundle is identical regardless of which language you pick**: structure is the same, only the in-game text differs. Use `/docs/ru/examples/builder/` for the Russian-string version.

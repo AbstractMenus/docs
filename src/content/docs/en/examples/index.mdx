@@ -1,0 +1,38 @@
+---
+title: Examples
+description: A catalog of ready-to-use AbstractMenus menu examples - copy, drop in, customize.
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+The Examples Pack is a catalog of ~46 ready-to-use menus organized by use-case. Every example is downloadable as a single `.conf` file or as a bundle (`.zip`) you drop into your server.
+
+## How to use
+
+Each example shows the full `menu.conf` with syntax highlighting, plus badges describing what plugins it needs and what features it teaches. Below the code: a **Download** button for the single file, and a **Bundle** button that ships the menu plus any shared templates it needs, plus an `INSTALL.txt` with install steps.
+
+The Bundle keeps the same folder layout as the wiki, so unzipping it into `plugins/AbstractMenus/menus/example/` gives you a working setup. Every example uses a command activator with the prefix `ame_` (e.g. `/ame_cake_shop`) to avoid colliding with your existing commands.
+
+## Categories
+
+<CardGrid>
+  <LinkCard title="Shops" href="/docs/en/examples/shops/" description="Buy/sell menus, paginated, rank-gated, NPC-vendor variants." />
+  <LinkCard title="Hub & Navigation" href="/docs/en/examples/hub-and-nav/" description="Main hubs, sub-hubs, breadcrumb navigation chains." />
+  <LinkCard title="Cosmetics" href="/docs/en/examples/cosmetics/" description="Tags, prefixes, color skin variants via templates." />
+  <LinkCard title="Donate" href="/docs/en/examples/donate/" description="Tiered ranks and item stores with permission-based variants." />
+  <LinkCard title="Casino & Games" href="/docs/en/examples/casino-and-games/" description="Roulettes, slot machines, lucky chests, daily lottery." />
+  <LinkCard title="Kits & Rewards" href="/docs/en/examples/kits-and-rewards/" description="Basic kits, daily cooldowns, tiered VIP kits." />
+  <LinkCard title="Admin Tools" href="/docs/en/examples/admin-tools/" description="Online players list, quick moderation menu." />
+  <LinkCard title="Info Pages" href="/docs/en/examples/info-pages/" description="Server rules, links, paginated FAQ." />
+  <LinkCard title="State & Variables" href="/docs/en/examples/state-and-vars/" description="Counters, cooldowns, live stats boards." />
+  <LinkCard title="World Integrations" href="/docs/en/examples/world-integrations/" description="Region-on-enter, NPC-click, block-as-button." />
+  <LinkCard title="Snippets" href="/docs/en/examples/snippets/" description="Tiny single-feature demos for each rule and action." />
+</CardGrid>
+
+## Shared templates
+
+All examples optionally include a small `_shared/templates.conf` (~80 lines) with sound presets, deny actions, border items, navigation buttons, rule shortcuts, and a common header. The bundle automatically includes it when needed.
+
+## Compatibility
+
+All examples target **AbstractMenus 2.0.0+** and **Minecraft 1.21+**. Per-example badges call out external plugin dependencies (Vault, LuckPerms, WorldGuard, Citizens, etc.).
