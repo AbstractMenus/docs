@@ -16,16 +16,18 @@ export function isWarningSquigglesEnabled(): boolean {
   return warningSquigglesEnabled;
 }
 
+export function computeCmDiagnostics(view: EditorView): CMDiagnostic[] {
+  const text = view.state.doc.toString();
+  const r = parse(tokenizeText(text));
+  const res = resolve(r.ast);
+  const unknown = validateUnknownKeys(r.ast);
+  const all = [...r.diagnostics, ...res.warnings, ...unknown];
+  const filtered = warningSquigglesEnabled ? all : all.filter((d) => d.severity !== 'warning');
+  return filtered.map((d) => toCm(view, d, text.length));
+}
+
 export function hoconLinter() {
-  return linter((view) => {
-    const text = view.state.doc.toString();
-    const r = parse(tokenizeText(text));
-    const res = resolve(r.ast);
-    const unknown = validateUnknownKeys(r.ast);
-    const all = [...r.diagnostics, ...res.warnings, ...unknown];
-    const filtered = warningSquigglesEnabled ? all : all.filter((d) => d.severity !== 'warning');
-    return filtered.map((d) => toCm(view, d, text.length));
-  }, { delay: 300 });
+  return linter((view) => computeCmDiagnostics(view), { delay: 300 });
 }
 
 function toCm(view: EditorView, d: Diagnostic, docLen: number): CMDiagnostic {

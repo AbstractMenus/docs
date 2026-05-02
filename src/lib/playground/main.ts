@@ -7,8 +7,8 @@ import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
-import { hoconLinter, setWarningSquigglesEnabled, isWarningSquigglesEnabled } from './cm/hocon-lint';
-import { forceLinting } from '@codemirror/lint';
+import { hoconLinter, setWarningSquigglesEnabled, isWarningSquigglesEnabled, computeCmDiagnostics } from './cm/hocon-lint';
+import { setDiagnostics } from '@codemirror/lint';
 import { snippetCompletions } from './cm/snippets';
 import { createCatalogSource } from './cm/catalog-source';
 import { hoverDocs } from './cm/hover-docs';
@@ -331,7 +331,9 @@ function bindWarningToggle(root: HTMLElement, view: EditorView): void {
     const next = !isWarningSquigglesEnabled();
     setWarningSquigglesEnabled(next);
     try { localStorage.setItem('pg-warning-squiggles', next ? '1' : '0'); } catch { /* ignore */ }
-    forceLinting(view);
+    // Direct dispatch - linter() with delay: 300 won't re-run on a no-doc-change
+    // event. setDiagnostics replaces the active marker set immediately.
+    view.dispatch(setDiagnostics(view.state, computeCmDiagnostics(view)));
     sync();
   });
 }
