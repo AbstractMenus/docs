@@ -5,6 +5,7 @@ import { bracketMatching, indentOnInput, foldGutter, foldKeymap } from '@codemir
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
 import { closeBrackets, closeBracketsKeymap, completionKeymap, completionStatus, startCompletion } from '@codemirror/autocomplete';
 import { colorSwatches } from './cm/color-widget';
+import { stripStringsAndComments } from './cm/text-utils';
 
 const PAIRS: Record<string, string> = { '{': '}', '[': ']', '(': ')' };
 
@@ -12,24 +13,6 @@ function scheduleCompletion(view: EditorView): void {
   // Defer past the current dispatch so the autocomplete plugin sees the
   // updated doc state.
   setTimeout(() => startCompletion(view), 0);
-}
-
-function stripStringsAndComments(line: string): string {
-  let out = '';
-  let inString = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (inString) {
-      if (c === '\\') { i++; continue; }
-      if (c === '"') inString = false;
-      continue;
-    }
-    if (c === '"') { inString = true; continue; }
-    if (c === '#') break;
-    if (c === '/' && line[i + 1] === '/') break;
-    out += c;
-  }
-  return out;
 }
 
 /**

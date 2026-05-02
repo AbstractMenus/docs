@@ -1,5 +1,6 @@
 import { Decoration, type DecorationSet, EditorView, ViewPlugin, type ViewUpdate, WidgetType } from '@codemirror/view';
 import { RangeSetBuilder } from '@codemirror/state';
+import { stripStringsAndComments } from './text-utils';
 
 type ColorKind = 'hex-quoted' | 'rgb-list' | 'empty';
 
@@ -20,9 +21,14 @@ const DEFAULT_HEX = '#ffffff';
 
 export function findColorMatches(text: string, baseOffset = 0): ColorMatch[] {
   const out: ColorMatch[] = [];
+  // Run the regex on the raw text (we need the actual value characters), but
+  // confirm the `color` keyword wasn't itself inside a string/comment by
+  // checking the stripped copy. stripStringsAndComments preserves positions.
+  const safe = stripStringsAndComments(text);
   COLOR_PREFIX_RE.lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = COLOR_PREFIX_RE.exec(text)) !== null) {
+    if (safe.slice(m.index, m.index + 5) !== 'color') continue;
     const valueStart = m.index + m[0].length;
     const lineEnd = nextLineBreak(text, valueStart);
     const rest = text.slice(valueStart, lineEnd);
