@@ -78,4 +78,14 @@ describe('validateUnknownKeys', () => {
     const w = check('items = [\n  ${borderTop}\n  { slot = 0 }\n]');
     expect(w.filter((d) => /list of objects/i.test(d.message))).toEqual([]);
   });
+
+  test('list of strings (lore) does NOT trigger list-of-objects warning', () => {
+    const w = check('items = [{ slot = 0, lore = ["one", "two"] }]');
+    expect(w.filter((d) => /list of objects/i.test(d.message))).toEqual([]);
+  });
+
+  test('list of strings (flags) does NOT trigger list-of-objects warning', () => {
+    const w = check('items = [{ slot = 0, flags = ["HIDE_ENCHANTS"] }]');
+    expect(w.filter((d) => /list of objects/i.test(d.message))).toEqual([]);
+  });
 });

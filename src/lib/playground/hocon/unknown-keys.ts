@@ -39,8 +39,12 @@ function walkObject(
     const childScope = childScopeFor(firstKey, scope);
     if (childScope) {
       const def = findKeyDef(firstKey);
-      const expectsList = def?.valueType === 'list';
-      visitValue(entry.value, childScope, warnings, firstKey, expectsList);
+      // Only flag "expects a list of objects" when the key actually targets
+      // a structured element scope (childrenScope set). Lists of primitives
+      // like `lore` (strings) or `flags` (string enum) are valueType: 'list'
+      // too but legitimately hold non-objects.
+      const expectsListOfObjects = def?.valueType === 'list' && !!def.childrenScope;
+      visitValue(entry.value, childScope, warnings, firstKey, expectsListOfObjects);
     }
   }
 }
