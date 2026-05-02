@@ -7,7 +7,8 @@ import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
-import { hoconLinter } from './cm/hocon-lint';
+import { hoconLinter, setWarningSquigglesEnabled, isWarningSquigglesEnabled } from './cm/hocon-lint';
+import { forceLinting } from '@codemirror/lint';
 import { snippetCompletions } from './cm/snippets';
 import { createCatalogSource } from './cm/catalog-source';
 import { hoverDocs } from './cm/hover-docs';
@@ -249,6 +250,15 @@ export function boot(): void {
   panels.bindClicks();
   panels.hideTab('tutorial');
 
+  // Warning squiggle toggle. Persists across reloads. Doesn't affect the
+  // Warnings tab - that always shows the full list.
+  const SQUIGGLE_KEY = 'pg-warning-squiggles';
+  try {
+    const stored = localStorage.getItem(SQUIGGLE_KEY);
+    if (stored === '0') setWarningSquigglesEnabled(false);
+  } catch { /* ignore */ }
+  bindWarningToggle(root, editor.view);
+
   bindModeSwitch(root, panels, {
     onEnterTutorial: () => {
       tutorialMode = true;
@@ -301,6 +311,29 @@ function updateTabCount(el: HTMLElement | null, count: number, klass: 'has-error
   if (!el) return;
   el.textContent = count > 0 ? String(count) : '';
   el.classList.toggle(klass, count > 0);
+}
+
+function bindWarningToggle(root: HTMLElement, view: EditorView): void {
+  const btn = root.querySelector<HTMLButtonElement>('[data-action="toggle-warning-squiggles"]');
+  if (!btn) return;
+
+  function sync(): void {
+    const on = isWarningSquigglesEnabled();
+    btn!.dataset.state = on ? 'on' : 'off';
+    btn!.textContent = on ? 'warnings: on' : 'warnings: off';
+    btn!.title = on
+      ? 'Hide warning squiggles in the editor (Warnings tab stays)'
+      : 'Show warning squiggles in the editor';
+  }
+  sync();
+
+  btn.addEventListener('click', () => {
+    const next = !isWarningSquigglesEnabled();
+    setWarningSquigglesEnabled(next);
+    try { localStorage.setItem('pg-warning-squiggles', next ? '1' : '0'); } catch { /* ignore */ }
+    forceLinting(view);
+    sync();
+  });
 }
 
 function pickInitialContent(): string {

@@ -392,6 +392,10 @@ html, body {
   cursor: not-allowed;
 }
 .pg-btn-secondary { background: var(--pg-bg-elev-2); }
+.pg-btn[data-state="off"] {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
 
 /* HOCON syntax highlighting (CM6 highlightStyle classes) */
 .cm-editor .cm-tk-comment      { color: #8b949e; font-style: italic; }

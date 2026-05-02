@@ -6,6 +6,16 @@ import { resolve } from '../hocon/resolve';
 import { validateUnknownKeys } from '../hocon/unknown-keys';
 import type { Diagnostic } from '../hocon/types';
 
+let warningSquigglesEnabled = true;
+
+export function setWarningSquigglesEnabled(v: boolean): void {
+  warningSquigglesEnabled = v;
+}
+
+export function isWarningSquigglesEnabled(): boolean {
+  return warningSquigglesEnabled;
+}
+
 export function hoconLinter() {
   return linter((view) => {
     const text = view.state.doc.toString();
@@ -13,7 +23,8 @@ export function hoconLinter() {
     const res = resolve(r.ast);
     const unknown = validateUnknownKeys(r.ast);
     const all = [...r.diagnostics, ...res.warnings, ...unknown];
-    return all.map((d) => toCm(view, d, text.length));
+    const filtered = warningSquigglesEnabled ? all : all.filter((d) => d.severity !== 'warning');
+    return filtered.map((d) => toCm(view, d, text.length));
   }, { delay: 300 });
 }
 
