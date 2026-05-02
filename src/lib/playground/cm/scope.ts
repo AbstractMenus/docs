@@ -1,3 +1,4 @@
+import { findKeyDef } from '../catalog';
 import type { Scope } from '../catalog/types';
 
 interface Frame {
@@ -5,22 +6,21 @@ interface Frame {
   key?: string;
 }
 
-const KEY_TO_SCOPE: Record<string, Scope> = {
-  click: 'click',
-  actions: 'actions',
-  denyActions: 'actions',
-  closeActions: 'actions',
-  rules: 'rules',
-  requirements: 'rules',
-  activators: 'activators',
-  left: 'click',
-  right: 'click',
-  middle: 'click',
-  drop: 'click',
-  shiftLeft: 'click',
-  shiftRight: 'click',
-};
-
+/**
+ * Determine which set of keys is meaningful at the given cursor position.
+ *
+ * Algorithm: walk source until pos, push a stack frame on every `{`/`[`,
+ * remembering the last seen identifier-followed-by-separator (the key that
+ * opened this block). On `}`/`]` pop. Strings and comments are skipped.
+ *
+ * Resolution rules:
+ *  - The innermost open `{` whose key has a `childrenScope` defined wins.
+ *  - For `[` (arrays of objects, e.g. `items = [{...}]`), an inner `{` inherits
+ *    the parent array's `childrenScope`.
+ *  - A frame whose key is unknown (or known but without `childrenScope`)
+ *    yields `unknown` - the autocomplete falls back to all keys.
+ *  - Empty stack means top-level: `menu-root`.
+ */
 export function detectScope(text: string, pos: number): Scope {
   const stack: Frame[] = [];
   let lastKey: string | undefined;
@@ -77,12 +77,28 @@ export function detectScope(text: string, pos: number): Scope {
 
   for (let j = stack.length - 1; j >= 0; j--) {
     const frame = stack[j];
-    if (frame.bracket === '[' && frame.key === 'items') return 'item';
+
+    if (frame.bracket === '[' && frame.key) {
+      const def = findKeyDef(frame.key);
+      if (def?.childrenScope) return def.childrenScope;
+      return 'unknown';
+    }
+
     if (frame.bracket === '{') {
+      // If parent is an array of objects, e.g. items = [{...}], inherit
+      // the array key's childrenScope.
       const parent = stack[j - 1];
-      if (parent && parent.bracket === '[' && parent.key === 'items') return 'item';
+      if (parent && parent.bracket === '[' && parent.key) {
+        const parentDef = findKeyDef(parent.key);
+        if (parentDef?.childrenScope) return parentDef.childrenScope;
+      }
       const k = frame.key;
-      if (k && KEY_TO_SCOPE[k]) return KEY_TO_SCOPE[k];
+      if (k) {
+        const def = findKeyDef(k);
+        if (def?.childrenScope) return def.childrenScope;
+        return 'unknown';
+      }
+      return 'unknown';
     }
   }
 

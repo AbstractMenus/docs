@@ -5,6 +5,14 @@ import { RULE_KEYS } from './rules';
 import { ACTIVATOR_KEYS } from './activators';
 import { MATERIALS } from './materials';
 import { SOUNDS } from './sounds';
+import {
+  SLOT_FIELDS,
+  ENCHANTMENT_FIELDS,
+  FIREWORK_FIELDS,
+  FIREWORK_EFFECT_FIELDS,
+  POTION_EFFECT_FIELDS,
+  BINDING_FIELDS,
+} from './sub-scopes';
 
 const ALL_KEYS_BY_SCOPE: Record<Scope, KeyDef[]> = {
   'menu-root': MENU_ROOT_KEYS,
@@ -13,10 +21,34 @@ const ALL_KEYS_BY_SCOPE: Record<Scope, KeyDef[]> = {
   'actions': ACTION_KEYS,
   'rules': RULE_KEYS,
   'activators': ACTIVATOR_KEYS,
+  'slot': SLOT_FIELDS,
+  'enchantments': ENCHANTMENT_FIELDS,
+  'firework': FIREWORK_FIELDS,
+  'firework-effect': FIREWORK_EFFECT_FIELDS,
+  'potion-effect': POTION_EFFECT_FIELDS,
+  'binding': BINDING_FIELDS,
+  'unknown': [],
 };
 
+let unknownFallback: KeyDef[] | null = null;
+function getAllUniqueKeys(): KeyDef[] {
+  if (unknownFallback) return unknownFallback;
+  const seen = new Set<string>();
+  const out: KeyDef[] = [];
+  for (const list of Object.values(ALL_KEYS_BY_SCOPE)) {
+    for (const k of list) {
+      if (!seen.has(k.name)) { seen.add(k.name); out.push(k); }
+    }
+  }
+  unknownFallback = out;
+  return out;
+}
+
 export function getKeysForScope(scope: Scope): KeyDef[] {
-  return ALL_KEYS_BY_SCOPE[scope] ?? [];
+  const list = ALL_KEYS_BY_SCOPE[scope];
+  if (list && list.length > 0) return list;
+  if (scope === 'unknown') return getAllUniqueKeys();
+  return [];
 }
 
 export function getEnumValues(name: 'materials' | 'sounds'): readonly string[] {

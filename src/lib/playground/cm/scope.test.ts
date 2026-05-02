@@ -54,4 +54,39 @@ describe('detectScope', () => {
     const text = '# {{{ comment\nactivators {\n  ';
     expect(detectScope(text, text.length)).toBe('activators');
   });
+
+  test('inside enchantments {} → enchantments', () => {
+    const text = 'enchantments {\n  ';
+    expect(detectScope(text, text.length)).toBe('enchantments');
+  });
+
+  test('inside slot {} → slot', () => {
+    const text = 'slot {\n  ';
+    expect(detectScope(text, text.length)).toBe('slot');
+  });
+
+  test('inside firework {} → firework', () => {
+    const text = 'firework {\n  ';
+    expect(detectScope(text, text.length)).toBe('firework');
+  });
+
+  test('inside firework.effects [{}] → firework-effect', () => {
+    const text = 'firework {\n  effects = [\n    {\n      ';
+    expect(detectScope(text, text.length)).toBe('firework-effect');
+  });
+
+  test('inside bindings [{}] → binding', () => {
+    const text = 'bindings = [\n  {\n    ';
+    expect(detectScope(text, text.length)).toBe('binding');
+  });
+
+  test('inside binding.props {} → item', () => {
+    const text = 'bindings = [\n  {\n    props {\n      ';
+    expect(detectScope(text, text.length)).toBe('item');
+  });
+
+  test('unknown parent key → unknown (fallback to all keys)', () => {
+    const text = 'myCustomBlock {\n  ';
+    expect(detectScope(text, text.length)).toBe('unknown');
+  });
 });
