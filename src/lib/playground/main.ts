@@ -1,11 +1,14 @@
-import { autocompletion, type CompletionContext, type CompletionResult } from '@codemirror/autocomplete';
-import { EditorView } from '@codemirror/view';
+import { autocompletion } from '@codemirror/autocomplete';
+import { EditorView, keymap } from '@codemirror/view';
 import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
 import { hoconLinter } from './cm/hocon-lint';
 import { snippetCompletions } from './cm/snippets';
+import { createCatalogSource } from './cm/catalog-source';
+import { hoverDocs } from './cm/hover-docs';
+import { formatHocon } from './cm/format';
 import { tokenizeText } from './hocon/tokenize';
 import { parse } from './hocon/parser';
 import { resolve } from './hocon/resolve';
@@ -14,16 +17,7 @@ import { createResolvedJsonPanel } from './ResolvedJsonPanel';
 import type { PlaygroundMode, TabId } from './types';
 
 const SNIPPETS = snippetCompletions();
-
-function hoconCompletions(context: CompletionContext): CompletionResult | null {
-  const word = context.matchBefore(/\w*/);
-  if (!word || (word.from === word.to && !context.explicit)) return null;
-  return {
-    from: word.from,
-    options: SNIPPETS,
-    validFor: /^\w*$/,
-  };
-}
+const catalogSource = createCatalogSource({ fallbackSnippets: SNIPPETS });
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
 # Edit below to see live validation and resolved JSON on the right.
@@ -90,7 +84,22 @@ export function boot(): void {
     extensions: [
       ...hoconLanguage(),
       hoconLinter(),
-      autocompletion({ override: [hoconCompletions] }),
+      hoverDocs(),
+      autocompletion({ override: [catalogSource] }),
+      keymap.of([
+        {
+          key: 'Mod-Shift-f',
+          run: (view) => {
+            const before = view.state.doc.toString();
+            const after = formatHocon(before);
+            if (after === before) return true;
+            view.dispatch({
+              changes: { from: 0, to: view.state.doc.length, insert: after },
+            });
+            return true;
+          },
+        },
+      ]),
     ],
     onChange: () => { refreshAnalysis(); },
   });
@@ -117,8 +126,22 @@ export function boot(): void {
   bindModeSwitch(root, panels);
   bindThemeToggle(root);
   bindDivider(root);
+  bindFormatButton(root, editor);
 
   (window as unknown as { __pg?: unknown }).__pg = { editor, panels };
+}
+
+function bindFormatButton(root: HTMLElement, editor: ReturnType<typeof createEditor>): void {
+  const btn = root.querySelector<HTMLButtonElement>('[data-action="format"]');
+  if (!btn) return;
+  btn.disabled = false;
+  btn.title = 'Format (Cmd+Shift+F)';
+  btn.addEventListener('click', () => {
+    const before = editor.getValue();
+    const after = formatHocon(before);
+    if (after !== before) editor.setValue(after);
+    editor.view.focus();
+  });
 }
 
 function bindDivider(root: HTMLElement): void {
