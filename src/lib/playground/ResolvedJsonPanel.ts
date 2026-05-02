@@ -24,10 +24,36 @@ export function createResolvedJsonPanel(panel: HTMLElement): ResolvedJsonPanelAp
     });
     const pre = document.createElement('pre');
     pre.className = 'pg-json';
-    pre.textContent = json;
+    pre.innerHTML = highlightJson(json);
     wrap.appendChild(btn);
     wrap.appendChild(pre);
     panel.replaceChildren(wrap);
   }
   return { update };
+}
+
+/**
+ * Cheap regex-based JSON syntax highlighter. Wraps strings/numbers/keywords
+ * into span classes consistent with the editor token palette.
+ * HTML-escapes input first so it's safe to inject as innerHTML.
+ */
+export function highlightJson(json: string): string {
+  const escaped = json
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Order matters: keys (string before colon) first, then plain strings,
+  // then keywords/numbers.
+  return escaped.replace(
+    /("(?:\\.|[^"\\])*"(?=\s*:))|("(?:\\.|[^"\\])*")|\b(true|false)\b|\b(null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g,
+    (_m, key, str, bool, nul, num) => {
+      if (key !== undefined) return `<span class="pg-json-key">${key}</span>`;
+      if (str !== undefined) return `<span class="pg-json-str">${str}</span>`;
+      if (bool !== undefined) return `<span class="pg-json-bool">${bool}</span>`;
+      if (nul !== undefined) return `<span class="pg-json-null">${nul}</span>`;
+      if (num !== undefined) return `<span class="pg-json-num">${num}</span>`;
+      return _m;
+    },
+  );
 }

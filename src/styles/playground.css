@@ -411,6 +411,16 @@ html, body {
   white-space: pre;
   color: var(--pg-fg);
 }
+.pg-json-key  { color: #79c0ff; }
+.pg-json-str  { color: #a5d6ff; }
+.pg-json-num  { color: #79c0ff; }
+.pg-json-bool { color: #d2a8ff; }
+.pg-json-null { color: #d2a8ff; }
+:root[data-theme="light"] .pg-json-key  { color: #0550ae; }
+:root[data-theme="light"] .pg-json-str  { color: #0a3069; }
+:root[data-theme="light"] .pg-json-num  { color: #0550ae; }
+:root[data-theme="light"] .pg-json-bool { color: #8250df; }
+:root[data-theme="light"] .pg-json-null { color: #8250df; }
 
 /* About page (narrow layout) */
 .pg-app-narrow {
