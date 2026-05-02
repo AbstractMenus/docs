@@ -59,9 +59,31 @@ describe('findColorMatches', () => {
     expect(text.slice(m.from, m.to)).toBe('"#ff6432"');
   });
 
-  test('does not match malformed values', () => {
+  test('shorthand hex still skipped (only 6-char supported)', () => {
     expect(findColorMatches('color = "#fff"')).toHaveLength(0);
+  });
+
+  test('named color leaves no swatch', () => {
     expect(findColorMatches('color = RED')).toHaveLength(0);
+  });
+
+  test('empty value emits placeholder swatch with from === to', () => {
+    const text = 'color = ';
+    const m = findColorMatches(text);
+    expect(m).toHaveLength(1);
+    expect(m[0].kind).toBe('empty');
+    expect(m[0].from).toBe(m[0].to);
+    expect(m[0].hex).toMatch(/^#[0-9a-f]{6}$/);
+  });
+
+  test('value followed by inline comment treated as empty', () => {
+    const m = findColorMatches('color = # not yet');
+    expect(m).toHaveLength(1);
+    expect(m[0].kind).toBe('empty');
+  });
+
+  test('formatColorValue empty kind writes hex (priority)', () => {
+    expect(formatColorValue('#abcdef', 'empty')).toBe('"#abcdef"');
   });
 
   test('baseOffset added to from/to', () => {
