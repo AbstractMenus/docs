@@ -189,6 +189,15 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Playground',
+          translations: { ru: 'Песочница' },
+          // Full URL because Starlight rewrites relative links per locale
+          // (would otherwise become /docs/en/playground/, which 404s).
+          link: SITE + BASE + 'playground/',
+          badge: { text: 'beta', variant: 'note' },
+          attrs: { 'data-playground-link': 'true' },
+        },
+        {
           slug: "changelog",
           attrs: { "data-changelog-link": "true" },
         },
