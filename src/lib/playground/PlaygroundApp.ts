@@ -5,9 +5,8 @@ import { detectScope } from './cm/scope';
 import { getKeysForScope } from './catalog';
 import { createEditor, type EditorApi } from './Editor';
 import { createPanels, type PanelsApi } from './Panels';
-import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
-import { hoconLinter, setWarningSquigglesEnabled, isWarningSquigglesEnabled } from './cm/hocon-lint';
+import { hoconLinter } from './cm/hocon-lint';
 import { snippetCompletions } from './cm/snippets';
 import { createCatalogSource } from './cm/catalog-source';
 import { hoverDocs } from './cm/hover-docs';
@@ -19,17 +18,15 @@ import { validateUnknownKeys } from './hocon/unknown-keys';
 import { createValidationPanel, type ValidationPanelApi } from './ValidationPanel';
 import { createResolvedJsonPanel, type ResolvedJsonPanelApi } from './ResolvedJsonPanel';
 import { createHistoryDropdown, type HistoryDropdownApi } from './HistoryDropdown';
-import { showToast } from './Toast';
-import { encodeShare, decodeShare } from './sharing/share-url';
-import { loadHistory, pushSnapshot } from './sharing/history';
-import { listLessons, getLesson, firstLessonId } from './tutorial/lessons';
-import { runCheck, loadProgress, saveProgress, markCompleted, markSkipped, bumpHint } from './tutorial/engine';
+import { decodeShare } from './sharing/share-url';
+import { loadHistory } from './sharing/history';
 import { createTutorialPanel, type TutorialPanelApi } from './TutorialPanel';
-import type { Lesson } from './tutorial/types';
+import { TutorialController } from './controllers/TutorialController';
+import { HistoryController } from './controllers/HistoryController';
+import { ToolbarController } from './controllers/ToolbarController';
 import type { PlaygroundMode, TabId } from './types';
 
 const SCOPE_SHORTCUT = 'Ctrl+space';
-const HISTORY_DEBOUNCE_MS = 5000;
 const ANALYSIS_DEBOUNCE_MS = 300;
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
@@ -63,35 +60,34 @@ interface DomRefs {
 }
 
 /**
- * Top-level playground orchestrator. Owns the editor, every controller
- * panel, and all shared state (current lesson, debounce timers).
+ * Top-level playground orchestrator. Owns:
+ *  - DOM resolution (cached refs)
+ *  - the editor and the tabbed right-pane (panels)
+ *  - the debounced analysis pipeline (parse / resolve / validate -> panels)
+ *  - mode switching (because it cross-cuts toolbar + tutorial controller)
  *
- * Design rules to keep extensibility:
- *  - Methods are grouped by concern: setupEditor, setupAnalysis, setupTutorial,
- *    setupHistory, setupToolbar. Adding a new feature should land in (or near)
- *    its own setupX method, not be sprinkled across boot().
- *  - All DOM lookup happens once in resolveDom(); methods receive the cached
- *    refs.
- *  - Cross-method state lives as private fields on the class, not as closures.
+ * Per-feature wiring lives in dedicated controllers under `./controllers/`:
+ *  - TutorialController - lesson state machine + tutorial panel handlers
+ *  - HistoryController  - share button, history dropdown, snapshot scheduler
+ *  - ToolbarController  - theme, divider, format, warning-squiggle toggle
+ *
+ * Adding a new toolbar item / panel / mode should land in the right
+ * controller (or warrant a new one), not bloat this class.
  */
 export class PlaygroundApp {
   private readonly dom: DomRefs;
   private editor!: EditorApi;
   private panels!: PanelsApi;
+
   private validation: { errors: ValidationPanelApi | null; warnings: ValidationPanelApi | null } = { errors: null, warnings: null };
   private resolvedPanel: ResolvedJsonPanelApi | null = null;
   private historyDropdown: HistoryDropdownApi | null = null;
   private tutorialPanelApi: TutorialPanelApi | null = null;
 
-  private currentLesson: Lesson | null = null;
-  private analysisTimer: ReturnType<typeof setTimeout> | undefined;
-  private historyTimer: ReturnType<typeof setTimeout> | undefined;
+  private tutorial: TutorialController | null = null;
+  private history: HistoryController | null = null;
 
-  /** "In tutorial mode" is encoded by `currentLesson != null`; this getter
-   *  exists only so the rest of the class reads the intent, not the trick. */
-  private get tutorialMode(): boolean {
-    return this.currentLesson !== null;
-  }
+  private analysisTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(root: HTMLElement) {
     this.dom = resolveDom(root);
@@ -99,25 +95,24 @@ export class PlaygroundApp {
 
   /**
    * Order is load-bearing:
-   *  - setupPanels constructs the right-pane API objects that setupAnalysis
-   *    wires its callbacks into.
-   *  - setupEditor must run before any code touching `this.editor`.
-   *  - setupToolbar.bindModeSwitch attaches the listener applyInitialUrlMode
-   *    triggers via switchMode().
+   *  - setupPanels constructs right-pane API objects that setupAnalysis wires
+   *    its callbacks into.
+   *  - setupEditor must run before any controller that touches `this.editor`.
+   *  - bindModeSwitch must attach before applyInitialUrlMode triggers
+   *    switchMode().
    */
   start(): void {
     this.setupPanels();
     this.setupEditor();
     this.setupAnalysis();
-    this.setupTutorial();
-    this.setupHistory();
-    this.setupToolbar();
+    this.setupControllers();
+    this.bindModeSwitch();
     this.applyInitialUrlMode();
 
     (window as unknown as { __pg?: unknown }).__pg = { editor: this.editor, panels: this.panels };
   }
 
-  // ---------- Panels (right-pane tabs) ----------
+  // ---------- DOM-derived UI factories ----------
 
   private setupPanels(): void {
     this.validation.errors = this.dom.errorsPanel ? createValidationPanel(this.dom.errorsPanel) : null;
@@ -130,8 +125,6 @@ export class PlaygroundApp {
     this.panels.bindClicks();
     this.panels.hideTab('tutorial');
   }
-
-  // ---------- Editor + extensions ----------
 
   private setupEditor(): void {
     const SNIPPETS = snippetCompletions();
@@ -163,8 +156,8 @@ export class PlaygroundApp {
       ],
       onChange: () => {
         this.scheduleAnalysis();
-        this.scheduleHistorySnapshot();
-        this.refreshTutorial();
+        this.history?.scheduleSnapshot();
+        this.tutorial?.refresh();
       },
     });
   }
@@ -180,10 +173,9 @@ export class PlaygroundApp {
     return DEFAULT_CONTENT;
   }
 
-  // ---------- Analysis pipeline (parse/resolve/validate -> panels) ----------
+  // ---------- Analysis (parse/resolve/validate -> panels) ----------
 
   private setupAnalysis(): void {
-    this.scopeShortcutHint();
     this.scheduleAnalysis();
     this.updateScopeHint(this.editor.view.state);
 
@@ -191,9 +183,8 @@ export class PlaygroundApp {
     this.validation.errors?.onJump(jumpTo);
     this.validation.warnings?.onJump(jumpTo);
 
-    const scopeHint = this.dom.scopeHint;
-    if (scopeHint) {
-      scopeHint.addEventListener('click', () => {
+    if (this.dom.scopeHint) {
+      this.dom.scopeHint.addEventListener('click', () => {
         this.editor.view.focus();
         startCompletion(this.editor.view);
       });
@@ -238,10 +229,6 @@ export class PlaygroundApp {
     this.dom.scopeHint.textContent = `${scope} · ${count} key${count === 1 ? '' : 's'} · ${SCOPE_SHORTCUT}`;
   }
 
-  private scopeShortcutHint(): void {
-    // Reserved for platform-specific override if Ctrl+Space ever conflicts.
-  }
-
   private jumpTo(line: number, column: number): void {
     const doc = this.editor.view.state.doc;
     const lineNo = Math.max(1, Math.min(doc.lines, line));
@@ -254,146 +241,21 @@ export class PlaygroundApp {
     this.editor.view.focus();
   }
 
-  // ---------- Tutorial mode ----------
+  // ---------- Controllers ----------
 
-  private setupTutorial(): void {
-    const t = this.tutorialPanelApi;
-    if (!t) return;
-
-    t.onHint(() => {
-      if (!this.currentLesson) return;
-      saveProgress(bumpHint(loadProgress(), this.currentLesson.id));
-      this.loadLesson(this.currentLesson.id);
-    });
-    t.onReset(() => {
-      if (!this.currentLesson) return;
-      this.editor.setValue(this.currentLesson.starter);
-    });
-    t.onSkip(() => {
-      if (!this.currentLesson) return;
-      saveProgress(markSkipped(loadProgress(), this.currentLesson.id));
-      this.advanceLessonAfter(this.currentLesson.id);
-    });
-    t.onNext(() => {
-      if (!this.currentLesson) return;
-      saveProgress(markCompleted(loadProgress(), this.currentLesson.id));
-      this.advanceLessonAfter(this.currentLesson.id);
-    });
-  }
-
-  private loadLesson(id: string): void {
-    const t = this.tutorialPanelApi;
-    if (!t) return;
-    const lesson = getLesson(id);
-    if (!lesson) {
-      t.showCompleted("You've finished every lesson. Try the editor mode now.");
-      this.currentLesson = null;
-      return;
+  private setupControllers(): void {
+    if (this.tutorialPanelApi) {
+      this.tutorial = new TutorialController(
+        this.editor,
+        this.tutorialPanelApi,
+        (id) => setUrlForLesson(id),
+      );
     }
-    this.currentLesson = lesson;
-    const progress = loadProgress();
-    saveProgress({ ...progress, current: id });
-    const hintsUsed = progress.hintsUsed[id] ?? 0;
-    const passed = runCheck(lesson.starter, lesson.check);
-    t.showLesson(lesson, { hintsUsed, passed });
-    this.editor.setValue(lesson.starter);
-    setUrlForLesson(id);
+    this.history = new HistoryController(this.dom.root, this.editor, this.historyDropdown);
+    new ToolbarController(this.dom.root, this.editor);
   }
 
-  private advanceLessonAfter(currentId: string): void {
-    const lessons = listLessons();
-    const idx = lessons.findIndex((l) => l.id === currentId);
-    const next = lessons[idx + 1];
-    if (next) this.loadLesson(next.id);
-    else this.tutorialPanelApi?.showCompleted("You've finished every lesson. Try the editor mode now.");
-  }
-
-  private refreshTutorial(): void {
-    if (!this.tutorialMode || !this.currentLesson || !this.tutorialPanelApi) return;
-    const passed = runCheck(this.editor.getValue(), this.currentLesson.check);
-    this.tutorialPanelApi.setPassed(passed);
-  }
-
-  private enterTutorialMode(): void {
-    const url = new URL(window.location.href);
-    const lessonId = url.searchParams.get('lesson') ?? loadProgress().current ?? firstLessonId();
-    this.loadLesson(lessonId || firstLessonId());
-    setUrlForMode('tutorial');
-  }
-
-  private leaveTutorialMode(): void {
-    this.currentLesson = null;
-    setUrlForMode('editor');
-  }
-
-  // ---------- History + sharing ----------
-
-  private setupHistory(): void {
-    this.historyDropdown?.update(loadHistory());
-    this.historyDropdown?.onSelect((content) => {
-      this.editor.setValue(content);
-      this.closeHistoryPopover();
-    });
-    this.bindHistoryToggle();
-    this.bindShareButton();
-  }
-
-  private scheduleHistorySnapshot(): void {
-    if (this.historyTimer) clearTimeout(this.historyTimer);
-    this.historyTimer = setTimeout(() => {
-      pushSnapshot(this.editor.getValue());
-      this.historyDropdown?.update(loadHistory());
-    }, HISTORY_DEBOUNCE_MS);
-  }
-
-  private bindHistoryToggle(): void {
-    const btn = this.dom.root.querySelector<HTMLButtonElement>('[data-action="history-toggle"]');
-    const pop = this.dom.root.querySelector<HTMLElement>('[data-pg-history]');
-    if (!btn || !pop) return;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      pop.hidden = !pop.hidden;
-    });
-    document.addEventListener('click', (e) => {
-      const within = (e.target as Element)?.closest?.('[data-pg-history-wrap]');
-      if (!within) pop.hidden = true;
-    });
-  }
-
-  private closeHistoryPopover(): void {
-    const pop = this.dom.root.querySelector<HTMLElement>('[data-pg-history]');
-    if (pop) pop.hidden = true;
-  }
-
-  private bindShareButton(): void {
-    const btn = this.dom.root.querySelector<HTMLButtonElement>('[data-action="share"]');
-    if (!btn) return;
-    btn.addEventListener('click', async () => {
-      const text = this.editor.getValue();
-      const enc = encodeShare(text);
-      const url = `${window.location.origin}${window.location.pathname}#config=${enc}`;
-      history.replaceState(null, '', `#config=${enc}`);
-      try {
-        await navigator.clipboard.writeText(url);
-        showToast('Link copied');
-      } catch {
-        showToast('Copy failed');
-      }
-      pushSnapshot(text);
-      this.historyDropdown?.update(loadHistory());
-      void url;
-    });
-  }
-
-  // ---------- Toolbar (mode/theme/divider/format/warning toggle) ----------
-
-  private setupToolbar(): void {
-    this.bindModeSwitch();
-    this.bindThemeToggle();
-    this.bindDivider();
-    this.bindFormatButton();
-    this.bindWarningToggle();
-  }
+  // ---------- Mode switching ----------
 
   private bindModeSwitch(): void {
     const buttons = this.dom.root.querySelectorAll<HTMLButtonElement>('.pg-mode-btn');
@@ -403,9 +265,9 @@ export class PlaygroundApp {
   }
 
   /**
-   * Single source of truth for mode switching. Init code (URL `?mode=tutorial`)
-   * and user clicks both call this, so toolbar-button listener semantics
-   * never diverge from programmatic init.
+   * Single source of truth for mode switching - both user clicks and
+   * URL-driven init come through here, so toolbar-button semantics never
+   * diverge from programmatic init.
    */
   private switchMode(mode: PlaygroundMode): void {
     const buttons = this.dom.root.querySelectorAll<HTMLButtonElement>('.pg-mode-btn');
@@ -417,83 +279,16 @@ export class PlaygroundApp {
     if (mode === 'tutorial') {
       this.panels.showTab('tutorial');
       this.panels.activate('tutorial');
-      this.enterTutorialMode();
+      const lessonId = new URL(window.location.href).searchParams.get('lesson');
+      this.tutorial?.enter(lessonId);
+      setUrlForMode('tutorial');
     } else {
       this.panels.hideTab('tutorial');
       this.panels.activate('errors' as TabId);
-      this.leaveTutorialMode();
+      this.tutorial?.leave();
+      setUrlForMode('editor');
     }
   }
-
-  private bindThemeToggle(): void {
-    const btn = this.dom.root.querySelector<HTMLButtonElement>('[data-action="theme-toggle"]');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const html = document.documentElement;
-      const next = html.dataset.theme === 'light' ? 'dark' : 'light';
-      html.dataset.theme = next;
-      try { localStorage.setItem('pg-theme', next); } catch { /* ignore */ }
-    });
-    try {
-      const saved = localStorage.getItem('pg-theme');
-      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
-    } catch { /* ignore */ }
-  }
-
-  private bindDivider(): void {
-    const main = this.dom.root.querySelector<HTMLElement>('.pg-main');
-    const divider = this.dom.root.querySelector<HTMLElement>('[data-pg-divider]');
-    if (!main || !divider) return;
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    createDivider({
-      main,
-      divider,
-      axis: isMobile ? 'vertical' : 'horizontal',
-      minPct: 20,
-      maxPct: 80,
-    });
-  }
-
-  private bindFormatButton(): void {
-    const btn = this.dom.root.querySelector<HTMLButtonElement>('[data-action="format"]');
-    if (!btn) return;
-    btn.disabled = false;
-    btn.title = 'Format (Cmd+Shift+F)';
-    btn.addEventListener('click', () => {
-      const before = this.editor.getValue();
-      const after = formatHocon(before);
-      if (after !== before) this.editor.setValue(after);
-      this.editor.view.focus();
-    });
-  }
-
-  private bindWarningToggle(): void {
-    const btn = this.dom.root.querySelector<HTMLButtonElement>('[data-action="toggle-warning-squiggles"]');
-    if (!btn) return;
-    try {
-      const stored = localStorage.getItem('pg-warning-squiggles');
-      if (stored === '0') setWarningSquigglesEnabled(this.editor.view, false);
-    } catch { /* ignore */ }
-
-    const sync = (): void => {
-      const on = isWarningSquigglesEnabled(this.editor.view.state);
-      btn.dataset.state = on ? 'on' : 'off';
-      btn.textContent = on ? 'warnings: on' : 'warnings: off';
-      btn.title = on
-        ? 'Hide warning squiggles in the editor (Warnings tab stays)'
-        : 'Show warning squiggles in the editor';
-    };
-    sync();
-
-    btn.addEventListener('click', () => {
-      const next = !isWarningSquigglesEnabled(this.editor.view.state);
-      setWarningSquigglesEnabled(this.editor.view, next);
-      try { localStorage.setItem('pg-warning-squiggles', next ? '1' : '0'); } catch { /* ignore */ }
-      sync();
-    });
-  }
-
-  // ---------- Initial URL handling ----------
 
   private applyInitialUrlMode(): void {
     const urlMode = new URL(window.location.href).searchParams.get('mode');
