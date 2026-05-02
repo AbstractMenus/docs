@@ -91,6 +91,16 @@ export class PlaygroundApp {
 
   private analysisTimer: ReturnType<typeof setTimeout> | undefined;
 
+  /**
+   * In-flight document for editor mode. Captured when switching to tutorial
+   * mode so toggling back doesn't silently overwrite the user's edits with
+   * the lesson's content. Initialized to the first content shown in the
+   * editor (default template, share hash, or last history snapshot) so the
+   * first switch tutorial -> editor restores the right thing.
+   */
+  private editorDraft: string | null = null;
+  private currentMode: PlaygroundMode = 'editor';
+
   constructor(root: HTMLElement) {
     this.dom = resolveDom(root);
   }
@@ -135,10 +145,15 @@ export class PlaygroundApp {
   private setupEditor(): void {
     const SNIPPETS = snippetCompletions();
     const catalogSource = createCatalogSource({ fallbackSnippets: SNIPPETS });
+    const initialContent = this.pickInitialContent();
+    // Seed the editor-mode draft so a tutorial->editor switch (without prior
+    // editor edits) restores what the user originally saw, not "" or
+    // DEFAULT_CONTENT.
+    this.editorDraft = initialContent;
 
     this.editor = createEditor({
       parent: this.dom.editorHost,
-      initialContent: this.pickInitialContent(),
+      initialContent,
       extensions: [
         ...hoconLanguage(),
         hoconLinter(),
@@ -267,7 +282,35 @@ export class PlaygroundApp {
       );
     }
     this.history = new HistoryController(this.dom.root, this.editor, this.historyDropdown);
-    new ToolbarController(this.dom.root, this.editor);
+    new ToolbarController(this.dom.root, this.editor, {
+      onResetEditor: () => this.resetEditorToDefault(),
+    });
+    // Initial mode is editor; sync visibility of mode-only chrome up front.
+    this.applyModeVisibility('editor');
+  }
+
+  /**
+   * Replace the editor content with the canonical default template, drop
+   * the editor draft, and clear any share hash so the URL no longer points
+   * at someone else's snippet. Confirmation lives in the toolbar callback.
+   */
+  private resetEditorToDefault(): void {
+    this.editorDraft = DEFAULT_CONTENT;
+    this.editor.setValue(DEFAULT_CONTENT);
+    if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+    this.editor.view.focus();
+  }
+
+  /**
+   * Toggle visibility of any element marked `data-mode-only="<mode>"` based
+   * on the current mode. Lets us hide the editor-only Reset button (and any
+   * future mode-scoped chrome) without coupling each controller to mode
+   * state.
+   */
+  private applyModeVisibility(mode: PlaygroundMode): void {
+    for (const el of this.dom.root.querySelectorAll<HTMLElement>('[data-mode-only]')) {
+      el.classList.toggle('is-hidden', el.dataset.modeOnly !== mode);
+    }
   }
 
   // ---------- Mode switching ----------
@@ -283,8 +326,17 @@ export class PlaygroundApp {
    * Single source of truth for mode switching - both user clicks and
    * URL-driven init come through here, so toolbar-button semantics never
    * diverge from programmatic init.
+   *
+   * Each mode owns its own document buffer:
+   *  - Switching FROM editor: snapshot editor.getValue() into editorDraft.
+   *  - Switching TO editor:   restore editorDraft into the editor.
+   *  - Tutorial side is symmetric and lives in TutorialController.
+   *
+   * No-op when the requested mode equals the current one (avoids losing a
+   * draft to a redundant click on the active tab button).
    */
   private switchMode(mode: PlaygroundMode): void {
+    if (mode === this.currentMode) return;
     const buttons = this.dom.root.querySelectorAll<HTMLButtonElement>('.pg-mode-btn');
     for (const b of buttons) {
       const isActive = b.dataset.mode === mode;
@@ -292,17 +344,24 @@ export class PlaygroundApp {
       b.setAttribute('aria-selected', String(isActive));
     }
     if (mode === 'tutorial') {
+      // Snapshot editor content before tutorial overwrites the doc.
+      this.editorDraft = this.editor.getValue();
       this.panels.showTab('tutorial');
       this.panels.activate('tutorial');
       const lessonId = new URL(window.location.href).searchParams.get('lesson');
       this.tutorial?.enter(lessonId);
       setUrlForMode('tutorial');
     } else {
+      // Let TutorialController snapshot its lesson draft, then restore the
+      // editor draft (or DEFAULT_CONTENT if there's somehow nothing saved).
+      this.tutorial?.leave();
+      this.editor.setValue(this.editorDraft ?? DEFAULT_CONTENT);
       this.panels.hideTab('tutorial');
       this.panels.activate('errors' as TabId);
-      this.tutorial?.leave();
       setUrlForMode('editor');
     }
+    this.currentMode = mode;
+    this.applyModeVisibility(mode);
   }
 
   private applyInitialUrlMode(): void {

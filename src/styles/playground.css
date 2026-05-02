@@ -410,9 +410,26 @@ html, body {
   cursor: not-allowed;
 }
 .pg-btn-secondary { background: var(--pg-bg-elev-2); }
+.pg-btn-danger {
+  color: #f0a8a8;
+  border-color: #5d2a2a;
+}
+.pg-btn-danger:hover {
+  background: #4a1f1f;
+  color: #ffd0d0;
+}
+[data-theme="light"] .pg-btn-danger {
+  color: #b03030;
+  border-color: #e8b0b0;
+}
+[data-theme="light"] .pg-btn-danger:hover {
+  background: #fae0e0;
+  color: #8b1f1f;
+}
 .pg-btn[data-state="off"] {
   opacity: 0.6;
 }
+[data-mode-only].is-hidden { display: none !important; }
 
 /* HOCON syntax highlighting (CM6 highlightStyle classes) */
 .cm-editor .cm-tk-comment      { color: #8b949e; font-style: italic; }

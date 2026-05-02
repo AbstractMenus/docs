@@ -13,15 +13,27 @@ import { t } from '../i18n';
  * coordinate the tutorial controller; this class would otherwise need a
  * back-reference.
  */
+export interface ToolbarControllerOptions {
+  /**
+   * Called when the user confirms "Reset" in editor mode. The controller
+   * only owns the button + the confirmation dialog; what "reset" actually
+   * means (DEFAULT_CONTENT, hash clearing, draft clearing) lives in the
+   * host so this class doesn't need to know about app-wide state.
+   */
+  onResetEditor: () => void;
+}
+
 export class ToolbarController {
   constructor(
     private readonly root: HTMLElement,
     private readonly editor: EditorApi,
+    private readonly opts: ToolbarControllerOptions,
   ) {
     this.bindThemeToggle();
     this.bindDivider();
     this.bindFormatButton();
     this.bindWarningToggle();
+    this.bindResetEditorButton();
   }
 
   private bindThemeToggle(): void {
@@ -87,6 +99,17 @@ export class ToolbarController {
       setWarningSquigglesEnabled(this.editor.view, next);
       try { localStorage.setItem('pg-warning-squiggles', next ? '1' : '0'); } catch { /* ignore */ }
       sync();
+    });
+  }
+
+  private bindResetEditorButton(): void {
+    const btn = this.root.querySelector<HTMLButtonElement>('[data-action="reset-editor"]');
+    if (!btn) return;
+    btn.title = t('btn.reset.title');
+    btn.addEventListener('click', () => {
+      // Native confirm is good enough here: it's modal, accessible, and
+      // doesn't introduce a custom-modal dependency. The string is i18n'd.
+      if (window.confirm(t('confirm.reset.editor'))) this.opts.onResetEditor();
     });
   }
 }

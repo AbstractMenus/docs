@@ -40,6 +40,10 @@ export const ru: Partial<Dict> = {
   'btn.format.title': 'Форматировать (Cmd+Shift+F)',
   'btn.share': 'Поделиться',
   'btn.copy': 'Копировать',
+  'btn.reset': 'Сброс',
+  'btn.reset.title': 'Сбросить песочницу до шаблона по умолчанию',
+  'confirm.reset.editor': 'Сбросить песочницу до шаблона по умолчанию? Текущие правки будут потеряны.',
+  'confirm.reset.tutorial': 'Сбросить урок до стартового состояния? Прогресс по уроку будет потерян.',
   'btn.warnings.on': 'предупреждения: вкл',
   'btn.warnings.off': 'предупреждения: выкл',
   'btn.warnings.title.on':
