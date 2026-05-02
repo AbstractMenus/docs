@@ -62,8 +62,35 @@ export const ru: Partial<Dict> = {
   'tutorial.btn.reset': 'Сброс',
   'tutorial.btn.skip': 'Пропустить',
   'tutorial.btn.next': 'Дальше',
+  'tutorial.btn.prev': 'Назад',
+  'tutorial.btn.allLessons': 'Все уроки',
+  'tutorial.btn.allLessons.title': 'Открыть список уроков',
+  'tutorial.counter': 'Урок ${n} / ${total}',
+  'tutorial.popup.empty': 'Уроков нет.',
+  'tutorial.marker.completed': 'пройдено',
+  'tutorial.marker.skipped': 'пропущено',
+  'tutorial.marker.current': 'текущий урок',
   'tutorial.done.title': '🎉 Курс пройден',
   'tutorial.done.body': 'Вы прошли все уроки. Теперь попробуйте режим редактора.',
+
+  'topic.basics': 'Основы',
+
+  'diag.parser.include-not-supported': 'Директива include не поддерживается в песочнице',
+  'diag.parser.unexpected-token': 'Неожиданный токен `${text}`',
+  'diag.parser.expected-value-after-sep': 'Ожидалось значение после `${sep}`',
+  'diag.parser.expected-key-separator': 'Ожидался `=`, `:` или `{` после ключа',
+  'diag.parser.expected-closing-brace': 'Ожидалась закрывающая `}`',
+  'diag.parser.unexpected-after-array-element':
+    'Неожиданный `${text}` после элемента массива. Используйте `,` или перенос строки между элементами, а пары ключ/значение оборачивайте в `{ ... }`.',
+  'diag.parser.unexpected-in-array':
+    'Неожиданный `${text}` в массиве. Ожидалось значение или объект `{ ... }`.',
+  'diag.parser.expected-closing-bracket': 'Ожидалась закрывающая `]`',
+
+  'diag.resolve.circular-substitution': 'Циклическая подстановка `${ref}`',
+  'diag.resolve.unresolved-substitution': 'Неразрешённая подстановка `${ref}`',
+
+  'diag.validate.unknown-key': 'Неизвестный ключ `${key}` в области ${scope}',
+  'diag.validate.expected-list-of-objects': '`${parentKey}` ожидает список объектов, получено ${itemKind}',
 
   'history.empty': '(пусто)',
   'history.justNow': 'только что',

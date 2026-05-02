@@ -31,6 +31,8 @@ function fakePanel(): TutorialPanelApi & { __passed: boolean } {
     onReset: vi.fn(),
     onSkip: vi.fn(),
     onNext: vi.fn(),
+    onPrev: vi.fn(),
+    onJump: vi.fn(),
     __passed: false,
   } as unknown as TutorialPanelApi & { __passed: boolean };
 }
@@ -109,5 +111,66 @@ describe('TutorialController draft preservation', () => {
     // Never entered -> no current lesson
     ctl.refresh();
     expect(panel.setPassed).not.toHaveBeenCalled();
+  });
+});
+
+describe('TutorialController navigation (Prev / Jump)', () => {
+  test('Prev navigates to previous lesson without marking progress', () => {
+    const editor = fakeEditor();
+    const panel = fakePanel();
+    let onPrev!: () => void;
+    panel.onPrev = vi.fn((fn: () => void) => { onPrev = fn; });
+    const ctl = new TutorialController(editor, panel, () => {});
+
+    ctl.enter('01-comments');
+    expect(editor.__doc).toContain('My menu'); // 01 starter
+
+    onPrev();
+    expect(editor.__doc).toMatch(/title = ""/); // 00 starter
+    // Progress not mutated by Prev: localStorage progress should not list 01 as completed
+    const progress = JSON.parse(localStorage.getItem('pg-tutorial-progress') ?? '{}');
+    expect(progress.completed ?? []).not.toContain('01-comments');
+    expect(progress.skipped ?? []).not.toContain('01-comments');
+  });
+
+  test('Prev is a no-op at the first lesson', () => {
+    const editor = fakeEditor();
+    const panel = fakePanel();
+    let onPrev!: () => void;
+    panel.onPrev = vi.fn((fn: () => void) => { onPrev = fn; });
+    const ctl = new TutorialController(editor, panel, () => {});
+
+    ctl.enter('00-introduction');
+    const before = editor.__doc;
+    onPrev();
+    expect(editor.__doc).toBe(before);
+  });
+
+  test('Jump loads target lesson without marking progress', () => {
+    const editor = fakeEditor();
+    const panel = fakePanel();
+    let onJump!: (id: string) => void;
+    panel.onJump = vi.fn((fn: (id: string) => void) => { onJump = fn; });
+    const ctl = new TutorialController(editor, panel, () => {});
+
+    ctl.enter('00-introduction');
+    onJump('01-comments');
+    expect(editor.__doc).toContain('My menu');
+
+    const progress = JSON.parse(localStorage.getItem('pg-tutorial-progress') ?? '{}');
+    expect(progress.completed ?? []).not.toContain('00-introduction');
+  });
+
+  test('Jump to current lesson is a no-op', () => {
+    const editor = fakeEditor();
+    const panel = fakePanel();
+    let onJump!: (id: string) => void;
+    panel.onJump = vi.fn((fn: (id: string) => void) => { onJump = fn; });
+    const ctl = new TutorialController(editor, panel, () => {});
+
+    ctl.enter('00-introduction');
+    editor.setValue('user changes');
+    onJump('00-introduction');
+    expect(editor.__doc).toBe('user changes'); // not reloaded
   });
 });

@@ -72,8 +72,42 @@ export const en = {
   'tutorial.btn.reset': 'Reset',
   'tutorial.btn.skip': 'Skip',
   'tutorial.btn.next': 'Next',
+  'tutorial.btn.prev': 'Prev',
+  'tutorial.btn.allLessons': 'All lessons',
+  'tutorial.btn.allLessons.title': 'Open the lesson list',
+  'tutorial.counter': 'Lesson ${n} / ${total}',
+  'tutorial.popup.empty': 'No lessons.',
+  'tutorial.marker.completed': 'completed',
+  'tutorial.marker.skipped': 'skipped',
+  'tutorial.marker.current': 'current lesson',
   'tutorial.done.title': '🎉 Course complete',
   'tutorial.done.body': "You've finished every lesson. Try the editor mode now.",
+
+  // Topic / subtopic labels (one per shipped slug). Community contributors
+  // adding new topic slugs add a matching key here so the navigation popup
+  // shows a localized header instead of the raw slug.
+  'topic.basics': 'Basics',
+
+  // Diagnostic messages. Keys mirror DiagCode in hocon/types.ts. `${name}`
+  // placeholders are interpolated with the params the emitter passes.
+  // Identifier-like values (scope, kind) stay in English by design - they're
+  // technical tokens, like type names in TS errors.
+  'diag.parser.include-not-supported': 'include is not supported in playground',
+  'diag.parser.unexpected-token': 'Unexpected token `${text}`',
+  'diag.parser.expected-value-after-sep': 'Expected a value after `${sep}`',
+  'diag.parser.expected-key-separator': 'Expected `=`, `:`, or `{` after key',
+  'diag.parser.expected-closing-brace': 'Expected closing `}`',
+  'diag.parser.unexpected-after-array-element':
+    'Unexpected `${text}` after array element. Use `,` or newline between items, and wrap key/value pairs in `{ ... }`.',
+  'diag.parser.unexpected-in-array':
+    'Unexpected `${text}` in array. Expected a value or `{ ... }` object literal.',
+  'diag.parser.expected-closing-bracket': 'Expected closing `]`',
+
+  'diag.resolve.circular-substitution': 'Circular substitution `${ref}`',
+  'diag.resolve.unresolved-substitution': 'Unresolved substitution `${ref}`',
+
+  'diag.validate.unknown-key': 'Unknown key `${key}` in ${scope} scope',
+  'diag.validate.expected-list-of-objects': '`${parentKey}` expects a list of objects, found ${itemKind}',
 
   // History
   'history.empty': '(empty)',

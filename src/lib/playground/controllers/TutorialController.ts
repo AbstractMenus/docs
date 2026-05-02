@@ -1,6 +1,6 @@
 import type { EditorApi } from '../Editor';
 import type { TutorialPanelApi } from '../TutorialPanel';
-import { listLessons, getLesson, firstLessonId } from '../tutorial/lessons';
+import { listLessons, getLesson, firstLessonId, prevLessonId, lessonPosition, lessonCount } from '../tutorial/lessons';
 import { runCheck, loadProgress, saveProgress, markCompleted, markSkipped, bumpHint } from '../tutorial/engine';
 import type { Lesson } from '../tutorial/types';
 import { t } from '../i18n';
@@ -35,6 +35,8 @@ export class TutorialController {
     panel.onReset(() => this.handleReset());
     panel.onSkip(() => this.handleSkip());
     panel.onNext(() => this.handleNext());
+    panel.onPrev(() => this.handlePrev());
+    panel.onJump((id) => this.handleJump(id));
   }
 
   isActive(): boolean {
@@ -81,7 +83,18 @@ export class TutorialController {
     const initialContent = draftMatches ? this.lastDraft!.content : lesson.starter;
     if (!draftMatches) this.lastDraft = null;
     const passed = runCheck(initialContent, lesson.check);
-    this.panel.showLesson(lesson, { hintsUsed, passed });
+    this.panel.showLesson(lesson, {
+      hintsUsed,
+      passed,
+      position: lessonPosition(id),
+      total: lessonCount(),
+      allLessons: listLessons(),
+      progress: {
+        completed: new Set(progress.completed),
+        skipped: new Set(progress.skipped),
+      },
+      hasPrev: prevLessonId(id) !== null,
+    });
     this.editor.setValue(initialContent);
     this.onLessonOpened(id);
   }
@@ -124,5 +137,31 @@ export class TutorialController {
     if (!this.currentLesson) return;
     saveProgress(markCompleted(loadProgress(), this.currentLesson.id));
     this.advanceAfter(this.currentLesson.id);
+  }
+
+  /**
+   * Navigate to the previous lesson WITHOUT mutating progress. Unlike Skip
+   * (which marks the current lesson as skipped) or Next (which marks it
+   * completed), Prev is pure navigation - the user is just paging back.
+   * No-op at the first lesson.
+   */
+  private handlePrev(): void {
+    if (!this.currentLesson) return;
+    const prev = prevLessonId(this.currentLesson.id);
+    if (!prev) return;
+    this.lastDraft = null; // discard current lesson's draft on navigation
+    this.loadLesson(prev);
+  }
+
+  /**
+   * Jump directly to any lesson by id (called from the lessons popup).
+   * Same semantics as Prev: pure navigation, no progress mutation. The
+   * destination lesson loads its starter (drafts only survive on the
+   * exact lesson they belong to).
+   */
+  private handleJump(id: string): void {
+    if (!id || (this.currentLesson && this.currentLesson.id === id)) return;
+    this.lastDraft = null;
+    this.loadLesson(id);
   }
 }

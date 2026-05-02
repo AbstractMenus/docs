@@ -22,6 +22,17 @@ export interface LessonTranslation {
 export interface Lesson {
   id: string;
   title: string;
+  /**
+   * Topic slug (required). Used to group lessons in the navigation popup
+   * and as a translation-key suffix: `topic.<slug>` is rendered to the
+   * user-facing label. Keep slugs ascii-kebab-case (e.g. "basics").
+   */
+  topic: string;
+  /**
+   * Optional sub-grouping within a topic. Same conventions as `topic`.
+   * Lessons without a subtopic appear directly under their topic.
+   */
+  subtopic?: string;
   intro: string;
   starter: string;
   goal: string;

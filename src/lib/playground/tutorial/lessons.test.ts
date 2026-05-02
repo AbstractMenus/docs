@@ -1,5 +1,15 @@
 import { describe, test, expect } from 'vitest';
-import { listLessons, getLesson, firstLessonId, validateLesson, applyTranslation } from './lessons';
+import {
+  listLessons,
+  getLesson,
+  firstLessonId,
+  validateLesson,
+  applyTranslation,
+  groupLessons,
+  prevLessonId,
+  lessonPosition,
+  lessonCount,
+} from './lessons';
 import { runCheck } from './engine';
 import type { Lesson } from './types';
 
@@ -31,6 +41,7 @@ describe('validateLesson', () => {
   const valid = {
     id: 'x',
     title: 'X',
+    topic: 'basics',
     intro: 'i',
     starter: 's',
     goal: 'g',
@@ -91,12 +102,67 @@ describe('validateLesson', () => {
   test('translations.<lang>.hints non-string[] is rejected', () => {
     expect(validateLesson({ ...valid, translations: { ru: { hints: [1] } } }).ok).toBe(false);
   });
+
+  test('missing topic is rejected', () => {
+    const { topic, ...rest } = valid;
+    void topic;
+    expect(validateLesson(rest).ok).toBe(false);
+  });
+
+  test('empty topic is rejected', () => {
+    expect(validateLesson({ ...valid, topic: '' }).ok).toBe(false);
+  });
+
+  test('subtopic when present must be non-empty string', () => {
+    expect(validateLesson({ ...valid, subtopic: 'syntax' }).ok).toBe(true);
+    expect(validateLesson({ ...valid, subtopic: '' }).ok).toBe(false);
+    expect(validateLesson({ ...valid, subtopic: 5 }).ok).toBe(false);
+  });
+});
+
+describe('groupLessons / position helpers', () => {
+  const lessons: Lesson[] = [
+    { id: 'a', title: 'A', topic: 'basics', intro: '', starter: '', goal: '', hints: [], check: { type: 'regex', pattern: 'x' } },
+    { id: 'b', title: 'B', topic: 'basics', subtopic: 'syntax', intro: '', starter: '', goal: '', hints: [], check: { type: 'regex', pattern: 'x' } },
+    { id: 'c', title: 'C', topic: 'advanced', intro: '', starter: '', goal: '', hints: [], check: { type: 'regex', pattern: 'x' } },
+    { id: 'd', title: 'D', topic: 'basics', subtopic: 'syntax', intro: '', starter: '', goal: '', hints: [], check: { type: 'regex', pattern: 'x' } },
+  ];
+
+  test('groups by topic preserving first-seen order', () => {
+    const groups = groupLessons(lessons);
+    expect(groups.map((g) => g.topic)).toEqual(['basics', 'advanced']);
+  });
+
+  test('groups subtopics within a topic, anonymous bucket goes first', () => {
+    const groups = groupLessons(lessons);
+    const basics = groups.find((g) => g.topic === 'basics')!;
+    expect(basics.subtopics.map((s) => s.subtopic)).toEqual([null, 'syntax']);
+    expect(basics.subtopics[0].lessons.map((l) => l.id)).toEqual(['a']);
+    expect(basics.subtopics[1].lessons.map((l) => l.id)).toEqual(['b', 'd']);
+  });
+
+  test('lessonPosition is 1-based, 0 for unknown', () => {
+    expect(lessonPosition('00-introduction')).toBe(1);
+    expect(lessonPosition('01-comments')).toBe(2);
+    expect(lessonPosition('999-nope')).toBe(0);
+  });
+
+  test('lessonCount matches shipped count', () => {
+    expect(lessonCount()).toBe(listLessons().length);
+  });
+
+  test('prevLessonId returns previous or null at the boundary', () => {
+    expect(prevLessonId('00-introduction')).toBeNull();
+    expect(prevLessonId('01-comments')).toBe('00-introduction');
+    expect(prevLessonId('999-nope')).toBeNull();
+  });
 });
 
 describe('applyTranslation', () => {
   const base: Lesson = {
     id: 'demo',
     title: 'Title',
+    topic: 'basics',
     intro: 'Intro',
     starter: 'starter',
     goal: 'Goal',

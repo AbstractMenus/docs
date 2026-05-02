@@ -765,6 +765,132 @@ html, body {
   font-size: 1.2rem;
 }
 
+/* Tutorial: navigation bar (breadcrumb + counter + Prev / All lessons) */
+.pg-tutorial-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--pg-border);
+}
+.pg-tutorial-crumbs {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--pg-fg-muted);
+  min-width: 0;
+}
+.pg-tutorial-crumb {
+  font-weight: 500;
+  color: var(--pg-fg);
+}
+.pg-tutorial-crumb-sep {
+  opacity: 0.5;
+}
+.pg-tutorial-counter {
+  margin-left: 0.25rem;
+  white-space: nowrap;
+  color: var(--pg-fg-muted);
+}
+.pg-tutorial-nav {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.55rem;
+}
+.pg-tutorial-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Tutorial: lessons popup (anchored to All-lessons button) */
+.pg-tutorial-popup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.4rem;
+  z-index: 20;
+  min-width: 18rem;
+  max-width: 26rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--pg-bg-elev);
+  border: 1px solid var(--pg-border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+[data-theme="light"] .pg-tutorial-popup {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.pg-tutorial-popup-topic + .pg-tutorial-popup-topic {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--pg-border);
+}
+.pg-tutorial-popup-topic-head {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pg-fg-muted);
+  padding: 0.25rem 0.4rem;
+  font-weight: 600;
+}
+.pg-tutorial-popup-subtopic {
+  font-size: 0.75rem;
+  color: var(--pg-fg-muted);
+  padding: 0.25rem 0.4rem 0.1rem 0.8rem;
+  font-style: italic;
+}
+.pg-tutorial-popup-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pg-tutorial-popup-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--pg-fg);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.pg-tutorial-popup-item:hover {
+  background: var(--pg-bg-elev-2);
+}
+.pg-tutorial-popup-item.is-current {
+  background: var(--pg-bg-elev-2);
+  font-weight: 600;
+}
+.pg-tutorial-popup-item.is-completed .pg-tutorial-popup-marker {
+  color: #3fb950;
+}
+.pg-tutorial-popup-item.is-skipped .pg-tutorial-popup-marker {
+  color: var(--pg-fg-muted);
+}
+.pg-tutorial-popup-item.is-current .pg-tutorial-popup-marker {
+  color: var(--pg-accent);
+}
+.pg-tutorial-popup-marker {
+  width: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--pg-fg-muted);
+}
+.pg-tutorial-popup-title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 /* Mobile: stack panes vertically */
 @media (max-width: 768px) {
   .pg-main {

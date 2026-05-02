@@ -1,6 +1,7 @@
 {
   "id": "01-comments",
   "title": "Comments",
+  "topic": "basics",
   "intro": "HOCON supports two comment styles:\n\n- `# this is a hash comment`\n- `// this is a slash comment`\n\nBoth run from the marker to the end of the line. Use comments to document menus or temporarily disable a line.\n\n**Goal:** add a comment to the file (any line that starts with `#` or `//`).",
   "starter": "title = \"My menu\"\nsize = 3\n",
   "goal": "Add at least one `#` or `//` comment line.",

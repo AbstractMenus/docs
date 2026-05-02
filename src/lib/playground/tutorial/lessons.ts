@@ -49,6 +49,65 @@ export function applyTranslation(lesson: Lesson, lang: string): Lesson {
   };
 }
 
+export interface SubtopicGroup {
+  /** null when the parent topic has lessons without a subtopic. */
+  subtopic: string | null;
+  lessons: Lesson[];
+}
+
+export interface TopicGroup {
+  topic: string;
+  subtopics: SubtopicGroup[];
+}
+
+/**
+ * Group a flat lesson list into Topic -> Subtopic -> [Lesson] for rendering
+ * the navigation popup. Topic order follows the first occurrence of each
+ * topic in the input (which is sorted by id), so `00-introduction` belongs
+ * under whatever its topic is and that topic appears first.
+ *
+ * Lessons without a subtopic are collected into a single anonymous bucket
+ * (`subtopic: null`) at the top of their topic.
+ */
+export function groupLessons(lessons: Lesson[]): TopicGroup[] {
+  const topics = new Map<string, Map<string | null, Lesson[]>>();
+  for (const l of lessons) {
+    const t = topics.get(l.topic) ?? new Map<string | null, Lesson[]>();
+    if (!topics.has(l.topic)) topics.set(l.topic, t);
+    const sub = l.subtopic ?? null;
+    const bucket = t.get(sub) ?? [];
+    if (!t.has(sub)) t.set(sub, bucket);
+    bucket.push(l);
+  }
+  return Array.from(topics.entries()).map(([topic, subMap]) => ({
+    topic,
+    subtopics: Array.from(subMap.entries()).map(([subtopic, ls]) => ({ subtopic, lessons: ls })),
+  }));
+}
+
+/** 1-based position of `id` in the global lesson order. 0 if not found. */
+export function lessonPosition(id: string): number {
+  const lessons = listLessons();
+  return lessons.findIndex((l) => l.id === id) + 1;
+}
+
+/** Total lesson count (post-translation, but count is locale-invariant). */
+export function lessonCount(): number {
+  return ALL.length;
+}
+
+/**
+ * Returns the previous lesson id by global order, or null if `id` is the
+ * first lesson (or unknown). Mirrors the implicit "next via order" used by
+ * advanceAfter() in the controller.
+ */
+export function prevLessonId(id: string): string | null {
+  const lessons = listLessons();
+  const idx = lessons.findIndex((l) => l.id === id);
+  if (idx <= 0) return null;
+  return lessons[idx - 1].id;
+}
+
 type Validation = { ok: true; lesson: Lesson } | { ok: false; error: string };
 
 /**
@@ -61,6 +120,10 @@ export function validateLesson(raw: unknown, source = '<inline>'): Validation {
   const r = raw as Record<string, unknown>;
   if (typeof r.id !== 'string' || !r.id) return fail('missing string field `id`');
   if (typeof r.title !== 'string' || !r.title) return fail('missing string field `title`');
+  if (typeof r.topic !== 'string' || !r.topic) return fail('missing string field `topic`');
+  if (r.subtopic !== undefined && (typeof r.subtopic !== 'string' || !r.subtopic)) {
+    return fail('`subtopic` must be a non-empty string when present');
+  }
   if (typeof r.intro !== 'string') return fail('missing string field `intro`');
   if (typeof r.starter !== 'string') return fail('missing string field `starter`');
   if (typeof r.goal !== 'string') return fail('missing string field `goal`');
