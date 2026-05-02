@@ -307,6 +307,25 @@ html, body {
   color: var(--pg-fg);
 }
 
+/* Hover tooltip */
+.cm-tooltip.cm-tooltip-hover .pg-hover {
+  background: var(--pg-bg-elev);
+  color: var(--pg-fg);
+  border: 1px solid var(--pg-border);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font-family: var(--pg-sans);
+  font-size: 0.78rem;
+  max-width: 320px;
+}
+.pg-hover-head {
+  font-family: var(--pg-mono);
+  font-size: 0.75rem;
+  color: var(--pg-accent);
+  margin-bottom: 0.25rem;
+}
+.pg-hover-body { color: var(--pg-fg-muted); line-height: 1.4; }
+
 /* Mobile: stack panes vertically */
 @media (max-width: 768px) {
   .pg-main {
