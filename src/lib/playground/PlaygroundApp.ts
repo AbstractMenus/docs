@@ -25,6 +25,8 @@ import { TutorialController } from './controllers/TutorialController';
 import { HistoryController } from './controllers/HistoryController';
 import { ToolbarController } from './controllers/ToolbarController';
 import type { PlaygroundMode, TabId } from './types';
+import { initLang, t, pluralForm, getLang, setLang, availableLangs } from './i18n';
+import { hydrateI18n } from './i18n/dom';
 
 const SCOPE_SHORTCUT = 'Ctrl+space';
 const ANALYSIS_DEBOUNCE_MS = 300;
@@ -102,11 +104,15 @@ export class PlaygroundApp {
    *    switchMode().
    */
   start(): void {
+    initLang();
+    document.documentElement.lang = getLang();
+    hydrateI18n(this.dom.root);
     this.setupPanels();
     this.setupEditor();
     this.setupAnalysis();
     this.setupControllers();
     this.bindModeSwitch();
+    this.bindLangSelector();
     this.applyInitialUrlMode();
 
     (window as unknown as { __pg?: unknown }).__pg = { editor: this.editor, panels: this.panels };
@@ -115,8 +121,8 @@ export class PlaygroundApp {
   // ---------- DOM-derived UI factories ----------
 
   private setupPanels(): void {
-    this.validation.errors = this.dom.errorsPanel ? createValidationPanel(this.dom.errorsPanel) : null;
-    this.validation.warnings = this.dom.warningsPanel ? createValidationPanel(this.dom.warningsPanel) : null;
+    this.validation.errors = this.dom.errorsPanel ? createValidationPanel(this.dom.errorsPanel, 'empty.errors') : null;
+    this.validation.warnings = this.dom.warningsPanel ? createValidationPanel(this.dom.warningsPanel, 'empty.warnings') : null;
     this.resolvedPanel = this.dom.jsonPanel ? createResolvedJsonPanel(this.dom.jsonPanel) : null;
     this.historyDropdown = this.dom.historyHost ? createHistoryDropdown(this.dom.historyHost) : null;
     this.tutorialPanelApi = this.dom.tutorialPanel ? createTutorialPanel(this.dom.tutorialPanel) : null;
@@ -214,9 +220,9 @@ export class PlaygroundApp {
 
     if (this.dom.status) {
       const s = this.dom.status;
-      if (errors.length > 0) s.textContent = `${errors.length} error${errors.length === 1 ? '' : 's'}`;
-      else if (warnings.length > 0) s.textContent = `${warnings.length} warning${warnings.length === 1 ? '' : 's'}`;
-      else s.textContent = 'ok';
+      if (errors.length > 0) s.textContent = formatCount('errors', errors.length);
+      else if (warnings.length > 0) s.textContent = formatCount('warnings', warnings.length);
+      else s.textContent = t('status.ok');
     }
   }
 
@@ -226,7 +232,16 @@ export class PlaygroundApp {
     const pos = state.selection.main.head;
     const scope = detectScope(text, pos);
     const count = getKeysForScope(scope).length;
-    this.dom.scopeHint.textContent = `${scope} · ${count} key${count === 1 ? '' : 's'} · ${SCOPE_SHORTCUT}`;
+    // Locale plural suffixes for "key": en two-form, ru three-form.
+    const plural = getLang() === 'ru'
+      ? pluralForm(count, ['', 'а', 'ей'])
+      : pluralForm(count, ['', 's']);
+    this.dom.scopeHint.textContent = t('scope.hint.body', {
+      scope,
+      count,
+      plural,
+      shortcut: SCOPE_SHORTCUT,
+    });
   }
 
   private jumpTo(line: number, column: number): void {
@@ -294,6 +309,51 @@ export class PlaygroundApp {
     const urlMode = new URL(window.location.href).searchParams.get('mode');
     if (urlMode === 'tutorial') this.switchMode('tutorial');
   }
+
+  // ---------- Language selector ----------
+
+  /**
+   * Populate the `<select data-pg-lang>` with available locales (auto-loaded
+   * via `import.meta.glob` in i18n/index.ts) and reload the page on change.
+   * Reload over reactive re-render because every panel caches translated
+   * strings on construction; a hard reload is one line and never drifts.
+   */
+  private bindLangSelector(): void {
+    const select = this.dom.root.querySelector<HTMLSelectElement>('[data-pg-lang]');
+    if (!select) return;
+    select.innerHTML = '';
+    for (const code of availableLangs()) {
+      const opt = document.createElement('option');
+      opt.value = code;
+      opt.textContent = LANG_LABELS[code] ?? code.toUpperCase();
+      if (code === getLang()) opt.selected = true;
+      select.appendChild(opt);
+    }
+    select.addEventListener('change', () => {
+      setLang(select.value);
+      window.location.reload();
+    });
+  }
+}
+
+const LANG_LABELS: Record<string, string> = {
+  en: 'English',
+  ru: 'Русский',
+};
+
+function formatCount(kind: 'errors' | 'warnings', n: number): string {
+  // English plural collapses to "" / "s". Russian needs three forms.
+  // Falls through to English-style "s" suffix for any other locale until
+  // a community contributor wires plural rules for it.
+  let plural: string;
+  if (getLang() === 'ru') {
+    plural = kind === 'errors'
+      ? pluralForm(n, ['а', 'и', 'ок'])  // 1 ошибка / 2 ошибки / 5 ошибок
+      : pluralForm(n, ['е', 'я', 'й']);  // 1 предупреждение / 2 предупреждения / 5 предупреждений
+  } else {
+    plural = pluralForm(n, ['', 's']);
+  }
+  return t(kind === 'errors' ? 'status.errors' : 'status.warnings', { count: n, plural });
 }
 
 function resolveDom(root: HTMLElement): DomRefs {

@@ -3,8 +3,7 @@ import type { TutorialPanelApi } from '../TutorialPanel';
 import { listLessons, getLesson, firstLessonId } from '../tutorial/lessons';
 import { runCheck, loadProgress, saveProgress, markCompleted, markSkipped, bumpHint } from '../tutorial/engine';
 import type { Lesson } from '../tutorial/types';
-
-const COMPLETED_TEXT = "You've finished every lesson. Try the editor mode now.";
+import { t } from '../i18n';
 
 /**
  * Owns "tutorial mode" state and wires the lesson-runner UI to the editor.
@@ -49,7 +48,7 @@ export class TutorialController {
   private loadLesson(id: string): void {
     const lesson = getLesson(id);
     if (!lesson) {
-      this.panel.showCompleted(COMPLETED_TEXT);
+      this.panel.showCompleted(t('tutorial.done.body'));
       this.currentLesson = null;
       return;
     }
@@ -68,7 +67,7 @@ export class TutorialController {
     const idx = lessons.findIndex((l) => l.id === currentId);
     const next = lessons[idx + 1];
     if (next) this.loadLesson(next.id);
-    else this.panel.showCompleted(COMPLETED_TEXT);
+    else this.panel.showCompleted(t('tutorial.done.body'));
   }
 
   private handleHint(): void {

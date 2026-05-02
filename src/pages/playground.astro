@@ -21,14 +21,15 @@ const BASE = import.meta.env.BASE_URL;
       <header class="pg-header">
         <a class="pg-brand" href={`${BASE}en/`}>
           <span class="pg-brand-text">AbstractMenus</span>
-          <span class="pg-brand-sub">Playground</span>
+          <span class="pg-brand-sub" data-i18n="brand.sub">Playground</span>
         </a>
-        <nav class="pg-mode-switch" role="tablist" aria-label="Playground mode">
-          <button type="button" class="pg-mode-btn is-active" data-mode="editor" role="tab" aria-selected="true">Editor</button>
-          <button type="button" class="pg-mode-btn" data-mode="tutorial" role="tab" aria-selected="false">Tutorial</button>
+        <nav class="pg-mode-switch" role="tablist" data-i18n-aria="mode.aria" aria-label="Playground mode">
+          <button type="button" class="pg-mode-btn is-active" data-mode="editor" role="tab" aria-selected="true" data-i18n="mode.editor">Editor</button>
+          <button type="button" class="pg-mode-btn" data-mode="tutorial" role="tab" aria-selected="false" data-i18n="mode.tutorial">Tutorial</button>
         </nav>
         <div class="pg-header-actions">
-          <button type="button" class="pg-icon-btn" data-action="theme-toggle" aria-label="Toggle theme">
+          <select class="pg-lang-select" data-pg-lang data-i18n-aria="lang.select.aria" aria-label="Language"></select>
+          <button type="button" class="pg-icon-btn" data-action="theme-toggle" data-i18n-aria="theme.toggle.aria" aria-label="Toggle theme">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -54,48 +55,48 @@ const BASE = import.meta.env.BASE_URL;
         <section class="pg-pane pg-pane-output" aria-label="Output">
           <nav class="pg-tabs" role="tablist">
             <button type="button" class="pg-tab is-active" data-tab="errors" role="tab" aria-selected="true">
-              Errors<span class="pg-tab-count" data-tab-count="errors"></span>
+              <span data-i18n="tab.errors">Errors</span><span class="pg-tab-count" data-tab-count="errors"></span>
             </button>
             <button type="button" class="pg-tab" data-tab="warnings" role="tab" aria-selected="false">
-              Warnings<span class="pg-tab-count" data-tab-count="warnings"></span>
+              <span data-i18n="tab.warnings">Warnings</span><span class="pg-tab-count" data-tab-count="warnings"></span>
             </button>
-            <button type="button" class="pg-tab" data-tab="json" role="tab" aria-selected="false">Resolved JSON</button>
-            <button type="button" class="pg-tab is-hidden" data-tab="tutorial" role="tab" aria-selected="false">Tutorial</button>
+            <button type="button" class="pg-tab" data-tab="json" role="tab" aria-selected="false" data-i18n="tab.json">Resolved JSON</button>
+            <button type="button" class="pg-tab is-hidden" data-tab="tutorial" role="tab" aria-selected="false" data-i18n="tab.tutorial">Tutorial</button>
           </nav>
           <div class="pg-tab-panels">
             <div class="pg-tab-panel is-active" data-panel="errors" role="tabpanel">
-              <p class="pg-empty">No errors.</p>
+              <p class="pg-empty" data-i18n="empty.errors">No errors.</p>
             </div>
             <div class="pg-tab-panel" data-panel="warnings" role="tabpanel">
-              <p class="pg-empty">No warnings. Warnings flag suspicious but valid configs (unknown keys, unresolved substitutions). They do not stop the menu from loading.</p>
+              <p class="pg-empty" data-i18n="empty.warnings">No warnings. Warnings flag suspicious but valid configs (unknown keys, unresolved substitutions). They do not stop the menu from loading.</p>
             </div>
             <div class="pg-tab-panel" data-panel="json" role="tabpanel">
-              <p class="pg-empty">Resolved JSON appears here once the parser is wired up.</p>
+              <p class="pg-empty" data-i18n="empty.json">Resolved JSON appears here once the parser is wired up.</p>
             </div>
             <div class="pg-tab-panel" data-panel="tutorial" role="tabpanel">
-              <p class="pg-empty">Tutorial mode lands at M.6.</p>
+              <p class="pg-empty" data-i18n="empty.tutorial">Tutorial mode lands at M.6.</p>
             </div>
           </div>
         </section>
       </main>
 
       <footer class="pg-footer">
-        <span class="pg-footer-status" data-pg-status>ready</span>
-        <button type="button" class="pg-footer-scope" data-pg-scope-hint title="Show suggestions for the current scope">
-          - keys -
+        <span class="pg-footer-status" data-pg-status data-i18n="status.ready">ready</span>
+        <button type="button" class="pg-footer-scope" data-pg-scope-hint data-i18n-title="scope.hint.title" title="Show suggestions for the current scope">
+          <span data-i18n="scope.hint.placeholder">- keys -</span>
         </button>
         <div class="pg-footer-actions">
           <div class="pg-history-wrap" data-pg-history-wrap>
-            <button type="button" class="pg-btn pg-btn-secondary" data-action="history-toggle">
+            <button type="button" class="pg-btn pg-btn-secondary" data-action="history-toggle" data-i18n="btn.history">
               History
             </button>
             <div class="pg-history-pop" data-pg-history hidden></div>
           </div>
-          <button type="button" class="pg-btn pg-btn-secondary" data-action="toggle-warning-squiggles" data-state="on" title="Hide warning squiggles in the editor (Warnings tab stays)">
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="toggle-warning-squiggles" data-state="on" data-i18n-title="btn.warnings.title.on" title="Hide warning squiggles in the editor (Warnings tab stays)" data-i18n="btn.warnings.on">
             warnings: on
           </button>
-          <button type="button" class="pg-btn pg-btn-secondary" data-action="format" disabled>Format</button>
-          <button type="button" class="pg-btn pg-btn-secondary" data-action="share">Share</button>
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="format" data-i18n="btn.format" disabled>Format</button>
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="share" data-i18n="btn.share">Share</button>
         </div>
       </footer>
     </div>

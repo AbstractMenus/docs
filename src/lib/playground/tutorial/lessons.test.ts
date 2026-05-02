@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { listLessons, getLesson, firstLessonId, validateLesson } from './lessons';
+import { listLessons, getLesson, firstLessonId, validateLesson, applyTranslation } from './lessons';
 import { runCheck } from './engine';
+import type { Lesson } from './types';
 
 describe('lessons loader', () => {
   test('finds at least 2 lessons', () => {
@@ -69,6 +70,60 @@ describe('validateLesson', () => {
 
   test('hints must be string[]', () => {
     expect(validateLesson({ ...valid, hints: ['ok', 7] }).ok).toBe(false);
+  });
+
+  test('translations object is allowed', () => {
+    const r = validateLesson({
+      ...valid,
+      translations: { ru: { title: 'X-ru', hints: ['a-ru'] } },
+    });
+    expect(r.ok).toBe(true);
+  });
+
+  test('translations as array is rejected', () => {
+    expect(validateLesson({ ...valid, translations: [] }).ok).toBe(false);
+  });
+
+  test('translations.<lang>.title non-string is rejected', () => {
+    expect(validateLesson({ ...valid, translations: { ru: { title: 5 } } }).ok).toBe(false);
+  });
+
+  test('translations.<lang>.hints non-string[] is rejected', () => {
+    expect(validateLesson({ ...valid, translations: { ru: { hints: [1] } } }).ok).toBe(false);
+  });
+});
+
+describe('applyTranslation', () => {
+  const base: Lesson = {
+    id: 'demo',
+    title: 'Title',
+    intro: 'Intro',
+    starter: 'starter',
+    goal: 'Goal',
+    hints: ['h1', 'h2'],
+    check: { type: 'regex', pattern: 'x' },
+    translations: {
+      ru: { title: 'Заголовок', goal: 'Цель' },
+    },
+  };
+
+  test('overlays known fields, keeps the rest from base', () => {
+    const r = applyTranslation(base, 'ru');
+    expect(r.title).toBe('Заголовок');
+    expect(r.goal).toBe('Цель');
+    expect(r.intro).toBe('Intro');     // not translated -> base
+    expect(r.hints).toEqual(['h1', 'h2']);
+    expect(r.starter).toBe('starter'); // never translated
+  });
+
+  test('returns base when no translation exists', () => {
+    const r = applyTranslation(base, 'de');
+    expect(r).toBe(base);
+  });
+
+  test('returns base when lesson has no translations field', () => {
+    const noTr: Lesson = { ...base, translations: undefined };
+    expect(applyTranslation(noTr, 'ru')).toBe(noTr);
   });
 });
 

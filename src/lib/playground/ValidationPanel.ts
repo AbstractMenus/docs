@@ -1,4 +1,5 @@
 import type { Diagnostic } from './hocon/types';
+import { t, type TranslationKey } from './i18n';
 
 type JumpListener = (line: number, column: number) => void;
 
@@ -7,12 +8,18 @@ export interface ValidationPanelApi {
   onJump(fn: JumpListener): void;
 }
 
-export function createValidationPanel(panel: HTMLElement): ValidationPanelApi {
+export function createValidationPanel(
+  panel: HTMLElement,
+  emptyKey: TranslationKey = 'empty.errors',
+): ValidationPanelApi {
   const listeners: JumpListener[] = [];
 
   function update(diags: Diagnostic[]): void {
     if (diags.length === 0) {
-      panel.innerHTML = '<p class="pg-empty">No errors.</p>';
+      const p = document.createElement('p');
+      p.className = 'pg-empty';
+      p.textContent = t(emptyKey);
+      panel.replaceChildren(p);
       return;
     }
     const list = document.createElement('ul');

@@ -116,6 +116,24 @@ html, body {
 .pg-icon-btn:hover {
   background: var(--pg-bg-elev-2);
 }
+.pg-lang-select {
+  height: 32px;
+  padding: 0 0.5rem;
+  background: transparent;
+  border: 1px solid var(--pg-border);
+  color: var(--pg-fg);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+.pg-lang-select:hover {
+  background: var(--pg-bg-elev-2);
+}
+.pg-lang-select option {
+  background: var(--pg-bg);
+  color: var(--pg-fg);
+}
 
 /* Main two-pane */
 .pg-main {

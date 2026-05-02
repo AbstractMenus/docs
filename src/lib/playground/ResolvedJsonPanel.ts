@@ -1,3 +1,5 @@
+import { t } from './i18n';
+
 export interface ResolvedJsonPanelApi {
   update(value: unknown): void;
 }
@@ -10,14 +12,13 @@ export function createResolvedJsonPanel(panel: HTMLElement): ResolvedJsonPanelAp
 
     const desc = document.createElement('div');
     desc.className = 'pg-json-desc';
-    desc.textContent =
-      'How AbstractMenus sees your config after HOCON resolves substitutions, dotted keys, and overrides. Use this to verify that ${vars} expand correctly and that nested objects flatten the way you expect.';
+    desc.textContent = t('json.desc');
     wrap.appendChild(desc);
 
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'pg-btn pg-btn-secondary pg-json-copy';
-    btn.textContent = 'Copy';
+    btn.textContent = t('btn.copy');
     btn.dataset.action = 'copy-json';
     btn.addEventListener('click', () => {
       navigator.clipboard?.writeText(json).catch(() => {});

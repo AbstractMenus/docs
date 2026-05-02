@@ -1,5 +1,6 @@
 import type { Lesson } from './tutorial/types';
 import { renderMd } from './tutorial/markdown';
+import { t } from './i18n';
 
 type Listener = () => void;
 
@@ -32,7 +33,7 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
 
     const banner = document.createElement('div');
     banner.className = 'pg-tutorial-passed';
-    banner.textContent = '✓ Goal reached';
+    banner.textContent = t('tutorial.passed');
     if (!opts.passed) banner.style.display = 'none';
     head.appendChild(banner);
 
@@ -46,7 +47,7 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
     const goal = document.createElement('div');
     goal.className = 'pg-tutorial-goal';
     const goalLabel = document.createElement('strong');
-    goalLabel.textContent = 'Goal: ';
+    goalLabel.textContent = t('tutorial.goalLabel');
     goal.appendChild(goalLabel);
     goal.appendChild(document.createTextNode(lesson.goal));
     wrap.appendChild(goal);
@@ -67,14 +68,14 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
     const actions = document.createElement('div');
     actions.className = 'pg-tutorial-actions';
 
-    const hintBtn = mkBtn('Hint', 'hint');
+    const hintBtn = mkBtn(t('tutorial.btn.hint'), 'hint');
     if (opts.hintsUsed >= lesson.hints.length) hintBtn.disabled = true;
     actions.appendChild(hintBtn);
 
-    actions.appendChild(mkBtn('Reset', 'reset'));
-    actions.appendChild(mkBtn('Skip', 'skip'));
+    actions.appendChild(mkBtn(t('tutorial.btn.reset'), 'reset'));
+    actions.appendChild(mkBtn(t('tutorial.btn.skip'), 'skip'));
 
-    const nextBtn = mkBtn('Next', 'next');
+    const nextBtn = mkBtn(t('tutorial.btn.next'), 'next');
     nextBtn.classList.add('pg-btn-primary');
     nextBtn.disabled = !opts.passed;
     actions.appendChild(nextBtn);
@@ -93,7 +94,7 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
     const wrap = document.createElement('div');
     wrap.className = 'pg-tutorial pg-tutorial-done';
     const h = document.createElement('h2');
-    h.textContent = '🎉 Course complete';
+    h.textContent = t('tutorial.done.title');
     const p = document.createElement('p');
     p.textContent = text;
     wrap.appendChild(h);

@@ -3,6 +3,7 @@ import type { HistoryDropdownApi } from '../HistoryDropdown';
 import { showToast } from '../Toast';
 import { encodeShare } from '../sharing/share-url';
 import { loadHistory, pushSnapshot } from '../sharing/history';
+import { t } from '../i18n';
 
 const SNAPSHOT_DEBOUNCE_MS = 5000;
 
@@ -65,9 +66,9 @@ export class HistoryController {
       history.replaceState(null, '', `#config=${enc}`);
       try {
         await navigator.clipboard.writeText(url);
-        showToast('Link copied');
+        showToast(t('toast.linkCopied'));
       } catch {
-        showToast('Copy failed');
+        showToast(t('toast.copyFailed'));
       }
       pushSnapshot(text);
       this.dropdown?.update(loadHistory());

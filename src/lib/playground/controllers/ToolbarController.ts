@@ -2,6 +2,7 @@ import type { EditorApi } from '../Editor';
 import { createDivider } from '../Divider';
 import { formatHocon } from '../cm/format';
 import { setWarningSquigglesEnabled, isWarningSquigglesEnabled } from '../cm/hocon-lint';
+import { t } from '../i18n';
 
 /**
  * Owns the buttons and widgets in the page chrome that don't belong to a
@@ -56,7 +57,7 @@ export class ToolbarController {
     const btn = this.root.querySelector<HTMLButtonElement>('[data-action="format"]');
     if (!btn) return;
     btn.disabled = false;
-    btn.title = 'Format (Cmd+Shift+F)';
+    btn.title = t('btn.format.title');
     btn.addEventListener('click', () => {
       const before = this.editor.getValue();
       const after = formatHocon(before);
@@ -76,10 +77,8 @@ export class ToolbarController {
     const sync = (): void => {
       const on = isWarningSquigglesEnabled(this.editor.view.state);
       btn.dataset.state = on ? 'on' : 'off';
-      btn.textContent = on ? 'warnings: on' : 'warnings: off';
-      btn.title = on
-        ? 'Hide warning squiggles in the editor (Warnings tab stays)'
-        : 'Show warning squiggles in the editor';
+      btn.textContent = on ? t('btn.warnings.on') : t('btn.warnings.off');
+      btn.title = on ? t('btn.warnings.title.on') : t('btn.warnings.title.off');
     };
     sync();
 
