@@ -14,6 +14,10 @@ import { parse } from './hocon/parser';
 import { resolve } from './hocon/resolve';
 import { createValidationPanel } from './ValidationPanel';
 import { createResolvedJsonPanel } from './ResolvedJsonPanel';
+import { createHistoryDropdown } from './HistoryDropdown';
+import { showToast } from './Toast';
+import { encodeShare, decodeShare } from './sharing/share-url';
+import { loadHistory, pushSnapshot } from './sharing/history';
 import type { PlaygroundMode, TabId } from './types';
 
 const SNIPPETS = snippetCompletions();
@@ -51,12 +55,26 @@ export function boot(): void {
   const status = root.querySelector<HTMLElement>('[data-pg-status]');
   const errorsEl = root.querySelector<HTMLElement>('[data-panel="errors"]');
   const jsonEl = root.querySelector<HTMLElement>('[data-panel="json"]');
+  const historyHost = root.querySelector<HTMLElement>('[data-pg-history]');
 
   const validation = errorsEl ? createValidationPanel(errorsEl) : null;
   const resolved = jsonEl ? createResolvedJsonPanel(jsonEl) : null;
+  const historyDropdown = historyHost ? createHistoryDropdown(historyHost) : null;
+
+  const initial = pickInitialContent();
 
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let historyTimer: ReturnType<typeof setTimeout> | undefined;
   let editorRef: ReturnType<typeof createEditor> | null = null;
+
+  function snapshotHistory(): void {
+    if (historyTimer) clearTimeout(historyTimer);
+    historyTimer = setTimeout(() => {
+      if (!editorRef) return;
+      pushSnapshot(editorRef.getValue());
+      historyDropdown?.update(loadHistory());
+    }, 5000);
+  }
 
   function refreshAnalysis(): void {
     if (timer) clearTimeout(timer);
@@ -80,7 +98,7 @@ export function boot(): void {
 
   const editor = createEditor({
     parent: editorHost,
-    initialContent: DEFAULT_CONTENT,
+    initialContent: initial,
     extensions: [
       ...hoconLanguage(),
       hoconLinter(),
@@ -101,9 +119,18 @@ export function boot(): void {
         },
       ]),
     ],
-    onChange: () => { refreshAnalysis(); },
+    onChange: () => {
+      refreshAnalysis();
+      snapshotHistory();
+    },
   });
   editorRef = editor;
+
+  historyDropdown?.update(loadHistory());
+  historyDropdown?.onSelect((content) => {
+    editor.setValue(content);
+    closeHistoryPopover(root);
+  });
 
   validation?.onJump((line, column) => {
     const doc = editor.view.state.doc;
@@ -127,8 +154,64 @@ export function boot(): void {
   bindThemeToggle(root);
   bindDivider(root);
   bindFormatButton(root, editor);
+  bindHistoryToggle(root);
+  bindShareButton(root, editor, historyDropdown);
 
   (window as unknown as { __pg?: unknown }).__pg = { editor, panels };
+}
+
+function pickInitialContent(): string {
+  const hash = window.location.hash;
+  const m = /^#config=(.+)$/.exec(hash);
+  if (m) {
+    const decoded = decodeShare(m[1]);
+    if (decoded !== null) return decoded;
+  }
+  const history = loadHistory();
+  if (history.length > 0) return history[0].content;
+  return DEFAULT_CONTENT;
+}
+
+function bindHistoryToggle(root: HTMLElement): void {
+  const btn = root.querySelector<HTMLButtonElement>('[data-action="history-toggle"]');
+  const pop = root.querySelector<HTMLElement>('[data-pg-history]');
+  if (!btn || !pop) return;
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pop.hidden = !pop.hidden;
+  });
+  document.addEventListener('click', (e) => {
+    const within = (e.target as Element)?.closest?.('[data-pg-history-wrap]');
+    if (!within) pop.hidden = true;
+  });
+}
+
+function closeHistoryPopover(root: HTMLElement): void {
+  const pop = root.querySelector<HTMLElement>('[data-pg-history]');
+  if (pop) pop.hidden = true;
+}
+
+function bindShareButton(
+  root: HTMLElement,
+  editor: ReturnType<typeof createEditor>,
+  dropdown: ReturnType<typeof createHistoryDropdown> | null,
+): void {
+  const btn = root.querySelector<HTMLButtonElement>('[data-action="share"]');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const text = editor.getValue();
+    const enc = encodeShare(text);
+    const url = `${window.location.origin}${window.location.pathname}#config=${enc}`;
+    history.replaceState(null, '', `#config=${enc}`);
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Link copied');
+    } catch {
+      showToast('Copy failed');
+    }
+    pushSnapshot(text);
+    dropdown?.update(loadHistory());
+  });
 }
 
 function bindFormatButton(root: HTMLElement, editor: ReturnType<typeof createEditor>): void {
