@@ -1,5 +1,6 @@
 import { findKeyDef } from '../catalog';
 import type { Scope } from '../catalog/types';
+import { stripStringsAndComments } from './text-utils';
 
 interface Frame {
   bracket: '{' | '[';
@@ -9,46 +10,28 @@ interface Frame {
 /**
  * Determine which set of keys is meaningful at the given cursor position.
  *
- * Algorithm: walk source until pos, push a stack frame on every `{`/`[`,
- * remembering the last seen identifier-followed-by-separator (the key that
- * opened this block). On `}`/`]` pop. Strings and comments are skipped.
+ * Strip strings/comments first (so brackets nested in `"..."` or after `#`
+ * don't open frames), then walk the safe copy: push a stack frame on every
+ * `{`/`[`, remembering the last seen identifier-followed-by-separator (the
+ * key that opened this block). On `}`/`]` pop.
  *
  * Resolution rules:
  *  - The innermost open `{` whose key has a `childrenScope` defined wins.
- *  - For `[` (arrays of objects, e.g. `items = [{...}]`), an inner `{` inherits
- *    the parent array's `childrenScope`.
+ *  - For `[` (arrays of objects, e.g. `items = [{...}]`), an inner `{`
+ *    inherits the parent array's `childrenScope`.
  *  - A frame whose key is unknown (or known but without `childrenScope`)
  *    yields `unknown` - the autocomplete falls back to all keys.
  *  - Empty stack means top-level: `menu-root`.
  */
 export function detectScope(text: string, pos: number): Scope {
+  const safe = stripStringsAndComments(text);
+  const end = Math.min(pos, safe.length);
   const stack: Frame[] = [];
   let lastKey: string | undefined;
-  let inString = false;
-  let inTriple = false;
   let i = 0;
-  const end = Math.min(pos, text.length);
 
   while (i < end) {
-    const ch = text[i];
-
-    if (inTriple) {
-      if (ch === '"' && text[i + 1] === '"' && text[i + 2] === '"') { inTriple = false; i += 3; continue; }
-      i++; continue;
-    }
-    if (inString) {
-      if (ch === '\\') { i += 2; continue; }
-      if (ch === '"') { inString = false; }
-      i++; continue;
-    }
-
-    if (ch === '#' || (ch === '/' && text[i + 1] === '/')) {
-      while (i < end && text[i] !== '\n') i++;
-      continue;
-    }
-
-    if (ch === '"' && text[i + 1] === '"' && text[i + 2] === '"') { inTriple = true; i += 3; continue; }
-    if (ch === '"') { inString = true; i++; continue; }
+    const ch = safe[i];
 
     if (ch === '{' || ch === '[') {
       stack.push({ bracket: ch as '{' | '[', key: lastKey });
@@ -61,10 +44,10 @@ export function detectScope(text: string, pos: number): Scope {
       i++; continue;
     }
 
-    const idMatch = /^[A-Za-z_][\w-]*/.exec(text.slice(i));
+    const idMatch = /^[A-Za-z_][\w-]*/.exec(safe.slice(i));
     if (idMatch) {
       const id = idMatch[0];
-      const after = text.slice(i + id.length).replace(/^[ \t]+/, '');
+      const after = safe.slice(i + id.length).replace(/^[ \t]+/, '');
       if (after.startsWith('=') || after.startsWith(':') || after.startsWith('+=') || after.startsWith('{') || after.startsWith('[')) {
         lastKey = id;
       }
