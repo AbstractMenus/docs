@@ -90,4 +90,13 @@ describe('findColorMatches', () => {
     const m = findColorMatches('color = "#ff6432"', 100);
     expect(m[0].from).toBeGreaterThan(100);
   });
+
+  test('color = inside a string literal is ignored', () => {
+    const text = 'lore = "click for color = pink"\nmaterial = STONE';
+    expect(findColorMatches(text)).toHaveLength(0);
+  });
+
+  test('color = on a commented-out line is ignored', () => {
+    expect(findColorMatches('# color = "#ff0000"\nname = "x"')).toHaveLength(0);
+  });
 });
