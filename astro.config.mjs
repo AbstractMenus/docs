@@ -266,6 +266,23 @@ export default defineConfig({
             "})();",
           ].join(""),
         },
+        {
+          // Sidebar's Playground entry has to be a full URL because Starlight
+          // would otherwise rewrite a relative path through the locale segment
+          // and 404. The static URL is a production fallback; this script
+          // rewrites it to the current origin on every load so the link works
+          // identically in dev (localhost), preview, and production.
+          tag: "script",
+          content: [
+            "(function(){",
+            "function fix(){",
+            "var as=document.querySelectorAll('a[data-playground-link]');",
+            "for(var i=0;i<as.length;i++){as[i].href=window.location.origin+'" + BASE + "playground/';}",
+            "}",
+            "if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fix);}else{fix();}",
+            "})();",
+          ].join(""),
+        },
       ],
     }),
     mdx(),
