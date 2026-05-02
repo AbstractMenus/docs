@@ -1,0 +1,72 @@
+---
+const BASE = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About - HOCON Playground - AbstractMenus</title>
+    <meta name="description" content="What the AbstractMenus HOCON Playground is and how to use it." />
+    <link rel="icon" href={`${BASE}favicon.ico`} />
+  </head>
+  <body>
+    <div class="pg-app pg-app-narrow">
+      <header class="pg-header">
+        <a class="pg-brand" href={`${BASE}playground/`}>
+          <span class="pg-brand-text">AbstractMenus</span>
+          <span class="pg-brand-sub">Playground</span>
+        </a>
+        <div class="pg-header-actions">
+          <a class="pg-btn pg-btn-secondary" href={`${BASE}playground/`}>Open editor</a>
+          <a class="pg-btn pg-btn-primary" href={`${BASE}playground/?mode=tutorial`}>Start tutorial</a>
+        </div>
+      </header>
+
+      <main class="pg-about">
+        <h1>HOCON Playground</h1>
+        <p>Browser-side editor for AbstractMenus menu configs. No server, no install. Edit, validate, share.</p>
+
+        <h2>Two modes</h2>
+        <ul>
+          <li><strong>Editor</strong> - paste your <code>menu.conf</code>, see parse errors with line:col, view the resolved JSON after substitutions, share a deep-link with another author for a second pair of eyes.</li>
+          <li><strong>Tutorial</strong> - short lessons on HOCON syntax. Each lesson has a goal, progressive hints, and a check that fires as you type. Progress is saved in your browser.</li>
+        </ul>
+
+        <h2>What it does</h2>
+        <ul>
+          <li>HOCON syntax highlighting (comments, keys, strings, substitutions, durations, includes)</li>
+          <li>Live parse + diagnostics with squiggles in the editor and a list of errors on the right</li>
+          <li>Resolved JSON view after <code>{`\${var}`}</code> substitutions and override merges</li>
+          <li>Scope-aware autocomplete - inside <code>actions {`{}`}</code> it suggests action types, inside <code>rules {`{}`}</code> it suggests rules, etc.</li>
+          <li>Enum value completion for <code>material:</code> and <code>sound:</code> (~150 popular Bukkit materials, ~80 sounds)</li>
+          <li>Hover docs on known keys</li>
+          <li>10 starter snippets for common blocks (<code>menu</code>, <code>item</code>, <code>clickaction</code>, ...)</li>
+          <li>Format command (<kbd>Cmd+Shift+F</kbd> / <kbd>Ctrl+Shift+F</kbd>)</li>
+          <li>Shareable URL via <code>#config=...</code> (deflate + base64-url)</li>
+          <li>LocalStorage history (last 5 versions)</li>
+          <li>Light / dark themes</li>
+        </ul>
+
+        <h2>Limitations (MVP)</h2>
+        <ul>
+          <li>No semantic schema validation yet (only HOCON syntax + warnings for unknown substitutions)</li>
+          <li>No inventory preview - the playground does not render the resulting Minecraft menu</li>
+          <li><code>include</code> directives produce a warning and are otherwise ignored (no virtual filesystem)</li>
+          <li>Material / sound autocomplete is a curated subset, not the full Bukkit enums</li>
+        </ul>
+
+        <h2>Open it</h2>
+        <p>
+          <a class="pg-btn pg-btn-primary" href={`${BASE}playground/`}>Open editor</a>
+          <a class="pg-btn pg-btn-secondary" href={`${BASE}playground/?mode=tutorial`}>Start tutorial</a>
+        </p>
+      </main>
+    </div>
+
+    <style is:global>
+      @import '../../styles/playground.css';
+    </style>
+  </body>
+</html>
