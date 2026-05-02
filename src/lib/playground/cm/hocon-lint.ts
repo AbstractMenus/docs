@@ -15,6 +15,17 @@ import type { Diagnostic } from '../hocon/types';
  */
 export const setWarningSquigglesEffect = StateEffect.define<boolean>();
 
+// Declared before the StateField that references it - StateField.provide is
+// evaluated at module-init, which means the Facet must already exist or we
+// hit a `Cannot access ... before initialization` TDZ error.
+const warningSquigglesFacet = Facet.define<boolean, boolean>({
+  // Only the StateField below feeds this facet today. If a future extension
+  // also writes the facet, treat any opt-out as authoritative (any `false`
+  // wins) so explicit "hide" preferences aren't silently overridden by
+  // late-loaded extensions defaulting to `true`.
+  combine: (values) => values.every((v) => v),
+});
+
 const warningSquigglesField = StateField.define<boolean>({
   create: () => true,
   update(value, tr) {
@@ -24,14 +35,6 @@ const warningSquigglesField = StateField.define<boolean>({
     return value;
   },
   provide: (f) => warningSquigglesFacet.from(f),
-});
-
-const warningSquigglesFacet = Facet.define<boolean, boolean>({
-  // Only the StateField above feeds this facet today. If a future extension
-  // also writes the facet, treat any opt-out as authoritative (any `false`
-  // wins) so explicit "hide" preferences aren't silently overridden by
-  // late-loaded extensions defaulting to `true`.
-  combine: (values) => values.every((v) => v),
 });
 
 export function isWarningSquigglesEnabled(state: EditorState): boolean {
