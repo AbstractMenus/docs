@@ -1,4 +1,5 @@
-import type { TokenWithPos, Node, Entry, Loc, Diagnostic, ParseResult } from './types';
+import type { TokenWithPos, Node, Entry, Loc, Diagnostic, DiagCode, DiagParams, ParseResult } from './types';
+import { formatDiagMessage } from './diag';
 
 export function parse(tokens: TokenWithPos[]): ParseResult {
   const meaningful = tokens.filter((t) => t.type !== 'comment');
@@ -30,11 +31,13 @@ class Parser {
     }
   }
 
-  emitError(msg: string, t: TokenWithPos | null): void {
+  emitError(code: DiagCode, params: DiagParams | undefined, t: TokenWithPos | null): void {
     const loc = t ?? this.toks[this.toks.length - 1] ?? this.makeFakeToken();
     this.diagnostics.push({
       severity: 'error',
-      message: msg,
+      code,
+      params,
+      message: formatDiagMessage(code, params),
       line: loc.line,
       column: loc.column,
       offset: loc.offset,
@@ -42,11 +45,13 @@ class Parser {
     });
   }
 
-  emitWarning(msg: string, t: TokenWithPos | null): void {
+  emitWarning(code: DiagCode, params: DiagParams | undefined, t: TokenWithPos | null): void {
     const loc = t ?? this.makeFakeToken();
     this.diagnostics.push({
       severity: 'warning',
-      message: msg,
+      code,
+      params,
+      message: formatDiagMessage(code, params),
       line: loc.line,
       column: loc.column,
       offset: loc.offset,
@@ -82,13 +87,13 @@ class Parser {
       while (this.peek() && this.peek()!.type !== 'newline') {
         this.consume();
       }
-      this.emitWarning('include is not supported in playground', first);
+      this.emitWarning('parser.include-not-supported', undefined, first);
       return null;
     }
 
     const path = this.parseKeyPath();
     if (path.length === 0) {
-      this.emitError(`Unexpected token \`${first.text}\``, first);
+      this.emitError('parser.unexpected-token', { text: first.text }, first);
       this.pos++;
       return null;
     }
@@ -102,7 +107,7 @@ class Parser {
       this.pos++;
       const v = this.parseValue();
       if (!v) {
-        this.emitError(`Expected a value after \`${sep.text}\``, sep);
+        this.emitError('parser.expected-value-after-sep', { sep: sep.text }, sep);
         return null;
       }
       value = v;
@@ -111,7 +116,7 @@ class Parser {
       if (!obj) return null;
       value = obj;
     } else {
-      this.emitError(`Expected \`=\`, \`:\`, or \`{\` after key`, sep ?? first);
+      this.emitError('parser.expected-key-separator', undefined, sep ?? first);
       return null;
     }
 
@@ -202,7 +207,7 @@ class Parser {
     }
     const close = this.peek();
     if (!close || close.text !== '}') {
-      this.emitError('Expected closing `}`', open);
+      this.emitError('parser.expected-closing-brace', undefined, open);
       return { kind: 'object', entries, loc: this.locFromTo(open, this.toks[this.pos - 1] ?? open) };
     }
     this.pos++;
@@ -224,7 +229,8 @@ class Parser {
         const next = this.peek();
         if (next && next.text !== ',' && next.text !== ';' && next.text !== ']' && next.type !== 'newline') {
           this.emitError(
-            `Unexpected \`${next.text}\` after array element. Use \`,\` or newline between items, and wrap key/value pairs in \`{ ... }\`.`,
+            'parser.unexpected-after-array-element',
+            { text: next.text },
             next,
           );
           this.pos++;
@@ -234,7 +240,8 @@ class Parser {
         // identifier that belongs in an object). Emit an error and skip.
         const t = this.peek()!;
         this.emitError(
-          `Unexpected \`${t.text}\` in array. Expected a value or \`{ ... }\` object literal.`,
+          'parser.unexpected-in-array',
+          { text: t.text },
           t,
         );
         this.pos++;
@@ -243,7 +250,7 @@ class Parser {
     }
     const close = this.peek();
     if (!close || close.text !== ']') {
-      this.emitError('Expected closing `]`', open);
+      this.emitError('parser.expected-closing-bracket', undefined, open);
       return { kind: 'array', items, loc: this.locFromTo(open, this.toks[this.pos - 1] ?? open) };
     }
     this.pos++;

@@ -1,4 +1,5 @@
 import type { Diagnostic } from './hocon/types';
+import { formatDiagMessage } from './hocon/diag';
 import { t, type TranslationKey } from './i18n';
 
 type JumpListener = (line: number, column: number) => void;
@@ -34,7 +35,11 @@ export function createValidationPanel(
       loc.textContent = `${d.line}:${d.column}`;
       const msg = document.createElement('span');
       msg.className = 'pg-diag-msg';
-      msg.textContent = d.message;
+      // Re-render via the active locale every time. Diagnostics carry the
+      // pre-formatted English message too, but the locale may have changed
+      // since emit time (rare in practice - lang switch reloads the page -
+      // but cheap to do right).
+      msg.textContent = formatDiagMessage(d.code, d.params);
       btn.appendChild(loc);
       btn.appendChild(document.createTextNode(' '));
       btn.appendChild(msg);

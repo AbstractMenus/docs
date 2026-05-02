@@ -1,4 +1,5 @@
 import type { Node, Entry, Diagnostic, ResolveResult } from './types';
+import { formatDiagMessage } from './diag';
 
 export function resolve(root: Node): ResolveResult {
   const warnings: Diagnostic[] = [];
@@ -78,7 +79,9 @@ function resolveNode(
       if (visiting.has(key)) {
         warnings.push({
           severity: 'warning',
-          message: `Circular substitution \`\${${key}}\``,
+          code: 'resolve.circular-substitution',
+          params: { ref: '${' + key + '}' },
+          message: formatDiagMessage('resolve.circular-substitution', { ref: '${' + key + '}' }),
           line: n.loc.line,
           column: n.loc.column,
           offset: n.loc.offset,
@@ -91,7 +94,9 @@ function resolveNode(
         if (!n.optional) {
           warnings.push({
             severity: 'warning',
-            message: `Unresolved substitution \`\${${key}}\``,
+            code: 'resolve.unresolved-substitution',
+            params: { ref: '${' + key + '}' },
+            message: formatDiagMessage('resolve.unresolved-substitution', { ref: '${' + key + '}' }),
             line: n.loc.line,
             column: n.loc.column,
             offset: n.loc.offset,

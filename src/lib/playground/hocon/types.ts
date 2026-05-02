@@ -17,8 +17,43 @@ export interface Loc {
   length: number;
 }
 
+/**
+ * Stable identifier for a diagnostic kind. The localized message lives in
+ * the translation table under `diag.<code>`. Adding a new emitter site
+ * means: add a member here + add the matching key to all translation files
+ * (a unit test asserts the en table has every code).
+ */
+export type DiagCode =
+  // parser.ts
+  | 'parser.include-not-supported'
+  | 'parser.unexpected-token'
+  | 'parser.expected-value-after-sep'
+  | 'parser.expected-key-separator'
+  | 'parser.expected-closing-brace'
+  | 'parser.unexpected-after-array-element'
+  | 'parser.unexpected-in-array'
+  | 'parser.expected-closing-bracket'
+  // resolve.ts
+  | 'resolve.circular-substitution'
+  | 'resolve.unresolved-substitution'
+  // unknown-keys.ts
+  | 'validate.unknown-key'
+  | 'validate.expected-list-of-objects';
+
+export type DiagParams = Record<string, string | number>;
+
+/**
+ * `code` is the canonical identifier; `params` are the named values
+ * interpolated into the localized template. `message` is the pre-formatted
+ * string in the active locale - emitted at construction time so consumers
+ * that don't know about i18n (like the CodeMirror linter overlay) can keep
+ * reading it directly. ValidationPanel re-renders via `t()` on every
+ * analysis tick, so locale changes still flow through.
+ */
 export interface Diagnostic {
   severity: 'error' | 'warning';
+  code: DiagCode;
+  params?: DiagParams;
   message: string;
   line: number;
   column: number;

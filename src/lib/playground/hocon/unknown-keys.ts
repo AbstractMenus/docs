@@ -1,6 +1,7 @@
 import type { Node, Diagnostic } from './types';
 import type { Scope } from '../catalog/types';
 import { getKeysForScope, findKeyDef, childScopeOf } from '../catalog';
+import { formatDiagMessage } from './diag';
 
 /**
  * Walk the AST and emit a warning for every entry whose key is not in the
@@ -26,9 +27,12 @@ function walkObject(
     if (!firstKey) continue;
 
     if (known && !known.has(firstKey)) {
+      const params = { key: firstKey, scope };
       warnings.push({
         severity: 'warning',
-        message: `Unknown key \`${firstKey}\` in ${scope} scope`,
+        code: 'validate.unknown-key',
+        params,
+        message: formatDiagMessage('validate.unknown-key', params),
         line: entry.loc.line,
         column: entry.loc.column,
         offset: entry.loc.offset,
@@ -75,9 +79,12 @@ function visitValue(
       if (item.kind === 'object') {
         walkObject(item, scope, warnings);
       } else if (expectListOfObjects && item.kind !== 'substitution' && item.kind !== 'include') {
+        const params = { parentKey, itemKind: item.kind };
         warnings.push({
           severity: 'warning',
-          message: `\`${parentKey}\` expects a list of objects, found ${item.kind}`,
+          code: 'validate.expected-list-of-objects',
+          params,
+          message: formatDiagMessage('validate.expected-list-of-objects', params),
           line: item.loc.line,
           column: item.loc.column,
           offset: item.loc.offset,
