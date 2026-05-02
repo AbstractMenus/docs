@@ -4,6 +4,7 @@ import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirro
 import { bracketMatching, indentOnInput, foldGutter, foldKeymap } from '@codemirror/language';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
 import { closeBrackets, closeBracketsKeymap, completionStatus, startCompletion } from '@codemirror/autocomplete';
+import { colorSwatches } from './cm/color-widget';
 
 const PAIRS: Record<string, string> = { '{': '}', '[': ']', '(': ')' };
 
@@ -117,6 +118,7 @@ export function createEditor(opts: CreateEditorOptions): EditorApi {
     bracketMatching(),
     indentOnInput(),
     closeBrackets(),
+    colorSwatches(),
     Prec.highest(smartEnter),
     keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, ...searchKeymap, ...foldKeymap, indentWithTab]),
     EditorView.lineWrapping,
