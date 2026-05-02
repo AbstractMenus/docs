@@ -1,4 +1,4 @@
-import { autocompletion } from '@codemirror/autocomplete';
+import { autocompletion, startCompletion } from '@codemirror/autocomplete';
 import { EditorView, keymap } from '@codemirror/view';
 import type { EditorState } from '@codemirror/state';
 import { detectScope } from './cm/scope';
@@ -84,14 +84,27 @@ export class PlaygroundApp {
   private tutorialPanelApi: TutorialPanelApi | null = null;
 
   private currentLesson: Lesson | null = null;
-  private tutorialMode = false;
   private analysisTimer: ReturnType<typeof setTimeout> | undefined;
   private historyTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** "In tutorial mode" is encoded by `currentLesson != null`; this getter
+   *  exists only so the rest of the class reads the intent, not the trick. */
+  private get tutorialMode(): boolean {
+    return this.currentLesson !== null;
+  }
 
   constructor(root: HTMLElement) {
     this.dom = resolveDom(root);
   }
 
+  /**
+   * Order is load-bearing:
+   *  - setupPanels constructs the right-pane API objects that setupAnalysis
+   *    wires its callbacks into.
+   *  - setupEditor must run before any code touching `this.editor`.
+   *  - setupToolbar.bindModeSwitch attaches the listener applyInitialUrlMode
+   *    triggers via switchMode().
+   */
   start(): void {
     this.setupPanels();
     this.setupEditor();
@@ -182,8 +195,7 @@ export class PlaygroundApp {
     if (scopeHint) {
       scopeHint.addEventListener('click', () => {
         this.editor.view.focus();
-        // Lazy-import to avoid pulling startCompletion through if no hint exists
-        import('@codemirror/autocomplete').then((m) => m.startCompletion(this.editor.view));
+        startCompletion(this.editor.view);
       });
     }
   }
@@ -303,7 +315,6 @@ export class PlaygroundApp {
   }
 
   private enterTutorialMode(): void {
-    this.tutorialMode = true;
     const url = new URL(window.location.href);
     const lessonId = url.searchParams.get('lesson') ?? loadProgress().current ?? firstLessonId();
     this.loadLesson(lessonId || firstLessonId());
@@ -311,7 +322,6 @@ export class PlaygroundApp {
   }
 
   private leaveTutorialMode(): void {
-    this.tutorialMode = false;
     this.currentLesson = null;
     setUrlForMode('editor');
   }
@@ -388,23 +398,30 @@ export class PlaygroundApp {
   private bindModeSwitch(): void {
     const buttons = this.dom.root.querySelectorAll<HTMLButtonElement>('.pg-mode-btn');
     for (const btn of buttons) {
-      btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode as PlaygroundMode;
-        for (const b of buttons) {
-          const isActive = b === btn;
-          b.classList.toggle('is-active', isActive);
-          b.setAttribute('aria-selected', String(isActive));
-        }
-        if (mode === 'tutorial') {
-          this.panels.showTab('tutorial');
-          this.panels.activate('tutorial');
-          this.enterTutorialMode();
-        } else {
-          this.panels.hideTab('tutorial');
-          this.panels.activate('errors' as TabId);
-          this.leaveTutorialMode();
-        }
-      });
+      btn.addEventListener('click', () => this.switchMode(btn.dataset.mode as PlaygroundMode));
+    }
+  }
+
+  /**
+   * Single source of truth for mode switching. Init code (URL `?mode=tutorial`)
+   * and user clicks both call this, so toolbar-button listener semantics
+   * never diverge from programmatic init.
+   */
+  private switchMode(mode: PlaygroundMode): void {
+    const buttons = this.dom.root.querySelectorAll<HTMLButtonElement>('.pg-mode-btn');
+    for (const b of buttons) {
+      const isActive = b.dataset.mode === mode;
+      b.classList.toggle('is-active', isActive);
+      b.setAttribute('aria-selected', String(isActive));
+    }
+    if (mode === 'tutorial') {
+      this.panels.showTab('tutorial');
+      this.panels.activate('tutorial');
+      this.enterTutorialMode();
+    } else {
+      this.panels.hideTab('tutorial');
+      this.panels.activate('errors' as TabId);
+      this.leaveTutorialMode();
     }
   }
 
@@ -480,10 +497,7 @@ export class PlaygroundApp {
 
   private applyInitialUrlMode(): void {
     const urlMode = new URL(window.location.href).searchParams.get('mode');
-    if (urlMode === 'tutorial') {
-      const tutBtn = this.dom.root.querySelector<HTMLButtonElement>('.pg-mode-btn[data-mode="tutorial"]');
-      tutBtn?.click();
-    }
+    if (urlMode === 'tutorial') this.switchMode('tutorial');
   }
 }
 

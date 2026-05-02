@@ -127,14 +127,23 @@ class Parser {
     const t = this.peek();
     if (!t) return [];
     // Quoted string acts as a single literal key, dots inside are NOT split.
-    // Per HOCON spec: `"a.b" = 1` is a top-level key named "a.b".
+    // Per HOCON spec: `"a.b" = 1` is a top-level key named "a.b". We strip
+    // the surrounding quotes only - escape sequences like \n stay literal so
+    // downstream consumers (catalog lookup, validateUnknownKeys) compare
+    // against the actual identifier characters the author typed.
     if (t.type === 'string') {
       this.pos++;
-      return [this.unquoteString(t.text)];
+      return [this.stripQuotesOnly(t.text)];
     }
     if (t.type !== 'key') return [];
     this.pos++;
     return t.text.split('.');
+  }
+
+  stripQuotesOnly(raw: string): string {
+    if (raw.startsWith('"""') && raw.endsWith('"""')) return raw.slice(3, -3);
+    if (raw.startsWith('"') && raw.endsWith('"')) return raw.slice(1, -1);
+    return raw;
   }
 
   parseValue(): Node | null {

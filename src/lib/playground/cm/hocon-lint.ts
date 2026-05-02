@@ -27,7 +27,11 @@ const warningSquigglesField = StateField.define<boolean>({
 });
 
 const warningSquigglesFacet = Facet.define<boolean, boolean>({
-  combine: (values) => (values.length > 0 ? values[values.length - 1] : true),
+  // Only the StateField above feeds this facet today. If a future extension
+  // also writes the facet, treat any opt-out as authoritative (any `false`
+  // wins) so explicit "hide" preferences aren't silently overridden by
+  // late-loaded extensions defaulting to `true`.
+  combine: (values) => values.every((v) => v),
 });
 
 export function isWarningSquigglesEnabled(state: EditorState): boolean {
@@ -35,8 +39,9 @@ export function isWarningSquigglesEnabled(state: EditorState): boolean {
 }
 
 export function setWarningSquigglesEnabled(view: EditorView, enabled: boolean): void {
+  // Order matters: dispatch must commit the new facet value before
+  // forceLinting reads it, otherwise the linter callback sees the old value.
   view.dispatch({ effects: setWarningSquigglesEffect.of(enabled) });
-  // Force re-run so squiggles update without waiting for the next doc edit.
   forceLinting(view);
 }
 
