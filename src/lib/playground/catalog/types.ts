@@ -11,6 +11,9 @@ export type Scope =
   | 'firework-effect'
   | 'potion-effect'
   | 'binding'
+  | 'item-list'
+  | 'binding-list'
+  | 'firework-effect-list'
   | 'unknown';
 
 export interface KeyDef {

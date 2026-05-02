@@ -1,10 +1,23 @@
-import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
+import { snippetCompletion, type Completion, type CompletionContext, type CompletionResult } from '@codemirror/autocomplete';
 import { getKeysForScope, getEnumValues, findKeyDef, type KeyDef } from '../catalog';
 import { detectScope } from './scope';
+import { hoconSnippets } from './snippets';
 
 export interface CatalogSourceOptions {
   fallbackSnippets?: Completion[];
 }
+
+/**
+ * In an array context (cursor inside `items = [│]`) the only legal element
+ * is an object literal of the matching shape - dumping all object fields
+ * here would just generate invalid HOCON. Map list-scopes to the snippet
+ * that inserts a skeleton.
+ */
+const LIST_SCOPE_TO_SNIPPET: Record<string, string> = {
+  'item-list': 'item',
+  'binding-list': 'binding',
+  'firework-effect-list': 'fireworkEffect',
+};
 
 export function createCatalogSource(opts: CatalogSourceOptions = {}) {
   return function catalogSource(context: CompletionContext): CompletionResult | null {
@@ -18,6 +31,20 @@ export function createCatalogSource(opts: CatalogSourceOptions = {}) {
     if (!word || (word.from === word.to && !context.explicit)) return null;
 
     const scope = detectScope(text, pos);
+
+    const skeletonName = LIST_SCOPE_TO_SNIPPET[scope];
+    if (skeletonName) {
+      const snip = hoconSnippets.find((s) => s.label === skeletonName);
+      if (snip) {
+        return {
+          from: word.from,
+          options: [snippetCompletion(snip.template, { label: snip.label, info: snip.info, type: 'snippet' })],
+          validFor: /^[\w-]*$/,
+        };
+      }
+      return null;
+    }
+
     const keyDefs = getKeysForScope(scope);
     const keyComps = keyDefs.map(keyToCompletion);
 

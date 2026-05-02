@@ -80,6 +80,16 @@ describe('detectScope', () => {
     expect(detectScope(text, text.length)).toBe('binding');
   });
 
+  test('inside items array but outside any object → item-list', () => {
+    const text = 'items = [\n  ';
+    expect(detectScope(text, text.length)).toBe('item-list');
+  });
+
+  test('inside bindings array but outside any object → binding-list', () => {
+    const text = 'bindings = [\n  ';
+    expect(detectScope(text, text.length)).toBe('binding-list');
+  });
+
   test('inside binding.props {} → item', () => {
     const text = 'bindings = [\n  {\n    props {\n      ';
     expect(detectScope(text, text.length)).toBe('item');

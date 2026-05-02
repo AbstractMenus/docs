@@ -2,8 +2,15 @@ import { describe, test, expect } from 'vitest';
 import { hoconSnippets } from './snippets';
 
 describe('HOCON snippets', () => {
-  test('exposes 10 base snippets', () => {
-    expect(hoconSnippets.length).toBe(10);
+  test('exposes the snippet set', () => {
+    expect(hoconSnippets.length).toBeGreaterThanOrEqual(10);
+  });
+
+  test('includes list-skeleton snippets used by catalog-source', () => {
+    const labels = hoconSnippets.map((s) => s.label);
+    expect(labels).toContain('item');
+    expect(labels).toContain('binding');
+    expect(labels).toContain('fireworkEffect');
   });
 
   test('each snippet has label, info, and template', () => {

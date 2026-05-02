@@ -80,7 +80,8 @@ export function detectScope(text: string, pos: number): Scope {
 
     if (frame.bracket === '[' && frame.key) {
       const def = findKeyDef(frame.key);
-      if (def?.childrenScope) return def.childrenScope;
+      const child = def?.childrenScope;
+      if (child) return arrayPositionScope(child);
       return 'unknown';
     }
 
@@ -103,4 +104,20 @@ export function detectScope(text: string, pos: number): Scope {
   }
 
   return 'menu-root';
+}
+
+/**
+ * When the cursor sits inside an array (between `[` and `{`/value), the
+ * meaningful suggestion is "an object literal of the right shape", not the
+ * keys that go inside that object. We map the element scope to a list-context
+ * scope so the completion source can offer a single skeleton snippet instead
+ * of dumping all object fields.
+ */
+function arrayPositionScope(elementScope: Scope): Scope {
+  switch (elementScope) {
+    case 'item': return 'item-list';
+    case 'binding': return 'binding-list';
+    case 'firework-effect': return 'firework-effect-list';
+    default: return elementScope;
+  }
 }

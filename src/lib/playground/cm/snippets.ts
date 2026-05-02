@@ -57,6 +57,16 @@ export const hoconSnippets: SnippetDef[] = [
     info: 'Close-menu action',
     template: '{ type = closeMenu }',
   },
+  {
+    label: 'binding',
+    info: 'Rules-gated property override (binding entry)',
+    template: '{\n  rules {\n    ${1:permission} = "${2:my.perm}"\n  }\n  props {\n    ${3:material} = ${4:DIAMOND}\n  }\n}',
+  },
+  {
+    label: 'fireworkEffect',
+    info: 'Firework effect descriptor',
+    template: '{\n  type = ${1:BALL}\n  colors = [${2:[255, 0, 0]}]\n  flicker = ${3:false}\n  trail = ${4:false}\n}',
+  },
 ];
 
 export function snippetCompletions(): Completion[] {
