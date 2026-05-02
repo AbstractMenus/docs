@@ -3,6 +3,7 @@ import { linter, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
 import { tokenizeText } from '../hocon/tokenize';
 import { parse } from '../hocon/parser';
 import { resolve } from '../hocon/resolve';
+import { validateUnknownKeys } from '../hocon/unknown-keys';
 import type { Diagnostic } from '../hocon/types';
 
 export function hoconLinter() {
@@ -10,7 +11,8 @@ export function hoconLinter() {
     const text = view.state.doc.toString();
     const r = parse(tokenizeText(text));
     const res = resolve(r.ast);
-    const all = [...r.diagnostics, ...res.warnings];
+    const unknown = validateUnknownKeys(r.ast);
+    const all = [...r.diagnostics, ...res.warnings, ...unknown];
     return all.map((d) => toCm(view, d, text.length));
   }, { delay: 300 });
 }

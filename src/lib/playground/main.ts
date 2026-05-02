@@ -15,6 +15,7 @@ import { formatHocon } from './cm/format';
 import { tokenizeText } from './hocon/tokenize';
 import { parse } from './hocon/parser';
 import { resolve } from './hocon/resolve';
+import { validateUnknownKeys } from './hocon/unknown-keys';
 import { createValidationPanel } from './ValidationPanel';
 import { createResolvedJsonPanel } from './ResolvedJsonPanel';
 import { createHistoryDropdown } from './HistoryDropdown';
@@ -99,7 +100,8 @@ export function boot(): void {
       const text = editorRef.getValue();
       const r = parse(tokenizeText(text));
       const res = resolve(r.ast);
-      const all = [...r.diagnostics, ...res.warnings];
+      const unknown = validateUnknownKeys(r.ast);
+      const all = [...r.diagnostics, ...res.warnings, ...unknown];
       validation?.update(all);
       resolved?.update(res.resolved);
       if (status) {
