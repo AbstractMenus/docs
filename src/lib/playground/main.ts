@@ -1,6 +1,7 @@
 import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
+import { hoconLanguage } from './cm/hocon-language';
 import type { PlaygroundMode, TabId } from './types';
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
@@ -28,6 +29,7 @@ export function boot(): void {
   const editor = createEditor({
     parent: editorHost,
     initialContent: DEFAULT_CONTENT,
+    extensions: [...hoconLanguage()],
     onChange: () => {
       if (status) status.textContent = 'edited';
     },

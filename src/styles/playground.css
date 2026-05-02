@@ -230,6 +230,35 @@ html, body {
 }
 .pg-btn-secondary { background: var(--pg-bg-elev-2); }
 
+/* HOCON syntax highlighting (CM6 highlightStyle classes) */
+.cm-editor .cm-tk-comment      { color: #8b949e; font-style: italic; }
+.cm-editor .cm-tk-string       { color: #a5d6ff; }
+.cm-editor .cm-tk-substitution { color: #f0b070; }
+.cm-editor .cm-tk-key          { color: #79c0ff; }
+.cm-editor .cm-tk-operator     { color: #ff7b72; }
+.cm-editor .cm-tk-bracket      { color: #c9d1d9; }
+.cm-editor .cm-tk-punctuation  { color: #c9d1d9; }
+.cm-editor .cm-tk-bool         { color: #d2a8ff; }
+.cm-editor .cm-tk-null         { color: #d2a8ff; }
+.cm-editor .cm-tk-keyword      { color: #ff7b72; font-weight: 600; }
+.cm-editor .cm-tk-include-fn   { color: #f0b070; }
+.cm-editor .cm-tk-number       { color: #79c0ff; }
+.cm-editor .cm-tk-duration     { color: #79c0ff; }
+.cm-editor .cm-tk-value        { color: #c9d1d9; }
+
+:root[data-theme="light"] .cm-editor .cm-tk-comment      { color: #6e7781; }
+:root[data-theme="light"] .cm-editor .cm-tk-string       { color: #0a3069; }
+:root[data-theme="light"] .cm-editor .cm-tk-substitution { color: #953800; }
+:root[data-theme="light"] .cm-editor .cm-tk-key          { color: #0550ae; }
+:root[data-theme="light"] .cm-editor .cm-tk-operator     { color: #cf222e; }
+:root[data-theme="light"] .cm-editor .cm-tk-bool         { color: #8250df; }
+:root[data-theme="light"] .cm-editor .cm-tk-null         { color: #8250df; }
+:root[data-theme="light"] .cm-editor .cm-tk-keyword      { color: #cf222e; font-weight: 600; }
+:root[data-theme="light"] .cm-editor .cm-tk-include-fn   { color: #953800; }
+:root[data-theme="light"] .cm-editor .cm-tk-number       { color: #0550ae; }
+:root[data-theme="light"] .cm-editor .cm-tk-duration     { color: #0550ae; }
+:root[data-theme="light"] .cm-editor .cm-tk-value        { color: #1f2328; }
+
 /* Mobile: stack panes vertically */
 @media (max-width: 768px) {
   .pg-main {
