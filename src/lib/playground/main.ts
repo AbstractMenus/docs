@@ -1,5 +1,8 @@
-import { autocompletion } from '@codemirror/autocomplete';
+import { autocompletion, startCompletion } from '@codemirror/autocomplete';
 import { EditorView, keymap } from '@codemirror/view';
+import type { EditorState } from '@codemirror/state';
+import { detectScope } from './cm/scope';
+import { getKeysForScope } from './catalog';
 import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
@@ -57,11 +60,14 @@ export function boot(): void {
   }
 
   const status = root.querySelector<HTMLElement>('[data-pg-status]');
+  const scopeHintEl = root.querySelector<HTMLElement>('[data-pg-scope-hint]');
   const errorsEl = root.querySelector<HTMLElement>('[data-panel="errors"]');
   const jsonEl = root.querySelector<HTMLElement>('[data-panel="json"]');
   const historyHost = root.querySelector<HTMLElement>('[data-pg-history]');
 
   const tutorialEl = root.querySelector<HTMLElement>('[data-panel="tutorial"]');
+
+  const scopeShortcut = navigator.platform.includes('Mac') ? '⌘+space' : 'Ctrl+space';
 
   const validation = errorsEl ? createValidationPanel(errorsEl) : null;
   const resolved = jsonEl ? createResolvedJsonPanel(jsonEl) : null;
@@ -106,6 +112,15 @@ export function boot(): void {
     }, 300);
   }
 
+  function updateScopeHint(state: EditorState): void {
+    if (!scopeHintEl) return;
+    const text = state.doc.toString();
+    const pos = state.selection.main.head;
+    const scope = detectScope(text, pos);
+    const count = getKeysForScope(scope).length;
+    scopeHintEl.textContent = `${scope} · ${count} key${count === 1 ? '' : 's'} · ${scopeShortcut}`;
+  }
+
   const editor = createEditor({
     parent: editorHost,
     initialContent: initial,
@@ -114,6 +129,9 @@ export function boot(): void {
       hoconLinter(),
       hoverDocs(),
       autocompletion({ override: [catalogSource] }),
+      EditorView.updateListener.of((u) => {
+        if (u.selectionSet || u.docChanged) updateScopeHint(u.state);
+      }),
       keymap.of([
         {
           key: 'Mod-Shift-f',

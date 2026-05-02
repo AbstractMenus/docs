@@ -306,6 +306,29 @@ html, body {
 .pg-footer-status {
   font-family: var(--pg-mono);
 }
+.pg-footer-scope {
+  font: inherit;
+  font-size: 0.78rem;
+  font-family: var(--pg-mono);
+  color: var(--pg-fg-muted);
+  background: transparent;
+  border: 0;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.pg-footer-scope:hover {
+  background: var(--pg-bg-elev-2);
+  color: var(--pg-fg);
+}
+.pg-footer-scope kbd {
+  background: var(--pg-bg-elev-2);
+  border: 1px solid var(--pg-border);
+  border-radius: 3px;
+  padding: 0 0.25rem;
+  font-size: 0.7rem;
+  margin-left: 0.3rem;
+}
 .pg-footer-actions {
   margin-left: auto;
   display: flex;

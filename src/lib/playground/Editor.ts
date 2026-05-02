@@ -3,9 +3,15 @@ import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLi
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { bracketMatching, indentOnInput, foldGutter, foldKeymap } from '@codemirror/language';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
-import { closeBrackets, closeBracketsKeymap, completionStatus } from '@codemirror/autocomplete';
+import { closeBrackets, closeBracketsKeymap, completionStatus, startCompletion } from '@codemirror/autocomplete';
 
 const PAIRS: Record<string, string> = { '{': '}', '[': ']', '(': ')' };
+
+function scheduleCompletion(view: EditorView): void {
+  // Defer past the current dispatch so the autocomplete plugin sees the
+  // updated doc state.
+  setTimeout(() => startCompletion(view), 0);
+}
 
 function stripStringsAndComments(line: string): string {
   let out = '';
@@ -65,6 +71,8 @@ const smartEnter = keymap.of([
           selection: { anchor: sel.from + 1 + inner.length },
           userEvent: 'input',
         });
+        // Brand-new empty body of a block - perfect spot for "what keys can I put here?"
+        scheduleCompletion(view);
         return true;
       }
 
@@ -78,6 +86,7 @@ const smartEnter = keymap.of([
         selection: { anchor: sel.from + 1 + newIndent.length },
         userEvent: 'input',
       });
+      if (opensBlock) scheduleCompletion(view);
       return true;
     },
   },

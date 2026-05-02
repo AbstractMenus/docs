@@ -45,24 +45,9 @@ const hoconParser: StreamParser<TokenState> = {
 
   tokenTable: TAG_TABLE,
 
-  indent(_state, textAfter, context) {
-    const lineNo = context.state.doc.lineAt(context.pos).number;
-    const prevLineNo = lineNo - 1;
-    if (prevLineNo < 1) return 0;
-    const prevLine = context.state.doc.line(prevLineNo);
-    const prevText = stripStringsAndComments(prevLine.text);
-    const prevIndent = /^[ \t]*/.exec(prevLine.text)![0].length;
-    const indentUnit = context.unit;
-
-    const trimmed = prevText.trimEnd();
-    const opens = /[{[]$/.test(trimmed);
-    const closesNext = /^[ \t]*[}\]]/.test(textAfter);
-
-    let result = prevIndent;
-    if (opens) result += indentUnit;
-    if (closesNext) result = Math.max(0, result - indentUnit);
-    return result;
-  },
+  // Enter behavior is fully owned by smartEnter in Editor.ts; we don't
+  // implement an indent callback here since IndentContext.pos was inconsistent
+  // and the custom handler gives more predictable results anyway.
 
   languageData: {
     commentTokens: { line: '#' },
@@ -70,28 +55,6 @@ const hoconParser: StreamParser<TokenState> = {
     indentOnInput: /^\s*[}\]]$/,
   },
 };
-
-/**
- * Strip string literals and comments from a line so we don't count brackets
- * inside `"..."` or after `#`/`//`.
- */
-function stripStringsAndComments(line: string): string {
-  let out = '';
-  let inString = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (inString) {
-      if (c === '\\') { i++; continue; }
-      if (c === '"') inString = false;
-      continue;
-    }
-    if (c === '"') { inString = true; continue; }
-    if (c === '#') break;
-    if (c === '/' && line[i + 1] === '/') break;
-    out += c;
-  }
-  return out;
-}
 
 const highlightStyle = HighlightStyle.define([
   { tag: tags.lineComment, class: 'cm-tk-comment' },
