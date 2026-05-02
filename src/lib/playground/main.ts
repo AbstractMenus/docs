@@ -18,6 +18,10 @@ import { createHistoryDropdown } from './HistoryDropdown';
 import { showToast } from './Toast';
 import { encodeShare, decodeShare } from './sharing/share-url';
 import { loadHistory, pushSnapshot } from './sharing/history';
+import { listLessons, getLesson, firstLessonId } from './tutorial/lessons';
+import { runCheck, loadProgress, saveProgress, markCompleted, markSkipped, bumpHint } from './tutorial/engine';
+import { createTutorialPanel } from './TutorialPanel';
+import type { Lesson } from './tutorial/types';
 import type { PlaygroundMode, TabId } from './types';
 
 const SNIPPETS = snippetCompletions();
@@ -57,11 +61,17 @@ export function boot(): void {
   const jsonEl = root.querySelector<HTMLElement>('[data-panel="json"]');
   const historyHost = root.querySelector<HTMLElement>('[data-pg-history]');
 
+  const tutorialEl = root.querySelector<HTMLElement>('[data-panel="tutorial"]');
+
   const validation = errorsEl ? createValidationPanel(errorsEl) : null;
   const resolved = jsonEl ? createResolvedJsonPanel(jsonEl) : null;
   const historyDropdown = historyHost ? createHistoryDropdown(historyHost) : null;
+  const tutorial = tutorialEl ? createTutorialPanel(tutorialEl) : null;
 
   const initial = pickInitialContent();
+
+  let currentLesson: Lesson | null = null;
+  let tutorialMode = false;
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   let historyTimer: ReturnType<typeof setTimeout> | undefined;
@@ -122,9 +132,63 @@ export function boot(): void {
     onChange: () => {
       refreshAnalysis();
       snapshotHistory();
+      refreshTutorial();
     },
   });
   editorRef = editor;
+
+  function refreshTutorial(): void {
+    if (!tutorialMode || !currentLesson || !tutorial) return;
+    const passed = runCheck(editor.getValue(), currentLesson.check);
+    tutorial.setPassed(passed);
+  }
+
+  function loadLesson(id: string): void {
+    if (!tutorial) return;
+    const lesson = getLesson(id);
+    if (!lesson) {
+      tutorial.showCompleted("You've finished every lesson. Try the editor mode now.");
+      currentLesson = null;
+      return;
+    }
+    currentLesson = lesson;
+    const progress = loadProgress();
+    saveProgress({ ...progress, current: id });
+    const hintsUsed = progress.hintsUsed[id] ?? 0;
+    const passed = runCheck(lesson.starter, lesson.check);
+    tutorial.showLesson(lesson, { hintsUsed, passed });
+    editor.setValue(lesson.starter);
+    setUrlForLesson(id);
+  }
+
+  function nextLesson(currentId: string): void {
+    const lessons = listLessons();
+    const idx = lessons.findIndex((l) => l.id === currentId);
+    const next = lessons[idx + 1];
+    if (next) loadLesson(next.id);
+    else tutorial?.showCompleted("You've finished every lesson. Try the editor mode now.");
+  }
+
+  tutorial?.onHint(() => {
+    if (!currentLesson) return;
+    const p = bumpHint(loadProgress(), currentLesson.id);
+    saveProgress(p);
+    loadLesson(currentLesson.id);
+  });
+  tutorial?.onReset(() => {
+    if (!currentLesson) return;
+    editor.setValue(currentLesson.starter);
+  });
+  tutorial?.onSkip(() => {
+    if (!currentLesson) return;
+    saveProgress(markSkipped(loadProgress(), currentLesson.id));
+    nextLesson(currentLesson.id);
+  });
+  tutorial?.onNext(() => {
+    if (!currentLesson) return;
+    saveProgress(markCompleted(loadProgress(), currentLesson.id));
+    nextLesson(currentLesson.id);
+  });
 
   historyDropdown?.update(loadHistory());
   historyDropdown?.onSelect((content) => {
@@ -150,14 +214,52 @@ export function boot(): void {
   panels.bindClicks();
   panels.hideTab('tutorial');
 
-  bindModeSwitch(root, panels);
+  bindModeSwitch(root, panels, {
+    onEnterTutorial: () => {
+      tutorialMode = true;
+      const url = new URL(window.location.href);
+      const lessonId = url.searchParams.get('lesson') ?? loadProgress().current ?? firstLessonId();
+      loadLesson(lessonId || firstLessonId());
+      setUrlForMode('tutorial');
+    },
+    onLeaveTutorial: () => {
+      tutorialMode = false;
+      currentLesson = null;
+      setUrlForMode('editor');
+    },
+  });
   bindThemeToggle(root);
   bindDivider(root);
   bindFormatButton(root, editor);
   bindHistoryToggle(root);
   bindShareButton(root, editor, historyDropdown);
 
+  // Initial mode from URL (?mode=tutorial)
+  const urlMode = new URL(window.location.href).searchParams.get('mode');
+  if (urlMode === 'tutorial') {
+    const tutBtn = root.querySelector<HTMLButtonElement>('.pg-mode-btn[data-mode="tutorial"]');
+    tutBtn?.click();
+  }
+
   (window as unknown as { __pg?: unknown }).__pg = { editor, panels };
+}
+
+function setUrlForMode(mode: PlaygroundMode): void {
+  const url = new URL(window.location.href);
+  if (mode === 'tutorial') {
+    url.searchParams.set('mode', 'tutorial');
+  } else {
+    url.searchParams.delete('mode');
+    url.searchParams.delete('lesson');
+  }
+  history.replaceState(null, '', url.toString());
+}
+
+function setUrlForLesson(id: string): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('mode', 'tutorial');
+  url.searchParams.set('lesson', id);
+  history.replaceState(null, '', url.toString());
 }
 
 function pickInitialContent(): string {
@@ -241,7 +343,16 @@ function bindDivider(root: HTMLElement): void {
   });
 }
 
-function bindModeSwitch(root: HTMLElement, panels: ReturnType<typeof createPanels>): void {
+interface ModeCallbacks {
+  onEnterTutorial?(): void;
+  onLeaveTutorial?(): void;
+}
+
+function bindModeSwitch(
+  root: HTMLElement,
+  panels: ReturnType<typeof createPanels>,
+  cb: ModeCallbacks = {},
+): void {
   const buttons = root.querySelectorAll<HTMLButtonElement>('.pg-mode-btn');
   for (const btn of buttons) {
     btn.addEventListener('click', () => {
@@ -254,9 +365,11 @@ function bindModeSwitch(root: HTMLElement, panels: ReturnType<typeof createPanel
       if (mode === 'tutorial') {
         panels.showTab('tutorial');
         panels.activate('tutorial');
+        cb.onEnterTutorial?.();
       } else {
         panels.hideTab('tutorial');
         panels.activate('errors' as TabId);
+        cb.onLeaveTutorial?.();
       }
     });
   }
