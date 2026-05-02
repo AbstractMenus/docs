@@ -74,8 +74,14 @@ const BASE = import.meta.env.BASE_URL;
       <footer class="pg-footer">
         <span class="pg-footer-status" data-pg-status>ready</span>
         <div class="pg-footer-actions">
-          <button type="button" class="pg-btn pg-btn-secondary" data-action="format" disabled title="Available at M.4">Format</button>
-          <button type="button" class="pg-btn pg-btn-secondary" data-action="share" disabled title="Available at M.5">Share</button>
+          <div class="pg-history-wrap" data-pg-history-wrap>
+            <button type="button" class="pg-btn pg-btn-secondary" data-action="history-toggle">
+              History
+            </button>
+            <div class="pg-history-pop" data-pg-history hidden></div>
+          </div>
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="format" disabled>Format</button>
+          <button type="button" class="pg-btn pg-btn-secondary" data-action="share">Share</button>
         </div>
       </footer>
     </div>
