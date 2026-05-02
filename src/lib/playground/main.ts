@@ -3,6 +3,7 @@ import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
+import { hoconLinter } from './cm/hocon-lint';
 import { snippetCompletions } from './cm/snippets';
 import type { PlaygroundMode, TabId } from './types';
 
@@ -45,6 +46,7 @@ export function boot(): void {
     initialContent: DEFAULT_CONTENT,
     extensions: [
       ...hoconLanguage(),
+      hoconLinter(),
       autocompletion({ override: [hoconCompletions] }),
     ],
     onChange: () => {
