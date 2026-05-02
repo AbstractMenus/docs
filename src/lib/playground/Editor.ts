@@ -3,7 +3,7 @@ import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLi
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { bracketMatching, indentOnInput, foldGutter, foldKeymap } from '@codemirror/language';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
-import { closeBrackets, closeBracketsKeymap, completionStatus, startCompletion } from '@codemirror/autocomplete';
+import { closeBrackets, closeBracketsKeymap, completionKeymap, completionStatus, startCompletion } from '@codemirror/autocomplete';
 import { colorSwatches } from './cm/color-widget';
 
 const PAIRS: Record<string, string> = { '{': '}', '[': ']', '(': ')' };
@@ -120,7 +120,15 @@ export function createEditor(opts: CreateEditorOptions): EditorApi {
     closeBrackets(),
     colorSwatches(),
     Prec.highest(smartEnter),
-    keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, ...searchKeymap, ...foldKeymap, indentWithTab]),
+    keymap.of([
+      ...closeBracketsKeymap,
+      ...defaultKeymap,
+      ...historyKeymap,
+      ...searchKeymap,
+      ...foldKeymap,
+      ...completionKeymap, // Ctrl-Space, Esc, Enter to accept, etc.
+      indentWithTab,
+    ]),
     EditorView.lineWrapping,
     EditorView.updateListener.of((u) => {
       if (u.docChanged && opts.onChange) {

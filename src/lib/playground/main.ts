@@ -71,7 +71,9 @@ export function boot(): void {
 
   const tutorialEl = root.querySelector<HTMLElement>('[data-panel="tutorial"]');
 
-  const scopeShortcut = navigator.platform.includes('Mac') ? '⌘+space' : 'Ctrl+space';
+  // Ctrl+Space on every platform - Cmd+Space on macOS is system Spotlight,
+  // never reaches the page. CM6 wires this binding via completionKeymap.
+  const scopeShortcut = 'Ctrl+space';
 
   const errorsPanel = errorsEl ? createValidationPanel(errorsEl) : null;
   const warningsPanel = warningsEl ? createValidationPanel(warningsEl) : null;
