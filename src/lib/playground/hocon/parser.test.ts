@@ -155,6 +155,35 @@ describe('parser - errors', () => {
     expect(r.diagnostics.some((d) => d.severity === 'error' && /after array element/i.test(d.message))).toBe(true);
   });
 
+  test('quoted dotted key is a single literal key, not a path', () => {
+    const r = parseString('"a.b" = 1');
+    expect(r.diagnostics).toEqual([]);
+    const e = getEntries(r.ast);
+    expect(e[0].path).toEqual(['a.b']);
+  });
+
+  test('triple-quoted string value parses', () => {
+    const r = parseString('s = """multi"""');
+    expect(r.diagnostics).toEqual([]);
+    const e = getEntries(r.ast);
+    expect(e[0].value.kind).toBe('string');
+    if (e[0].value.kind === 'string') {
+      expect(e[0].value.value).toBe('multi');
+    }
+  });
+
+  test('trailing comma in array is harmless', () => {
+    const r = parseString('xs = [1, 2, 3,]');
+    expect(r.diagnostics.filter((d) => d.severity === 'error')).toEqual([]);
+  });
+
+  test('self-referential substitution parses', () => {
+    const r = parseString('a = ${a}');
+    expect(r.diagnostics).toEqual([]);
+    const v = getEntries(r.ast)[0].value;
+    expect(v.kind).toBe('substitution');
+  });
+
   test('plain numbers list passes (no false-positive)', () => {
     const r = parseString('xs = [1, 2, 3]');
     expect(r.diagnostics.filter((d) => d.severity === 'error')).toEqual([]);

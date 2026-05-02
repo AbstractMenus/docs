@@ -99,4 +99,21 @@ describe('detectScope', () => {
     const text = 'myCustomBlock {\n  ';
     expect(detectScope(text, text.length)).toBe('unknown');
   });
+
+  test('cursor inside triple-quoted string returns outer scope', () => {
+    // The string body, including the `{` inside, should not open a frame.
+    const text = 'items = [{ name = """has { brace""" }]';
+    const cursorInString = text.indexOf('has') + 1;
+    expect(detectScope(text, cursorInString)).toBe('item');
+  });
+
+  test('cursor inside line comment ignores comment text', () => {
+    const text = 'activators {\n  # inside { brace and = colon\n  ';
+    expect(detectScope(text, text.length)).toBe('activators');
+  });
+
+  test('escaped quote inside string does not break tracking', () => {
+    const text = 'name = "she said \\"go\\"" \nactivators {\n  ';
+    expect(detectScope(text, text.length)).toBe('activators');
+  });
 });

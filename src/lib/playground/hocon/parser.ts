@@ -125,7 +125,14 @@ class Parser {
 
   parseKeyPath(): string[] {
     const t = this.peek();
-    if (!t || t.type !== 'key') return [];
+    if (!t) return [];
+    // Quoted string acts as a single literal key, dots inside are NOT split.
+    // Per HOCON spec: `"a.b" = 1` is a top-level key named "a.b".
+    if (t.type === 'string') {
+      this.pos++;
+      return [this.unquoteString(t.text)];
+    }
+    if (t.type !== 'key') return [];
     this.pos++;
     return t.text.split('.');
   }
