@@ -395,6 +395,88 @@ html, body {
 }
 .pg-hover-body { color: var(--pg-fg-muted); line-height: 1.4; }
 
+/* Tutorial panel */
+.pg-tutorial {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+.pg-tutorial-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+}
+.pg-tutorial-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.pg-tutorial-passed {
+  color: #3fb950;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+:root[data-theme="light"] .pg-tutorial-passed { color: #1a7f37; }
+.pg-tutorial-intro,
+.pg-tutorial-intro p,
+.pg-tutorial-intro ul {
+  color: var(--pg-fg);
+  line-height: 1.5;
+}
+.pg-tutorial-intro p { margin: 0 0 0.5rem 0; }
+.pg-tutorial-intro ul { margin: 0 0 0.5rem 1.25rem; padding: 0; }
+.pg-tutorial-intro code,
+.pg-tutorial-hint code,
+.pg-tutorial-goal code {
+  background: var(--pg-bg-elev-2);
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  font-family: var(--pg-mono);
+  font-size: 0.85em;
+}
+.pg-tutorial-goal {
+  background: var(--pg-bg-elev-2);
+  border-left: 3px solid var(--pg-accent);
+  padding: 0.5rem 0.75rem;
+  border-radius: 3px;
+}
+.pg-tutorial-hints { display: flex; flex-direction: column; gap: 0.5rem; }
+.pg-tutorial-hint {
+  background: var(--pg-bg-elev-2);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.pg-tutorial-hint p { margin: 0; }
+.pg-tutorial-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--pg-border);
+}
+.pg-btn-primary {
+  background: var(--pg-accent);
+  color: white;
+  border-color: var(--pg-accent);
+}
+.pg-btn-primary:disabled {
+  background: var(--pg-bg-elev-2);
+  color: var(--pg-fg-muted);
+  border-color: var(--pg-border);
+}
+.pg-tutorial-done {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.pg-tutorial-done h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
 /* Mobile: stack panes vertically */
 @media (max-width: 768px) {
   .pg-main {
