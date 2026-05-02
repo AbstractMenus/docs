@@ -245,6 +245,24 @@ html, body {
 :root[data-theme="light"] .cm-diagnostic-error { border-left-color: #cf222e; }
 :root[data-theme="light"] .cm-diagnostic-warning { border-left-color: #9a6700; }
 
+/* Squiggle underline color override (CM default uses orange-ish red even for warnings) */
+.pg-editor-host .cm-lintRange-error {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath fill='none' stroke='%23f85149' stroke-width='1' d='m0 3 l2 -2 l1 0 l2 2 l1 0'/%3E%3C/svg%3E") !important;
+  background-repeat: repeat-x !important;
+  background-position: left bottom !important;
+}
+.pg-editor-host .cm-lintRange-warning {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath fill='none' stroke='%23d29922' stroke-width='1' d='m0 3 l2 -2 l1 0 l2 2 l1 0'/%3E%3C/svg%3E") !important;
+  background-repeat: repeat-x !important;
+  background-position: left bottom !important;
+}
+:root[data-theme="light"] .pg-editor-host .cm-lintRange-error {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath fill='none' stroke='%23cf222e' stroke-width='1' d='m0 3 l2 -2 l1 0 l2 2 l1 0'/%3E%3C/svg%3E") !important;
+}
+:root[data-theme="light"] .pg-editor-host .cm-lintRange-warning {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath fill='none' stroke='%239a6700' stroke-width='1' d='m0 3 l2 -2 l1 0 l2 2 l1 0'/%3E%3C/svg%3E") !important;
+}
+
 /* Output pane */
 .pg-pane-output {
   background: var(--pg-bg-elev);
@@ -273,6 +291,31 @@ html, body {
 .pg-tab.is-hidden {
   display: none;
 }
+.pg-tab-count {
+  display: none;
+  margin-left: 0.35rem;
+  background: var(--pg-bg-elev-2);
+  color: var(--pg-fg-muted);
+  font-size: 0.7rem;
+  font-family: var(--pg-mono);
+  padding: 0 0.35rem;
+  border-radius: 8px;
+  min-width: 1.1rem;
+  text-align: center;
+  vertical-align: baseline;
+}
+.pg-tab-count.has-error {
+  display: inline-block;
+  background: color-mix(in srgb, #f85149 25%, transparent);
+  color: #f85149;
+}
+.pg-tab-count.has-warning {
+  display: inline-block;
+  background: color-mix(in srgb, #d29922 25%, transparent);
+  color: #d29922;
+}
+:root[data-theme="light"] .pg-tab-count.has-error { color: #cf222e; background: color-mix(in srgb, #cf222e 18%, transparent); }
+:root[data-theme="light"] .pg-tab-count.has-warning { color: #9a6700; background: color-mix(in srgb, #9a6700 18%, transparent); }
 .pg-tab-panels {
   flex: 1;
   min-height: 0;

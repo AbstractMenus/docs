@@ -63,14 +63,18 @@ export function boot(): void {
   const status = root.querySelector<HTMLElement>('[data-pg-status]');
   const scopeHintEl = root.querySelector<HTMLElement>('[data-pg-scope-hint]');
   const errorsEl = root.querySelector<HTMLElement>('[data-panel="errors"]');
+  const warningsEl = root.querySelector<HTMLElement>('[data-panel="warnings"]');
   const jsonEl = root.querySelector<HTMLElement>('[data-panel="json"]');
   const historyHost = root.querySelector<HTMLElement>('[data-pg-history]');
+  const errorsCountEl = root.querySelector<HTMLElement>('[data-tab-count="errors"]');
+  const warningsCountEl = root.querySelector<HTMLElement>('[data-tab-count="warnings"]');
 
   const tutorialEl = root.querySelector<HTMLElement>('[data-panel="tutorial"]');
 
   const scopeShortcut = navigator.platform.includes('Mac') ? '⌘+space' : 'Ctrl+space';
 
-  const validation = errorsEl ? createValidationPanel(errorsEl) : null;
+  const errorsPanel = errorsEl ? createValidationPanel(errorsEl) : null;
+  const warningsPanel = warningsEl ? createValidationPanel(warningsEl) : null;
   const resolved = jsonEl ? createResolvedJsonPanel(jsonEl) : null;
   const historyDropdown = historyHost ? createHistoryDropdown(historyHost) : null;
   const tutorial = tutorialEl ? createTutorialPanel(tutorialEl) : null;
@@ -102,13 +106,19 @@ export function boot(): void {
       const res = resolve(r.ast);
       const unknown = validateUnknownKeys(r.ast);
       const all = [...r.diagnostics, ...res.warnings, ...unknown];
-      validation?.update(all);
+      const errors = all.filter((d) => d.severity === 'error');
+      const warnings = all.filter((d) => d.severity === 'warning');
+
+      errorsPanel?.update(errors);
+      warningsPanel?.update(warnings);
       resolved?.update(res.resolved);
+
+      updateTabCount(errorsCountEl, errors.length, 'has-error');
+      updateTabCount(warningsCountEl, warnings.length, 'has-warning');
+
       if (status) {
-        const errCount = all.filter((d) => d.severity === 'error').length;
-        const warnCount = all.length - errCount;
-        if (errCount > 0) status.textContent = `${errCount} error${errCount === 1 ? '' : 's'}`;
-        else if (warnCount > 0) status.textContent = `${warnCount} warning${warnCount === 1 ? '' : 's'}`;
+        if (errors.length > 0) status.textContent = `${errors.length} error${errors.length === 1 ? '' : 's'}`;
+        else if (warnings.length > 0) status.textContent = `${warnings.length} warning${warnings.length === 1 ? '' : 's'}`;
         else status.textContent = 'ok';
       }
     }, 300);
@@ -216,7 +226,7 @@ export function boot(): void {
     closeHistoryPopover(root);
   });
 
-  validation?.onJump((line, column) => {
+  function jumpTo(line: number, column: number): void {
     const doc = editor.view.state.doc;
     const lineNo = Math.max(1, Math.min(doc.lines, line));
     const docLine = doc.line(lineNo);
@@ -226,7 +236,10 @@ export function boot(): void {
       effects: EditorView.scrollIntoView(pos, { y: 'center' }),
     });
     editor.view.focus();
-  });
+  }
+
+  errorsPanel?.onJump(jumpTo);
+  warningsPanel?.onJump(jumpTo);
 
   refreshAnalysis();
 
@@ -280,6 +293,12 @@ function setUrlForLesson(id: string): void {
   url.searchParams.set('mode', 'tutorial');
   url.searchParams.set('lesson', id);
   history.replaceState(null, '', url.toString());
+}
+
+function updateTabCount(el: HTMLElement | null, count: number, klass: 'has-error' | 'has-warning'): void {
+  if (!el) return;
+  el.textContent = count > 0 ? String(count) : '';
+  el.classList.toggle(klass, count > 0);
 }
 
 function pickInitialContent(): string {

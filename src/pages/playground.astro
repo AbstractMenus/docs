@@ -53,13 +53,21 @@ const BASE = import.meta.env.BASE_URL;
 
         <section class="pg-pane pg-pane-output" aria-label="Output">
           <nav class="pg-tabs" role="tablist">
-            <button type="button" class="pg-tab is-active" data-tab="errors" role="tab" aria-selected="true">Errors</button>
+            <button type="button" class="pg-tab is-active" data-tab="errors" role="tab" aria-selected="true">
+              Errors<span class="pg-tab-count" data-tab-count="errors"></span>
+            </button>
+            <button type="button" class="pg-tab" data-tab="warnings" role="tab" aria-selected="false">
+              Warnings<span class="pg-tab-count" data-tab-count="warnings"></span>
+            </button>
             <button type="button" class="pg-tab" data-tab="json" role="tab" aria-selected="false">Resolved JSON</button>
             <button type="button" class="pg-tab is-hidden" data-tab="tutorial" role="tab" aria-selected="false">Tutorial</button>
           </nav>
           <div class="pg-tab-panels">
             <div class="pg-tab-panel is-active" data-panel="errors" role="tabpanel">
-              <p class="pg-empty">No errors. (Parser plugs in at M.3.)</p>
+              <p class="pg-empty">No errors.</p>
+            </div>
+            <div class="pg-tab-panel" data-panel="warnings" role="tabpanel">
+              <p class="pg-empty">No warnings. Warnings flag suspicious but valid configs (unknown keys, unresolved substitutions). They do not stop the menu from loading.</p>
             </div>
             <div class="pg-tab-panel" data-panel="json" role="tabpanel">
               <p class="pg-empty">Resolved JSON appears here once the parser is wired up.</p>
