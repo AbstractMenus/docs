@@ -11,6 +11,7 @@ npm install
 npm run dev      # http://localhost:4321/docs/
 npm run build    # static output in ./dist
 npm run preview  # serve ./dist locally
+npm test         # vitest unit tests for the playground
 ```
 
 Requires Node 20+ (CI runs Node 22).
@@ -45,6 +46,16 @@ astro.config.mjs          Astro + Starlight configuration (sidebar, locales, the
 - `/docs/` redirects to `/docs/en/`.
 - English content lives at `/docs/en/...`.
 - Russian content lives at `/docs/ru/...`. Pages without a Russian translation fall back to English with a "translate this page" notice.
+
+## Playground
+
+`/docs/playground/` is a browser-side editor for HOCON menu configs (CodeMirror 6 + custom HOCON parser, no backend). It lives outside the Starlight content layout so it can use the full viewport.
+
+- Source: `src/lib/playground/`
+- Pages: `src/pages/playground.astro` (editor), `src/pages/playground/about.astro` (overview)
+- Styles: `src/styles/playground.css` (scoped via `<style is:global>` on the page; intentionally not registered in `astro.config.mjs > customCss` so the rest of the docs site is unaffected)
+- Tests: `npm test` (vitest + happy-dom)
+- Extend autocomplete data in `src/lib/playground/catalog/`, add lessons in `src/lib/playground/tutorial/lessons/`.
 
 ## Image paths
 
