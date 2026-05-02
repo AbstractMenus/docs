@@ -141,4 +141,22 @@ describe('parser - errors', () => {
     expect(err!.line).toBeGreaterThanOrEqual(1);
     expect(err!.column).toBeGreaterThanOrEqual(1);
   });
+
+  test('object-field syntax inside array errors', () => {
+    // `slot: 5` is a key:value pair, only valid in objects. In an array
+    // context HOCON wants either a value or a wrapped `{ slot: 5 }`.
+    const r = parseString('items = [\n  slot: 5\n  { slot = 0 }\n]');
+    expect(r.diagnostics.some((d) => d.severity === 'error' && /array/i.test(d.message))).toBe(true);
+  });
+
+  test('value followed by `:` inside array errors', () => {
+    // After parsing `5` as a number, the next `:` is illegal here.
+    const r = parseString('xs = [5 : 10]');
+    expect(r.diagnostics.some((d) => d.severity === 'error' && /after array element/i.test(d.message))).toBe(true);
+  });
+
+  test('plain numbers list passes (no false-positive)', () => {
+    const r = parseString('xs = [1, 2, 3]');
+    expect(r.diagnostics.filter((d) => d.severity === 'error')).toEqual([]);
+  });
 });

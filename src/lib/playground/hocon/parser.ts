@@ -202,8 +202,27 @@ class Parser {
     while (this.peek() && this.peek()!.text !== ']') {
       const before = this.pos;
       const v = this.parseValue();
-      if (v) items.push(v);
-      if (this.pos === before) this.pos++;
+      if (v) {
+        items.push(v);
+        // After a value, the only legal continuations are `,`/`;`/newline/`]`.
+        const next = this.peek();
+        if (next && next.text !== ',' && next.text !== ';' && next.text !== ']' && next.type !== 'newline') {
+          this.emitError(
+            `Unexpected \`${next.text}\` after array element. Use \`,\` or newline between items, and wrap key/value pairs in \`{ ... }\`.`,
+            next,
+          );
+          this.pos++;
+        }
+      } else if (this.pos === before) {
+        // parseValue couldn't recognise the token (e.g. it's a `key`-typed
+        // identifier that belongs in an object). Emit an error and skip.
+        const t = this.peek()!;
+        this.emitError(
+          `Unexpected \`${t.text}\` in array. Expected a value or \`{ ... }\` object literal.`,
+          t,
+        );
+        this.pos++;
+      }
       this.skipSeparators();
     }
     const close = this.peek();

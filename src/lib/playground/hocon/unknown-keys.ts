@@ -37,7 +37,11 @@ function walkObject(
     }
 
     const childScope = childScopeFor(firstKey, scope);
-    if (childScope) visitValue(entry.value, childScope, warnings);
+    if (childScope) {
+      const def = findKeyDef(firstKey);
+      const expectsList = def?.valueType === 'list';
+      visitValue(entry.value, childScope, warnings, firstKey, expectsList);
+    }
   }
 }
 
@@ -50,11 +54,31 @@ function childScopeFor(keyName: string, parentScope: Scope): Scope | null {
   return null;
 }
 
-function visitValue(v: Node, scope: Scope, warnings: Diagnostic[]): void {
-  if (v.kind === 'object') walkObject(v, scope, warnings);
+function visitValue(
+  v: Node,
+  scope: Scope,
+  warnings: Diagnostic[],
+  parentKey: string,
+  expectListOfObjects: boolean,
+): void {
+  if (v.kind === 'object') {
+    walkObject(v, scope, warnings);
+    return;
+  }
   if (v.kind === 'array') {
     for (const item of v.items) {
-      if (item.kind === 'object') walkObject(item, scope, warnings);
+      if (item.kind === 'object') {
+        walkObject(item, scope, warnings);
+      } else if (expectListOfObjects && item.kind !== 'substitution' && item.kind !== 'include') {
+        warnings.push({
+          severity: 'warning',
+          message: `\`${parentKey}\` expects a list of objects, found ${item.kind}`,
+          line: item.loc.line,
+          column: item.loc.column,
+          offset: item.loc.offset,
+          length: item.loc.length,
+        });
+      }
     }
   }
 }

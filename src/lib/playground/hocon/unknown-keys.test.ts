@@ -60,4 +60,22 @@ describe('validateUnknownKeys', () => {
     const w = check('bindings = [\n  { rules { permission = "x" }, props { material = STONE, badKey = 1 } }\n]');
     expect(w.some((d) => d.message.includes('badKey'))).toBe(true);
   });
+
+  test('items list rejects bare value (semantic warning)', () => {
+    // Wrap raw value `5` as a single number element (no `slot:` prefix; that
+    // would be a parser error). We verify that even a syntactically valid
+    // bare value triggers a "list of objects" warning.
+    const w = check('items = [\n  5\n  { slot = 0, material = STONE }\n]');
+    expect(w.some((d) => /items.*list of objects.*number/i.test(d.message))).toBe(true);
+  });
+
+  test('items list with all objects passes', () => {
+    const w = check('items = [\n  { slot = 0, material = STONE }\n  { slot = 4, material = DIAMOND }\n]');
+    expect(w.filter((d) => /list of objects/i.test(d.message))).toEqual([]);
+  });
+
+  test('substitution in items list is allowed (template expansion)', () => {
+    const w = check('items = [\n  ${borderTop}\n  { slot = 0 }\n]');
+    expect(w.filter((d) => /list of objects/i.test(d.message))).toEqual([]);
+  });
 });
