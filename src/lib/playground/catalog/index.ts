@@ -14,6 +14,10 @@ import {
   BINDING_FIELDS,
 } from './sub-scopes';
 
+// List-context scopes (e.g. cursor inside `items = [│]`) intentionally have
+// no key set - the completion source maps them to a single skeleton snippet
+// instead. Keeping them here as empty arrays satisfies Record<Scope, ...>
+// exhaustiveness, and any drive-by call to getKeysForScope returns [].
 const ALL_KEYS_BY_SCOPE: Record<Scope, KeyDef[]> = {
   'menu-root': MENU_ROOT_KEYS,
   'item': ITEM_KEYS,
@@ -27,6 +31,9 @@ const ALL_KEYS_BY_SCOPE: Record<Scope, KeyDef[]> = {
   'firework-effect': FIREWORK_EFFECT_FIELDS,
   'potion-effect': POTION_EFFECT_FIELDS,
   'binding': BINDING_FIELDS,
+  'item-list': [],
+  'binding-list': [],
+  'firework-effect-list': [],
   'unknown': [],
 };
 
