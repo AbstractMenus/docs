@@ -1,10 +1,16 @@
 import { autocompletion, type CompletionContext, type CompletionResult } from '@codemirror/autocomplete';
+import { EditorView } from '@codemirror/view';
 import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
 import { hoconLinter } from './cm/hocon-lint';
 import { snippetCompletions } from './cm/snippets';
+import { tokenizeText } from './hocon/tokenize';
+import { parse } from './hocon/parser';
+import { resolve } from './hocon/resolve';
+import { createValidationPanel } from './ValidationPanel';
+import { createResolvedJsonPanel } from './ResolvedJsonPanel';
 import type { PlaygroundMode, TabId } from './types';
 
 const SNIPPETS = snippetCompletions();
@@ -20,10 +26,19 @@ function hoconCompletions(context: CompletionContext): CompletionResult | null {
 }
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
-# Type your menu config below. Validation lands at M.3.
+# Edit below to see live validation and resolved JSON on the right.
 
 title = "Example Menu"
 size = 3
+
+defaults {
+  cooldown = 5s
+}
+
+items = [
+  { slot = 0, material = STONE, name = "Stone" }
+  { slot = 4, material = DIAMOND, name = \${title} }
+]
 `;
 
 export function boot(): void {
@@ -40,6 +55,34 @@ export function boot(): void {
   }
 
   const status = root.querySelector<HTMLElement>('[data-pg-status]');
+  const errorsEl = root.querySelector<HTMLElement>('[data-panel="errors"]');
+  const jsonEl = root.querySelector<HTMLElement>('[data-panel="json"]');
+
+  const validation = errorsEl ? createValidationPanel(errorsEl) : null;
+  const resolved = jsonEl ? createResolvedJsonPanel(jsonEl) : null;
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let editorRef: ReturnType<typeof createEditor> | null = null;
+
+  function refreshAnalysis(): void {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (!editorRef) return;
+      const text = editorRef.getValue();
+      const r = parse(tokenizeText(text));
+      const res = resolve(r.ast);
+      const all = [...r.diagnostics, ...res.warnings];
+      validation?.update(all);
+      resolved?.update(res.resolved);
+      if (status) {
+        const errCount = all.filter((d) => d.severity === 'error').length;
+        const warnCount = all.length - errCount;
+        if (errCount > 0) status.textContent = `${errCount} error${errCount === 1 ? '' : 's'}`;
+        else if (warnCount > 0) status.textContent = `${warnCount} warning${warnCount === 1 ? '' : 's'}`;
+        else status.textContent = 'ok';
+      }
+    }, 300);
+  }
 
   const editor = createEditor({
     parent: editorHost,
@@ -49,10 +92,23 @@ export function boot(): void {
       hoconLinter(),
       autocompletion({ override: [hoconCompletions] }),
     ],
-    onChange: () => {
-      if (status) status.textContent = 'edited';
-    },
+    onChange: () => { refreshAnalysis(); },
   });
+  editorRef = editor;
+
+  validation?.onJump((line, column) => {
+    const doc = editor.view.state.doc;
+    const lineNo = Math.max(1, Math.min(doc.lines, line));
+    const docLine = doc.line(lineNo);
+    const pos = docLine.from + Math.max(0, column - 1);
+    editor.view.dispatch({
+      selection: { anchor: pos },
+      effects: EditorView.scrollIntoView(pos, { y: 'center' }),
+    });
+    editor.view.focus();
+  });
+
+  refreshAnalysis();
 
   const panels = createPanels(root);
   panels.bindClicks();

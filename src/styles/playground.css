@@ -259,6 +259,54 @@ html, body {
 :root[data-theme="light"] .cm-editor .cm-tk-duration     { color: #0550ae; }
 :root[data-theme="light"] .cm-editor .cm-tk-value        { color: #1f2328; }
 
+/* Validation diagnostic list */
+.pg-diag-list { list-style: none; padding: 0; margin: 0; }
+.pg-diag-list li { margin: 0; }
+.pg-diag {
+  font: inherit;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--pg-fg);
+  border: 0;
+  border-bottom: 1px solid var(--pg-border);
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.pg-diag:hover { background: var(--pg-bg-elev-2); }
+.pg-diag-loc {
+  display: inline-block;
+  min-width: 3rem;
+  font-family: var(--pg-mono);
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+  opacity: 0.7;
+}
+.pg-diag-error .pg-diag-loc { color: #f85149; }
+.pg-diag-warning .pg-diag-loc { color: #d29922; }
+:root[data-theme="light"] .pg-diag-error .pg-diag-loc { color: #cf222e; }
+:root[data-theme="light"] .pg-diag-warning .pg-diag-loc { color: #9a6700; }
+
+/* Resolved JSON panel */
+.pg-tab-panel[data-panel="json"] { padding: 0; }
+.pg-json-wrap { position: relative; }
+.pg-json-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+}
+.pg-json {
+  font-family: var(--pg-mono);
+  font-size: 12px;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  white-space: pre;
+  color: var(--pg-fg);
+}
+
 /* Mobile: stack panes vertically */
 @media (max-width: 768px) {
   .pg-main {
