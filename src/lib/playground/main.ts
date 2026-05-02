@@ -1,8 +1,22 @@
+import { autocompletion, type CompletionContext, type CompletionResult } from '@codemirror/autocomplete';
 import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
+import { snippetCompletions } from './cm/snippets';
 import type { PlaygroundMode, TabId } from './types';
+
+const SNIPPETS = snippetCompletions();
+
+function hoconCompletions(context: CompletionContext): CompletionResult | null {
+  const word = context.matchBefore(/\w*/);
+  if (!word || (word.from === word.to && !context.explicit)) return null;
+  return {
+    from: word.from,
+    options: SNIPPETS,
+    validFor: /^\w*$/,
+  };
+}
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
 # Type your menu config below. Validation lands at M.3.
@@ -29,7 +43,10 @@ export function boot(): void {
   const editor = createEditor({
     parent: editorHost,
     initialContent: DEFAULT_CONTENT,
-    extensions: [...hoconLanguage()],
+    extensions: [
+      ...hoconLanguage(),
+      autocompletion({ override: [hoconCompletions] }),
+    ],
     onChange: () => {
       if (status) status.textContent = 'edited';
     },
