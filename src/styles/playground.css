@@ -143,10 +143,107 @@ html, body {
   height: 100%;
   font-family: var(--pg-mono);
   font-size: 13px;
+  background: var(--pg-bg);
+  color: var(--pg-fg);
 }
 .pg-editor-host .cm-scroller {
   font-family: var(--pg-mono);
 }
+.pg-editor-host .cm-content { caret-color: var(--pg-fg); }
+.pg-editor-host .cm-cursor,
+.pg-editor-host .cm-dropCursor {
+  border-left-color: var(--pg-fg);
+}
+
+/* Gutter (line numbers, fold markers) */
+.pg-editor-host .cm-gutters {
+  background-color: var(--pg-bg);
+  color: var(--pg-fg-muted);
+  border-right: 1px solid var(--pg-border);
+}
+.pg-editor-host .cm-activeLineGutter {
+  background-color: var(--pg-bg-elev-2);
+  color: var(--pg-fg);
+}
+.pg-editor-host .cm-activeLine {
+  background-color: color-mix(in srgb, var(--pg-fg) 6%, transparent);
+}
+.pg-editor-host .cm-foldPlaceholder {
+  background-color: var(--pg-bg-elev-2);
+  color: var(--pg-fg-muted);
+  border: 1px solid var(--pg-border);
+}
+
+/* Selection */
+.pg-editor-host .cm-editor .cm-selectionBackground,
+.pg-editor-host .cm-editor.cm-focused .cm-selectionBackground,
+.pg-editor-host .cm-editor ::selection {
+  background-color: var(--pg-accent-soft) !important;
+}
+.pg-editor-host .cm-selectionMatch {
+  background-color: color-mix(in srgb, var(--pg-fg) 10%, transparent);
+}
+
+/* Search panel + autocomplete tooltips */
+.cm-tooltip,
+.cm-panels {
+  background-color: var(--pg-bg-elev) !important;
+  color: var(--pg-fg) !important;
+  border: 1px solid var(--pg-border) !important;
+}
+.cm-tooltip.cm-tooltip-autocomplete > ul > li {
+  color: var(--pg-fg);
+  padding: 0.15rem 0.5rem;
+}
+.cm-tooltip.cm-tooltip-autocomplete > ul > li[aria-selected] {
+  background-color: var(--pg-accent);
+  color: white;
+}
+.cm-tooltip.cm-tooltip-autocomplete > ul > li[aria-selected] .cm-completionDetail,
+.cm-tooltip.cm-tooltip-autocomplete > ul > li[aria-selected] .cm-completionMatchedText {
+  color: white;
+}
+.cm-completionDetail {
+  color: var(--pg-fg-muted);
+  font-style: normal;
+  margin-left: 0.5rem;
+  font-size: 0.78rem;
+}
+.cm-completionLabel { font-family: var(--pg-mono); }
+.cm-completionMatchedText {
+  color: var(--pg-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.cm-tooltip.cm-completionInfo {
+  background-color: var(--pg-bg-elev) !important;
+  color: var(--pg-fg) !important;
+  border: 1px solid var(--pg-border) !important;
+  padding: 0.4rem 0.6rem;
+  max-width: 280px;
+  font-family: var(--pg-sans);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+/* Search panel inputs */
+.cm-panel.cm-search input,
+.cm-panel.cm-search button {
+  background: var(--pg-bg-elev-2);
+  color: var(--pg-fg);
+  border: 1px solid var(--pg-border);
+}
+.cm-panel.cm-search label { color: var(--pg-fg-muted); }
+
+/* Lint diagnostics popup */
+.cm-diagnostic {
+  border-left: 3px solid var(--pg-accent);
+  padding: 0.25rem 0.5rem;
+}
+.cm-diagnostic-error { border-left-color: #f85149; }
+.cm-diagnostic-warning { border-left-color: #d29922; }
+:root[data-theme="light"] .cm-diagnostic-error { border-left-color: #cf222e; }
+:root[data-theme="light"] .cm-diagnostic-warning { border-left-color: #9a6700; }
 
 /* Output pane */
 .pg-pane-output {
@@ -292,6 +389,14 @@ html, body {
 /* Resolved JSON panel */
 .pg-tab-panel[data-panel="json"] { padding: 0; }
 .pg-json-wrap { position: relative; }
+.pg-json-desc {
+  padding: 0.6rem 0.75rem;
+  background: var(--pg-bg-elev-2);
+  border-bottom: 1px solid var(--pg-border);
+  color: var(--pg-fg-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
 .pg-json-copy {
   position: absolute;
   top: 0.5rem;

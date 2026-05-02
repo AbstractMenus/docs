@@ -7,6 +7,13 @@ export function createResolvedJsonPanel(panel: HTMLElement): ResolvedJsonPanelAp
     const json = value === undefined ? 'undefined' : JSON.stringify(value, null, 2);
     const wrap = document.createElement('div');
     wrap.className = 'pg-json-wrap';
+
+    const desc = document.createElement('div');
+    desc.className = 'pg-json-desc';
+    desc.textContent =
+      'How AbstractMenus sees your config after HOCON resolves substitutions, dotted keys, and overrides. Use this to verify that ${vars} expand correctly and that nested objects flatten the way you expect.';
+    wrap.appendChild(desc);
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'pg-btn pg-btn-secondary pg-json-copy';
