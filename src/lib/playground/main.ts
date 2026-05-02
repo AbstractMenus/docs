@@ -7,8 +7,7 @@ import { createEditor } from './Editor';
 import { createPanels } from './Panels';
 import { createDivider } from './Divider';
 import { hoconLanguage } from './cm/hocon-language';
-import { hoconLinter, setWarningSquigglesEnabled, isWarningSquigglesEnabled, computeCmDiagnostics } from './cm/hocon-lint';
-import { setDiagnostics } from '@codemirror/lint';
+import { hoconLinter, setWarningSquigglesEnabled, isWarningSquigglesEnabled } from './cm/hocon-lint';
 import { snippetCompletions } from './cm/snippets';
 import { createCatalogSource } from './cm/catalog-source';
 import { hoverDocs } from './cm/hover-docs';
@@ -252,10 +251,9 @@ export function boot(): void {
 
   // Warning squiggle toggle. Persists across reloads. Doesn't affect the
   // Warnings tab - that always shows the full list.
-  const SQUIGGLE_KEY = 'pg-warning-squiggles';
   try {
-    const stored = localStorage.getItem(SQUIGGLE_KEY);
-    if (stored === '0') setWarningSquigglesEnabled(false);
+    const stored = localStorage.getItem('pg-warning-squiggles');
+    if (stored === '0') setWarningSquigglesEnabled(editor.view, false);
   } catch { /* ignore */ }
   bindWarningToggle(root, editor.view);
 
@@ -318,7 +316,7 @@ function bindWarningToggle(root: HTMLElement, view: EditorView): void {
   if (!btn) return;
 
   function sync(): void {
-    const on = isWarningSquigglesEnabled();
+    const on = isWarningSquigglesEnabled(view.state);
     btn!.dataset.state = on ? 'on' : 'off';
     btn!.textContent = on ? 'warnings: on' : 'warnings: off';
     btn!.title = on
@@ -328,12 +326,9 @@ function bindWarningToggle(root: HTMLElement, view: EditorView): void {
   sync();
 
   btn.addEventListener('click', () => {
-    const next = !isWarningSquigglesEnabled();
-    setWarningSquigglesEnabled(next);
+    const next = !isWarningSquigglesEnabled(view.state);
+    setWarningSquigglesEnabled(view, next);
     try { localStorage.setItem('pg-warning-squiggles', next ? '1' : '0'); } catch { /* ignore */ }
-    // Direct dispatch - linter() with delay: 300 won't re-run on a no-doc-change
-    // event. setDiagnostics replaces the active marker set immediately.
-    view.dispatch(setDiagnostics(view.state, computeCmDiagnostics(view)));
     sync();
   });
 }

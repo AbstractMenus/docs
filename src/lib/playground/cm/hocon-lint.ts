@@ -1,33 +1,62 @@
 import type { EditorView } from '@codemirror/view';
-import { linter, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
+import { Facet, type EditorState, StateEffect, StateField } from '@codemirror/state';
+import { linter, forceLinting, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
 import { tokenizeText } from '../hocon/tokenize';
 import { parse } from '../hocon/parser';
 import { resolve } from '../hocon/resolve';
 import { validateUnknownKeys } from '../hocon/unknown-keys';
 import type { Diagnostic } from '../hocon/types';
 
-let warningSquigglesEnabled = true;
+/**
+ * Per-editor toggle for the warning subset of diagnostics. Stored as a
+ * StateField so a transaction can flip it; a Facet then exposes the current
+ * value to the linter callback. Result: toggling re-runs the linter
+ * reactively, no manual setDiagnostics dispatch from the toolbar code.
+ */
+export const setWarningSquigglesEffect = StateEffect.define<boolean>();
 
-export function setWarningSquigglesEnabled(v: boolean): void {
-  warningSquigglesEnabled = v;
+const warningSquigglesField = StateField.define<boolean>({
+  create: () => true,
+  update(value, tr) {
+    for (const e of tr.effects) {
+      if (e.is(setWarningSquigglesEffect)) return e.value;
+    }
+    return value;
+  },
+  provide: (f) => warningSquigglesFacet.from(f),
+});
+
+const warningSquigglesFacet = Facet.define<boolean, boolean>({
+  combine: (values) => (values.length > 0 ? values[values.length - 1] : true),
+});
+
+export function isWarningSquigglesEnabled(state: EditorState): boolean {
+  return state.facet(warningSquigglesFacet);
 }
 
-export function isWarningSquigglesEnabled(): boolean {
-  return warningSquigglesEnabled;
-}
-
-export function computeCmDiagnostics(view: EditorView): CMDiagnostic[] {
-  const text = view.state.doc.toString();
-  const r = parse(tokenizeText(text));
-  const res = resolve(r.ast);
-  const unknown = validateUnknownKeys(r.ast);
-  const all = [...r.diagnostics, ...res.warnings, ...unknown];
-  const filtered = warningSquigglesEnabled ? all : all.filter((d) => d.severity !== 'warning');
-  return filtered.map((d) => toCm(view, d, text.length));
+export function setWarningSquigglesEnabled(view: EditorView, enabled: boolean): void {
+  view.dispatch({ effects: setWarningSquigglesEffect.of(enabled) });
+  // Force re-run so squiggles update without waiting for the next doc edit.
+  forceLinting(view);
 }
 
 export function hoconLinter() {
-  return linter((view) => computeCmDiagnostics(view), { delay: 300 });
+  return [
+    warningSquigglesField,
+    linter(
+      (view) => {
+        const text = view.state.doc.toString();
+        const r = parse(tokenizeText(text));
+        const res = resolve(r.ast);
+        const unknown = validateUnknownKeys(r.ast);
+        const all = [...r.diagnostics, ...res.warnings, ...unknown];
+        const showWarnings = view.state.facet(warningSquigglesFacet);
+        const filtered = showWarnings ? all : all.filter((d) => d.severity !== 'warning');
+        return filtered.map((d) => toCm(view, d, text.length));
+      },
+      { delay: 300 },
+    ),
+  ];
 }
 
 function toCm(view: EditorView, d: Diagnostic, docLen: number): CMDiagnostic {
