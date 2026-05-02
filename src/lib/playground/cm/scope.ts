@@ -1,4 +1,4 @@
-import { findKeyDef } from '../catalog';
+import { childScopeOf, arrayPositionScope } from '../catalog';
 import type { Scope } from '../catalog/types';
 import { stripStringsAndComments } from './text-utils';
 
@@ -62,10 +62,7 @@ export function detectScope(text: string, pos: number): Scope {
     const frame = stack[j];
 
     if (frame.bracket === '[' && frame.key) {
-      const def = findKeyDef(frame.key);
-      const child = def?.childrenScope;
-      if (child) return arrayPositionScope(child);
-      return 'unknown';
+      return arrayPositionScope(childScopeOf(frame.key));
     }
 
     if (frame.bracket === '{') {
@@ -73,34 +70,12 @@ export function detectScope(text: string, pos: number): Scope {
       // the array key's childrenScope.
       const parent = stack[j - 1];
       if (parent && parent.bracket === '[' && parent.key) {
-        const parentDef = findKeyDef(parent.key);
-        if (parentDef?.childrenScope) return parentDef.childrenScope;
+        return childScopeOf(parent.key);
       }
-      const k = frame.key;
-      if (k) {
-        const def = findKeyDef(k);
-        if (def?.childrenScope) return def.childrenScope;
-        return 'unknown';
-      }
+      if (frame.key) return childScopeOf(frame.key);
       return 'unknown';
     }
   }
 
   return 'menu-root';
-}
-
-/**
- * When the cursor sits inside an array (between `[` and `{`/value), the
- * meaningful suggestion is "an object literal of the right shape", not the
- * keys that go inside that object. We map the element scope to a list-context
- * scope so the completion source can offer a single skeleton snippet instead
- * of dumping all object fields.
- */
-function arrayPositionScope(elementScope: Scope): Scope {
-  switch (elementScope) {
-    case 'item': return 'item-list';
-    case 'binding': return 'binding-list';
-    case 'firework-effect': return 'firework-effect-list';
-    default: return elementScope;
-  }
 }

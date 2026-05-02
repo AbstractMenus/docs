@@ -1,5 +1,5 @@
 import type { Node, Entry } from './types';
-import { findKeyDef } from '../catalog';
+import { childScopeOf, arrayPositionScope } from '../catalog';
 import type { Scope } from '../catalog/types';
 
 /**
@@ -49,10 +49,10 @@ function walkEntries(entries: Entry[], parentScope: Scope, parentPath: string[],
 }
 
 function visitValue(entry: Entry, parentScope: Scope, fullPath: string[], out: ScopeRange[]): void {
+  void parentScope;
   const v = entry.value;
   const keyName = entry.path[entry.path.length - 1];
-  const def = findKeyDef(keyName);
-  const childScope: Scope = def?.childrenScope ?? 'unknown';
+  const childScope = childScopeOf(keyName);
 
   if (v.kind === 'object') {
     out.push({
@@ -83,15 +83,6 @@ function visitValue(entry: Entry, parentScope: Scope, fullPath: string[], out: S
         walkEntries(item.entries, childScope, fullPath, out);
       }
     }
-  }
-}
-
-function arrayPositionScope(scope: Scope): Scope {
-  switch (scope) {
-    case 'item': return 'item-list';
-    case 'binding': return 'binding-list';
-    case 'firework-effect': return 'firework-effect-list';
-    default: return scope;
   }
 }
 

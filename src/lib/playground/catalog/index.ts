@@ -71,4 +71,32 @@ export function findKeyDef(name: string): KeyDef | undefined {
   return KEY_BY_NAME.get(name);
 }
 
+/**
+ * Resolve the scope that applies INSIDE a `{...}` opened by the given key.
+ * If the key isn't in the catalog (or has no childrenScope), the body is
+ * an `unknown` block: validators and autocomplete should not assume any
+ * particular shape there.
+ *
+ * Single source of truth so the autocomplete (`cm/scope.ts`), the AST-walking
+ * validator (`hocon/unknown-keys.ts`), and the position-indexed range builder
+ * (`hocon/scope-ranges.ts`) all agree on the rule.
+ */
+export function childScopeOf(keyName: string): Scope {
+  return findKeyDef(keyName)?.childrenScope ?? 'unknown';
+}
+
+/**
+ * When the cursor sits inside an array context (`items = [│]`), the relevant
+ * scope is the *list* variant - we offer a skeleton snippet for the element
+ * shape, not the keys that go inside that element.
+ */
+export function arrayPositionScope(elementScope: Scope): Scope {
+  switch (elementScope) {
+    case 'item': return 'item-list';
+    case 'binding': return 'binding-list';
+    case 'firework-effect': return 'firework-effect-list';
+    default: return elementScope;
+  }
+}
+
 export type { KeyDef, Scope } from './types';

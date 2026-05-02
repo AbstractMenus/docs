@@ -1,6 +1,6 @@
 import type { Node, Diagnostic } from './types';
 import type { Scope } from '../catalog/types';
-import { getKeysForScope, findKeyDef } from '../catalog';
+import { getKeysForScope, findKeyDef, childScopeOf } from '../catalog';
 
 /**
  * Walk the AST and emit a warning for every entry whose key is not in the
@@ -49,8 +49,9 @@ function childScopeFor(keyName: string, parentScope: Scope): Scope | null {
   const def = findKeyDef(keyName);
   if (def?.childrenScope) return def.childrenScope;
   // Unknown key in a known scope still walks its body as `unknown` so we
-  // don't cascade noise into it.
-  if (parentScope !== 'unknown') return 'unknown';
+  // don't cascade noise into it. Once we're already in `unknown`, stop
+  // descending - we have no schema to validate against.
+  if (parentScope !== 'unknown') return childScopeOf(keyName); // 'unknown'
   return null;
 }
 
