@@ -1,5 +1,6 @@
 import { snippetCompletion, type Completion, type CompletionContext, type CompletionResult } from '@codemirror/autocomplete';
 import { getKeysForScope, getEnumValues, findKeyDef, type KeyDef } from '../catalog';
+import { describeKeyDef } from '../catalog/i18n';
 import { detectScope } from './scope';
 import { hoconSnippets } from './snippets';
 
@@ -62,7 +63,7 @@ function keyToCompletion(k: KeyDef): Completion {
     label: k.name,
     type: 'property',
     detail,
-    info: k.description,
+    info: describeKeyDef(k),
     apply: k.name,
     boost: k.valueType === 'enum' ? 2 : 1,
   };

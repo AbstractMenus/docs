@@ -1,5 +1,6 @@
 import { hoverTooltip } from '@codemirror/view';
 import { findKeyDef } from '../catalog';
+import { describeKeyDef } from '../catalog/i18n';
 
 export function hoverDocs() {
   return hoverTooltip((view, pos) => {
@@ -25,7 +26,7 @@ export function hoverDocs() {
         head.textContent = `${def.name} : ${def.valueType === 'enum' ? `enum<${def.enumRef}>` : def.valueType}`;
         const body = document.createElement('div');
         body.className = 'pg-hover-body';
-        body.textContent = def.description;
+        body.textContent = describeKeyDef(def);
         dom.appendChild(head);
         dom.appendChild(body);
         return { dom };
