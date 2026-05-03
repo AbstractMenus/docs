@@ -1,0 +1,32 @@
+{
+  "id": "17-click-command",
+  "title": "Click: run a command",
+  "topic": "actions",
+  "intro": "Sending a message is fine, but you usually want the menu to actually **change game state** - give items, teleport, set permissions. The standard way is running a command.\n\nThe `command` action takes a string. By default it runs as **console** so the player doesn't need permissions.\n\n```\nclick {\n  actions {\n    command = \"give @p diamond_sword 1\"\n  }\n}\n```\n\nUse `@p` to refer to the clicking player (vanilla selector). Or use the AbstractMenus placeholder `%player_name%` (covered in lesson 25).\n\nFor a player-side command (run as the player, with their permissions), use the long form:\n```\ncommand { cmd = \"warp spawn\", as = PLAYER }\n```\n\n**Goal:** replace the message handler with a command that gives the player a diamond sword.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\"\n    click {\n      actions {\n        message = \"Welcome to the shop!\"\n      }\n    }\n  }\n]\n",
+  "goal": "Replace the `message` action with `command = \"give @p diamond_sword 1\"`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "items[0].click.actions.command", "value": "give @p diamond_sword 1" }
+    ]
+  },
+  "hints": [
+    "Same nesting as last lesson; just swap `message` for `command`.",
+    "The command goes in double quotes - it's just a string.",
+    "```\nclick {\n  actions {\n    command = \"give @p diamond_sword 1\"\n  }\n}\n```"
+  ],
+  "next": "18-multiple-actions",
+  "translations": {
+    "ru": {
+      "title": "Click: запуск команды",
+      "intro": "Сообщение это хорошо, но обычно меню должно **менять состояние игры** - выдать предмет, телепортировать, выдать доступ. Стандартный способ - запустить команду.\n\nДействие `command` принимает строку. По умолчанию запускается от **консоли** - игроку не нужны пермишены.\n\n```\nclick {\n  actions {\n    command = \"give @p diamond_sword 1\"\n  }\n}\n```\n\nИспользуй `@p` для ссылки на кликнувшего игрока (vanilla селектор). Или плейсхолдер AbstractMenus `%player_name%` (урок 25).\n\nДля команды от игрока (с его пермишенами), длинная форма:\n```\ncommand { cmd = \"warp spawn\", as = PLAYER }\n```\n\n**Цель:** замени message-обработчик на команду которая выдаёт игроку алмазный меч.",
+      "goal": "Замени `message` на `command = \"give @p diamond_sword 1\"`.",
+      "hints": [
+        "Та же вложенность что и в прошлом уроке; просто поменяй `message` на `command`.",
+        "Команда в двойных кавычках - это просто строка.",
+        "```\nclick {\n  actions {\n    command = \"give @p diamond_sword 1\"\n  }\n}\n```"
+      ]
+    }
+  }
+}

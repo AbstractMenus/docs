@@ -17,7 +17,7 @@
     "`cooldown` is a duration with a unit suffix: `cooldown = 5s` (also `1m`, `500ms`).",
     "```\nitems = [\n  { slot = 4, material = DIAMOND, name = \"&aBuy\"\n    count = 16\n    cooldown = 5s\n  }\n]\n```"
   ],
-  "next": null,
+  "next": "16-click-message",
   "translations": {
     "ru": {
       "title": "Count и cooldown",
