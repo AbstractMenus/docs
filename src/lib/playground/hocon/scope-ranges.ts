@@ -43,6 +43,8 @@ export function buildScopeRanges(root: Node): ScopeRange[] {
 
 function walkEntries(entries: Entry[], parentScope: Scope, parentPath: string[], out: ScopeRange[]): void {
   for (const entry of entries) {
+    // Spread entries don't add a key path of their own - skip indexing.
+    if (entry.spread) continue;
     const path = [...parentPath, ...entry.path];
     visitValue(entry, parentScope, path, out);
   }

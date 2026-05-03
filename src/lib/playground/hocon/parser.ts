@@ -91,6 +91,16 @@ class Parser {
       return null;
     }
 
+    // Inline spread: `${ref}` at entry position (instead of `key = value`).
+    // Consumed as a substitution Node and stored as a spread Entry; the
+    // resolver merges the referenced object's fields into the enclosing
+    // object. Own keys override spread fields (see resolve.ts).
+    if (first.type === 'substitution') {
+      const sub = this.parseValue();
+      if (!sub || sub.kind !== 'substitution') return null;
+      return { path: [], value: sub, loc: this.tokLoc(first), append: false, spread: true };
+    }
+
     const path = this.parseKeyPath();
     if (path.length === 0) {
       this.emitError('parser.unexpected-token', { text: first.text }, first);

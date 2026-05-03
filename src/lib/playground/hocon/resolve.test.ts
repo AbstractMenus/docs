@@ -138,3 +138,47 @@ describe('+= array append', () => {
     expect(r.resolved).toEqual({ xs: [2] });
   });
 });
+
+describe('inline spread `${ref}` in object', () => {
+  test('spread merges referenced object fields into enclosing object', () => {
+    const r = run('defaults { material = STONE }\nitem { ${defaults} }');
+    expect(r.resolved).toEqual({
+      defaults: { material: 'STONE' },
+      item: { material: 'STONE' },
+    });
+  });
+
+  test('spread alongside explicit fields - explicit fields win on collision', () => {
+    const r = run('defaults { material = STONE, slot = 0 }\nitem { ${defaults}, slot = 4 }');
+    expect((r.resolved as Record<string, unknown>).item).toEqual({ material: 'STONE', slot: 4 });
+  });
+
+  test('spread inside array of items (DRY pattern)', () => {
+    const r = run('defaults { material = STONE }\nitems = [{ slot = 0, ${defaults} }, { slot = 8, ${defaults} }]');
+    expect((r.resolved as { items: unknown[] }).items).toEqual([
+      { slot: 0, material: 'STONE' },
+      { slot: 8, material: 'STONE' },
+    ]);
+  });
+
+  test('multiple spreads in same object compose left-to-right', () => {
+    const r = run('a { x = 1 }\nb { y = 2 }\nc { ${a}, ${b} }');
+    expect((r.resolved as Record<string, unknown>).c).toEqual({ x: 1, y: 2 });
+  });
+
+  test('spread referencing non-object resolves but contributes nothing', () => {
+    const r = run('scalar = 7\no { ${scalar}, real = "field" }');
+    expect((r.resolved as Record<string, unknown>).o).toEqual({ real: 'field' });
+  });
+
+  test('spread of unknown reference still allows surrounding fields to resolve', () => {
+    const r = run('o { ${missing}, real = "field" }');
+    expect((r.resolved as Record<string, unknown>).o).toEqual({ real: 'field' });
+  });
+
+  test('spread does not produce an unknown-key warning for the spread token', () => {
+    // Sanity: parsing+resolving shouldn't raise spread-related parse errors.
+    const r = run('defaults { a = 1 }\nx { ${defaults} }');
+    expect(r.warnings.filter((w) => w.severity === 'error')).toEqual([]);
+  });
+});

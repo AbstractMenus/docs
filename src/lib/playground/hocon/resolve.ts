@@ -14,13 +14,29 @@ export function resolve(root: Node): ResolveResult {
 
 type Tree = { [k: string]: Tree | Node };
 
+/**
+ * Symbol-keyed slot on a Tree that holds inline-spread substitutions
+ * collected from `${ref}` entries. Symbol so it doesn't collide with any
+ * user key and isn't enumerated by Object.keys() in resolveSubsDeep.
+ */
+const SPREADS = Symbol('hocon-spreads');
+type TreeWithSpreads = Tree & { [SPREADS]?: Node[] };
+
 function isLeaf(v: Tree | Node): v is Node {
   return v !== null && typeof v === 'object' && 'kind' in v;
 }
 
 function buildTree(entries: Entry[], warnings: Diagnostic[]): Tree {
-  const tree: Tree = {};
-  for (const e of entries) setPath(tree, e.path, e.value, e.append, warnings);
+  const tree: TreeWithSpreads = {};
+  for (const e of entries) {
+    if (e.spread) {
+      const list = tree[SPREADS] ?? [];
+      list.push(e.value);
+      tree[SPREADS] = list;
+    } else {
+      setPath(tree, e.path, e.value, e.append, warnings);
+    }
+  }
   return tree;
 }
 
@@ -95,6 +111,19 @@ function resolveSubsDeep(
   warnings: Diagnostic[],
 ): unknown {
   const out: Record<string, unknown> = {};
+  // Spread substitutions are resolved FIRST so explicit own keys (set
+  // below) win on collision. Matches the typical "defaults + overrides"
+  // intent rather than HOCON's strict declaration-order semantics; trade
+  // documented for lesson-friendliness.
+  const spreads = (tree as TreeWithSpreads)[SPREADS];
+  if (spreads) {
+    for (const sub of spreads) {
+      const resolved = resolveNode(sub, root, visiting, warnings);
+      if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
+        Object.assign(out, resolved);
+      }
+    }
+  }
   for (const k of Object.keys(tree)) {
     const v = tree[k];
     out[k] = isLeaf(v)

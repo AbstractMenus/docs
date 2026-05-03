@@ -76,10 +76,22 @@ export type Node =
   | { kind: 'include'; raw: string; loc: Loc };
 
 export interface Entry {
+  /**
+   * Key path segments. Empty `[]` for spread entries (where `value` is a
+   * substitution to be merged into the enclosing object).
+   */
   path: string[];
   value: Node;
   loc: Loc;
+  /** `true` for `+=` entries; resolver concatenates instead of overwriting. */
   append: boolean;
+  /**
+   * Inline-spread marker. When true, `value` is a substitution Node whose
+   * resolved object is merged into the enclosing object's fields. The
+   * `path` field is `[]`. Consumers iterating entries should skip spreads
+   * if they're indexing by key.
+   */
+  spread?: boolean;
 }
 
 export interface ParseResult {
