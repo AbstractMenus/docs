@@ -17,7 +17,7 @@
     "Add `name = \"&aBuy Sword\"` inside the same `{ ... }`. The `&a` is Minecraft's green color code.",
     "```\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\" }\n]\n```"
   ],
-  "next": null,
+  "next": "12-lore",
   "translations": {
     "ru": {
       "title": "Имя и материал",
