@@ -2,31 +2,31 @@
   "id": "07-variables-object",
   "title": "Custom variables (object)",
   "topic": "basics",
-  "intro": "Variables aren't limited to strings and numbers. You can stash a whole **object** in a variable and reuse it.\n\nThis is the foundation of every DRY pattern in AbstractMenus configs - shared click actions, repeating styles, common item shapes. Define once, reference many times.\n\n```\ncloseAction { close = true }\n\nclick = ${closeAction}\n# click resolves to { close = true }\n```\n\nWhen `${name}` resolves to an object, the whole object lands at that position. Same mechanic as scalar variables, just bigger payload.\n\n**Goal:** define `closeAction { close = true }` and use it as `click = ${closeAction}`.",
-  "starter": "title = \"Demo\"\n",
-  "goal": "Define `closeAction` as an object with `close = true`, then assign `click = ${closeAction}`.",
+  "intro": "Variables aren't limited to strings and numbers. You can stash a whole **object** in a variable and reuse it.\n\nThis is the foundation of every DRY pattern in AbstractMenus configs - shared click actions, repeating styles, common item shapes. Define once, reference many times.\n\n```\ncloseBtnAction { closeMenu = true }\n\nitems = [\n  { slot = 8, material = BARRIER, name = \"&cClose\"\n    click { actions = ${closeBtnAction} }\n  }\n]\n# items[0].click.actions resolves to { closeMenu = true }\n```\n\nWhen `${name}` resolves to an object, the whole object lands at that position. Same mechanic as scalar variables, just bigger payload.\n\nThe custom key (`closeBtnAction`) sits at the top of the file as a reusable definition; AbstractMenus ignores it after substitution.\n\n**Goal:** define `closeBtnAction` as an object with `closeMenu = true`, then assign it to the existing item's `click.actions`.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  { slot = 8, material = BARRIER, name = \"&cClose\" }\n]\n",
+  "goal": "Define `closeBtnAction { closeMenu = true }` at the top, then set the item's `click.actions = ${closeBtnAction}`.",
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "closeAction.close", "value": true },
-      { "kind": "eq", "path": "click.close", "value": true }
+      { "kind": "eq", "path": "closeBtnAction.closeMenu", "value": true },
+      { "kind": "eq", "path": "items[0].click.actions.closeMenu", "value": true }
     ]
   },
   "hints": [
-    "Define the object: `closeAction { close = true }` (no `=` needed before `{`).",
-    "Reference the whole object: `click = ${closeAction}`.",
-    "```\ncloseAction { close = true }\nclick = ${closeAction}\n```"
+    "Define the object at the top: `closeBtnAction { closeMenu = true }` (no `=` needed before `{`).",
+    "Inside the item, reference the whole object: `click { actions = ${closeBtnAction} }`.",
+    "```\ncloseBtnAction { closeMenu = true }\nitems = [\n  { slot = 8, material = BARRIER, name = \"&cClose\"\n    click { actions = ${closeBtnAction} }\n  }\n]\n```"
   ],
   "next": "08-size",
   "translations": {
     "ru": {
       "title": "Кастомные переменные (объект)",
-      "intro": "Переменные не ограничены строками и числами. Можно закинуть в переменную **целый объект** и переиспользовать.\n\nЭто фундамент любого DRY-паттерна в конфигах AbstractMenus - общие click-действия, повторяющиеся стили, типовые формы предметов. Объяви раз - используй много.\n\n```\ncloseAction { close = true }\n\nclick = ${closeAction}\n# click резолвится в { close = true }\n```\n\nКогда `${name}` ссылается на объект - весь объект встаёт на это место. Механика та же что у скалярных переменных, просто пэйлоад больше.\n\n**Цель:** объяви `closeAction { close = true }` и используй как `click = ${closeAction}`.",
-      "goal": "Объяви `closeAction` как объект с `close = true`, затем присвой `click = ${closeAction}`.",
+      "intro": "Переменные не ограничены строками и числами. Можно закинуть в переменную **целый объект** и переиспользовать.\n\nЭто фундамент любого DRY-паттерна в конфигах AbstractMenus - общие click-действия, повторяющиеся стили, типовые формы предметов. Объяви раз - используй много.\n\n```\ncloseBtnAction { closeMenu = true }\n\nitems = [\n  { slot = 8, material = BARRIER, name = \"&cClose\"\n    click { actions = ${closeBtnAction} }\n  }\n]\n# items[0].click.actions резолвится в { closeMenu = true }\n```\n\nКогда `${name}` ссылается на объект - весь объект встаёт на это место. Механика та же что у скалярных переменных, просто пэйлоад больше.\n\nКастомный ключ (`closeBtnAction`) лежит наверху файла как переиспользуемое определение; AbstractMenus его игнорирует после подстановки.\n\n**Цель:** объяви `closeBtnAction` как объект с `closeMenu = true`, затем присвой существующему item'у `click.actions`.",
+      "goal": "Объяви `closeBtnAction { closeMenu = true }` сверху, потом присвой `items[0].click.actions = ${closeBtnAction}`.",
       "hints": [
-        "Объяви объект: `closeAction { close = true }` (`=` перед `{` не нужен).",
-        "Сошлись на весь объект: `click = ${closeAction}`.",
-        "```\ncloseAction { close = true }\nclick = ${closeAction}\n```"
+        "Объяви объект сверху: `closeBtnAction { closeMenu = true }` (`=` перед `{` не нужен).",
+        "Внутри item'а сошлись на весь объект: `click { actions = ${closeBtnAction} }`.",
+        "```\ncloseBtnAction { closeMenu = true }\nitems = [\n  { slot = 8, material = BARRIER, name = \"&cClose\"\n    click { actions = ${closeBtnAction} }\n  }\n]\n```"
       ]
     }
   }
