@@ -1,5 +1,5 @@
 {
-  "id": "15-count-cooldown",
+  "id": "16-count-cooldown",
   "title": "Count & cooldown",
   "topic": "items",
   "intro": "Two practical fields you'll set on real items:\n\n- **`count`** - stack size shown on the item icon (1-64). Default is 1. Set higher for visual emphasis or to display a quantity.\n- **`cooldown`** - per-item click cooldown (a duration like `5s`, `500ms`, `1m`). Prevents click spam when the action is expensive (gives item, runs command).\n\n```\nitems = [\n  {\n    slot = 4\n    material = EMERALD\n    name = \"&a10 Emeralds\"\n    count = 10\n    cooldown = 3s\n  }\n]\n```\n\nNote: `count` is the AbstractMenus name; you might see `amount` in other plugins or in vanilla Bukkit API - they refer to the same thing.\n\n**Goal:** add `count = 16` and `cooldown = 5s` to the item.",
@@ -25,7 +25,7 @@
     "`cooldown` is a duration with a unit suffix: `cooldown = 5s` (also `1m`, `500ms`).",
     "```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND\n    name = \"&aBuy\"\n    count = 16\n    cooldown = 5s\n  }\n]\n```"
   ],
-  "next": "16-click-message",
+  "next": "17-click-message",
   "translations": {
     "ru": {
       "title": "Count и cooldown",

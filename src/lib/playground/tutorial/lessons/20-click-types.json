@@ -1,5 +1,5 @@
 {
-  "id": "19-click-types",
+  "id": "20-click-types",
   "title": "Click types: left vs right",
   "topic": "actions",
   "intro": "Until now `click.actions` fired on **any** click. To react differently to different mouse buttons, nest under `left`, `right`, `middle`, `drop`, `shiftLeft`, `shiftRight`:\n\n```\nclick {\n  left { actions { message = \"Left clicked!\" } }\n  right { actions { message = \"Right clicked!\" } }\n}\n```\n\nClassic shop pattern: left-click to buy, right-click to inspect.\n\n```\nclick {\n  left  { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Costs 10 emeralds\" } }\n}\n```\n\nIf you also have a top-level `click.actions` and a `click.left.actions`, both fire on a left click - the top-level one is the catch-all.\n\n**Goal:** split the existing `click.actions` into two distinct handlers - `left` runs the `command`, `right` shows a `message = \"Costs 10 emeralds\"`.",
@@ -25,7 +25,7 @@
     "Each has its own `actions { ... }` with its own keys.",
     "```\nclick {\n  left { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Costs 10 emeralds\" } }\n}\n```"
   ],
-  "next": "20-include",
+  "next": "21-include",
   "translations": {
     "ru": {
       "title": "Типы кликов: left vs right",

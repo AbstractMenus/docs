@@ -1,5 +1,5 @@
 {
-  "id": "23-defaults-merge",
+  "id": "24-defaults-merge",
   "title": "Defaults pattern (`${ref}` spread)",
   "topic": "templates",
   "intro": "The classic DRY trick in AbstractMenus configs: define a `defaults` object once, **spread** it into each item via `${defaults}`. Item-specific fields override the defaults on collision.\n\n```\ndefaults {\n  material = STONE\n  name = \"&aGeneric\"\n}\nitems = [\n  {\n    slot = 0\n    ${defaults}\n  }\n  {\n    slot = 4\n    ${defaults}\n    name = \"&bSpecial\"\n  }\n]\n# resolves to:\n# items[0]: { slot = 0, material = STONE, name = \"&aGeneric\" }\n# items[1]: { slot = 4, material = STONE, name = \"&bSpecial\" }\n```\n\nThe spread substitution drops every field of the referenced object into the surrounding `{...}`. Anything you write **alongside** `${defaults}` overrides it (own keys win).\n\nUseful for: shared button styles, repeating item shapes, common click handlers.\n\n**Goal:** spread `${defaults}` into both items so they pick up `material = STONE` from the defaults block. The first item keeps its slot only; the second gets a custom `name`.",
@@ -45,7 +45,7 @@
     "Order doesn't matter for the merge; explicit fields always win on collision.",
     "```\nitems = [\n  {\n    slot = 0\n    ${defaults}\n  }\n  {\n    slot = 4\n    ${defaults}\n    name = \"&bSpecial\"\n  }\n]\n```"
   ],
-  "next": "24-optional-subs",
+  "next": "25-optional-subs",
   "translations": {
     "ru": {
       "title": "Defaults паттерн (`${ref}` спред)",

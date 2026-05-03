@@ -47,7 +47,7 @@ describe('TutorialController draft preservation', () => {
     const panel = fakePanel();
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     expect(editor.__doc).toMatch(/title/); // starter loaded
 
     editor.setValue('title = "MY EDITED VALUE"');
@@ -56,7 +56,7 @@ describe('TutorialController draft preservation', () => {
     // Simulate user round-tripping through editor mode
     editor.setValue('something completely different');
 
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     expect(editor.__doc).toBe('title = "MY EDITED VALUE"');
   });
 
@@ -65,12 +65,12 @@ describe('TutorialController draft preservation', () => {
     const panel = fakePanel();
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     editor.setValue('drafted lesson 0');
     ctl.leave();
 
-    ctl.enter('01-comments');
-    // 01-comments starter contains `title = "My menu"` and `size = 3`
+    ctl.enter('02-comments');
+    // 02-comments starter contains `title = "My menu"` and `size = 3`
     expect(editor.__doc).toContain('My menu');
     expect(editor.__doc).not.toContain('drafted lesson 0');
   });
@@ -82,7 +82,7 @@ describe('TutorialController draft preservation', () => {
     panel.onReset = vi.fn((fn: () => void) => { onReset = fn; });
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     editor.setValue('user edits');
 
     // confirm denied -> editor untouched
@@ -98,7 +98,7 @@ describe('TutorialController draft preservation', () => {
     // verify draft is actually cleared: a leave/re-enter must NOT bring back 'user edits'
     ctl.leave();
     editor.setValue('intermediate');
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     expect(editor.__doc).not.toBe('user edits');
 
     spy.mockRestore();
@@ -122,15 +122,15 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     panel.onPrev = vi.fn((fn: () => void) => { onPrev = fn; });
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('01-comments');
+    ctl.enter('02-comments');
     expect(editor.__doc).toContain('My menu'); // 01 starter
 
     onPrev();
     expect(editor.__doc).toMatch(/title = ""/); // 00 starter
     // Progress not mutated by Prev: localStorage progress should not list 01 as completed
     const progress = JSON.parse(localStorage.getItem('am_playground_progress') ?? '{}');
-    expect(progress.completed ?? []).not.toContain('01-comments');
-    expect(progress.skipped ?? []).not.toContain('01-comments');
+    expect(progress.completed ?? []).not.toContain('02-comments');
+    expect(progress.skipped ?? []).not.toContain('02-comments');
   });
 
   test('Prev is a no-op at the first lesson', () => {
@@ -140,7 +140,7 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     panel.onPrev = vi.fn((fn: () => void) => { onPrev = fn; });
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     const before = editor.__doc;
     onPrev();
     expect(editor.__doc).toBe(before);
@@ -153,12 +153,12 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     panel.onJump = vi.fn((fn: (id: string) => void) => { onJump = fn; });
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('00-introduction');
-    onJump('01-comments');
+    ctl.enter('01-introduction');
+    onJump('02-comments');
     expect(editor.__doc).toContain('My menu');
 
     const progress = JSON.parse(localStorage.getItem('am_playground_progress') ?? '{}');
-    expect(progress.completed ?? []).not.toContain('00-introduction');
+    expect(progress.completed ?? []).not.toContain('01-introduction');
   });
 
   test('Jump to current lesson is a no-op', () => {
@@ -168,9 +168,9 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     panel.onJump = vi.fn((fn: (id: string) => void) => { onJump = fn; });
     const ctl = new TutorialController(editor, panel, () => {});
 
-    ctl.enter('00-introduction');
+    ctl.enter('01-introduction');
     editor.setValue('user changes');
-    onJump('00-introduction');
+    onJump('01-introduction');
     expect(editor.__doc).toBe('user changes'); // not reloaded
   });
 
@@ -185,10 +185,10 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     }));
     ctl.enter();
 
-    // Should land on the first real lesson (00-introduction starter), NOT
+    // Should land on the first real lesson (01-introduction starter), NOT
     // show the "course complete" screen.
     expect(panel.showCompleted).not.toHaveBeenCalled();
-    expect(editor.__doc).toMatch(/title = ""/); // 00-introduction starter
+    expect(editor.__doc).toMatch(/title = ""/); // 01-introduction starter
   });
 
   test('enter() with explicit unknown id also falls back', () => {

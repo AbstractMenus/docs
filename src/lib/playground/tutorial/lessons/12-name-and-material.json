@@ -1,5 +1,5 @@
 {
-  "id": "11-name-and-material",
+  "id": "12-name-and-material",
   "title": "Name + material",
   "topic": "menu",
   "intro": "Two keys you'll set on almost every item:\n\n- **`material`** - what the item looks like in the slot. It's a Bukkit material name (uppercase enum, like `DIAMOND_SWORD`, `OAK_LOG`, `BARRIER`).\n- **`name`** - the display name shown when the player hovers over the item. Just a string. Use Minecraft color codes with `&` like `&aGreen` or `&l` for bold.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n```\n\n**Tip:** type `material = ` and press `Ctrl+Space` - the editor offers a list of common materials.\n\n**Goal:** change the existing item to `material = DIAMOND_SWORD` and add `name = \"&aBuy Sword\"`.",
@@ -25,7 +25,7 @@
     "Add `name = \"&aBuy Sword\"` inside the same `{ ... }`. The `&a` is Minecraft's green color code.",
     "```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n```"
   ],
-  "next": "12-lore",
+  "next": "13-lore",
   "translations": {
     "ru": {
       "title": "Имя и материал",

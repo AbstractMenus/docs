@@ -1,0 +1,41 @@
+{
+  "id": "07-variables-inline",
+  "title": "Custom variables (inline)",
+  "topic": "basics",
+  "intro": "HOCON lets you define your own keys and reference them elsewhere via `${name}` substitution. Useful for any value that repeats across the config.\n\n```\nitemName = \"Diamond Sword\"\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = ${itemName}\n  }\n]\n# items[0].name resolves to \"Diamond Sword\"\n```\n\nThe variable is just a regular key. Substitutions are resolved before AbstractMenus sees the config. The custom key (`itemName`) sits at the top of the file and AbstractMenus ignores it after substitution - any nicely-readable name will do.\n\n**Gotcha:** if you assign the same scalar key twice, **the last one wins**:\n```\nsize = 3\nsize = 5      # final size is 5\n```\nObject values merge instead of overwriting - that's a separate lesson (`23-object-merge`).\n\n**Goal:** define `itemName = \"Diamond Sword\"` and use it for `items[0].name`.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n  }\n]\n",
+  "goal": "Define `itemName = \"Diamond Sword\"` at the top, then set `items[0].name = ${itemName}`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "itemName",
+        "value": "Diamond Sword"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].name",
+        "value": "Diamond Sword"
+      }
+    ]
+  },
+  "hints": [
+    "Define a variable like any other key: `itemName = \"Diamond Sword\"` (any name works).",
+    "Reference it without quotes inside the item: `name = ${itemName}`.",
+    "```\nitemName = \"Diamond Sword\"\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = ${itemName}\n  }\n]\n```"
+  ],
+  "next": "08-variables-object",
+  "translations": {
+    "ru": {
+      "title": "Кастомные переменные (inline)",
+      "intro": "HOCON позволяет объявить свои ключи и ссылаться на них через `${name}`. Удобно для любых значений которые повторяются в конфиге.\n\n```\nitemName = \"Алмазный меч\"\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = ${itemName}\n  }\n]\n# items[0].name резолвится в \"Алмазный меч\"\n```\n\nПеременная это обычный ключ. Подстановки раскрываются до того как конфиг попадёт в AbstractMenus. Кастомный ключ (`itemName`) лежит наверху файла и AbstractMenus его игнорирует после подстановки - имя можно выбрать любое читаемое.\n\n**Подводный камень:** если присвоить тот же скалярный ключ дважды - **последнее значение побеждает**:\n```\nsize = 3\nsize = 5      # итоговое size равно 5\n```\nДля объектов работает merge (а не перезапись) - это отдельный урок (`23-object-merge`).\n\n**Цель:** объяви `itemName = \"Diamond Sword\"` и используй для `items[0].name`.",
+      "goal": "Объяви `itemName = \"Diamond Sword\"` сверху, потом присвой `items[0].name = ${itemName}`.",
+      "hints": [
+        "Объяви переменную как обычный ключ: `itemName = \"Diamond Sword\"` (имя любое).",
+        "Сошлись на неё без кавычек внутри item'а: `name = ${itemName}`.",
+        "```\nitemName = \"Diamond Sword\"\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = ${itemName}\n  }\n]\n```"
+      ]
+    }
+  }
+}

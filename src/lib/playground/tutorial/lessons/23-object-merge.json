@@ -1,5 +1,5 @@
 {
-  "id": "22-object-merge",
+  "id": "23-object-merge",
   "title": "Object merge on duplicate keys",
   "topic": "templates",
   "intro": "When you assign the same key twice and **both values are objects**, HOCON merges them - the second block adds/overrides fields in the first instead of replacing it.\n\n```\ndefaults {\n  material = STONE\n  name = \"Default\"\n}\ndefaults {\n  name = \"Override\"\n  lore = [\"line\"]\n}\n# resolves to:\n# defaults: { material = STONE, name = \"Override\", lore = [\"line\"] }\n```\n\nThis is the same rule that fires when you `include` a file: keys after the include override (or merge into) keys from the include. It's also what makes a base+override pattern work without `+=` or spreads:\n\n```\n# base.conf\ndefaults {\n  material = STONE\n  count = 1\n}\n\n# menu.conf\ninclude \"base.conf\"\ndefaults { count = 16 }   # bumps count, keeps material\n```\n\n**Gotcha vs scalars:** if either side is a scalar (or one is an object and the other isn't), it's still last-wins. Merge is **only** when both are objects.\n\n**Goal:** add a second `defaults { ... }` block that contributes `count = 16` while leaving `material = STONE` from the first block intact.",
@@ -25,7 +25,7 @@
     "Inside: `count = 16`. Don't repeat `material` - it's already there.",
     "```\ndefaults { material = STONE }\ndefaults { count = 16 }\n```"
   ],
-  "next": "23-defaults-merge",
+  "next": "24-defaults-merge",
   "translations": {
     "ru": {
       "title": "Object merge на дубликатах ключей",

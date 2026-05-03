@@ -1,5 +1,5 @@
 {
-  "id": "28-rules-world",
+  "id": "29-rules-world",
   "title": "World/gamemode rules + multi-rule blocks",
   "topic": "conditions",
   "intro": "`rules` works in three places, each with slightly different meaning:\n\n- on a **`click`** - gates the actions (lesson 26)\n- inside a **`binding`** - gates the props swap (lesson 27)\n- on an **`item`** itself - gates the **visibility** of the slot (this lesson)\n\nWhen rules on an item fail, the slot is just not rendered - the player sees an empty inventory cell.\n\nMultiple rule keys in one block are **AND**-ed:\n\n```\nitems = [\n  {\n    slot = 4\n    material = ENDER_PEARL\n    name = \"&aLobby teleport\"\n    rules {\n      world = \"lobby\"\n      gamemode = \"SURVIVAL\"\n    }\n    click { actions { command = \"warp spawn\" } }\n  }\n]\n```\n\nThe pearl shows up only for survival players in the `lobby` world. Anyone else sees an empty slot.\n\nFor **OR** logic, write multiple bindings (each its own rule set) or use the more advanced `if`/`js` rule kinds.\n\n**Goal:** put the existing item under `rules { world = \"lobby\" }` so it only shows in the lobby world.",

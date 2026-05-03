@@ -1,5 +1,5 @@
 {
-  "id": "07-variables-object",
+  "id": "08-variables-object",
   "title": "Custom variables (object)",
   "topic": "basics",
   "intro": "Variables aren't limited to strings and numbers. You can stash a whole **object** in a variable and reuse it.\n\nThis is the foundation of every DRY pattern in AbstractMenus configs - shared click actions, repeating styles, common item shapes. Define once, reference many times.\n\n```\ncloseBtnAction { closeMenu = true }\n\nitems = [\n  {\n    slot = 8\n    material = BARRIER\n    name = \"&cClose\"\n    click { actions = ${closeBtnAction} }\n  }\n]\n# items[0].click.actions resolves to { closeMenu = true }\n```\n\nWhen `${closeBtnAction}` resolves to an object, the whole object lands at that position. Same mechanic as the scalar variable from the previous lesson, just a bigger payload.\n\nThe custom key (`closeBtnAction`) sits at the top of the file as a reusable definition; AbstractMenus ignores it after substitution.\n\n**Goal:** define `closeBtnAction` as an object with `closeMenu = true`, then assign it to the existing item's `click.actions`.",
@@ -25,7 +25,7 @@
     "Inside the item, reference the whole object: `click { actions = ${closeBtnAction} }`.",
     "```\ncloseBtnAction { closeMenu = true }\nitems = [\n  {\n    slot = 8\n    material = BARRIER\n    name = \"&cClose\"\n    click { actions = ${closeBtnAction} }\n  }\n]\n```"
   ],
-  "next": "08-size",
+  "next": "09-size",
   "translations": {
     "ru": {
       "title": "Кастомные переменные (объект)",

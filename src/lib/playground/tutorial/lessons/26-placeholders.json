@@ -1,5 +1,5 @@
 {
-  "id": "25-placeholders",
+  "id": "26-placeholders",
   "title": "Player placeholders `%player_name%`",
   "topic": "templates",
   "intro": "Two different things look similar but happen at totally different times:\n\n- **`${var}`** - HOCON substitution. Resolved when the config is **loaded** by AbstractMenus. The reference must point at another key in the same config.\n- **`%player_name%`** - PlaceholderAPI placeholder (and similar). Resolved at **runtime**, every time the menu is rendered for a specific player. The HOCON parser doesn't touch it - the literal `%...%` text passes through into the value.\n\n```\nitems = [\n  {\n    slot = 4\n    material = PLAYER_HEAD\n    name = \"&aHello %player_name%!\"\n    lore = [\n      \"&7Balance: %vault_eco_balance%\"\n      \"&7Rank: %luckperms_prefix%\"\n    ]\n  }\n]\n```\n\nUse `%...%` placeholders for anything **per-player**: their name, their balance, their permissions, their location. Use `${var}` for **structural** reuse (defaults, color palette, button templates).\n\nAvailable placeholders depend on which plugins you have installed - any PlaceholderAPI extension contributes its own.\n\n**Goal:** add a `name` to the existing item that greets the player by their name using `%player_name%`.",
@@ -20,7 +20,7 @@
     "Color codes work too: `\"&aHello %player_name%!\"`.",
     "```\nitems = [\n  {\n    slot = 4\n    material = PLAYER_HEAD\n    name = \"&aHello %player_name%!\"\n  }\n]\n```"
   ],
-  "next": "26-rules-permission",
+  "next": "27-rules-permission",
   "translations": {
     "ru": {
       "title": "Player-плейсхолдеры `%player_name%`",

@@ -1,5 +1,5 @@
 {
-  "id": "16-click-message",
+  "id": "17-click-message",
   "title": "Click: send a message",
   "topic": "actions",
   "intro": "Time to make the menu **do** something. The simplest reaction to a click is sending the player a chat message.\n\nClick handlers live under `click.actions`. Each key inside `actions` is an **action type** (one of message, command, sound, openMenu, closeMenu, ...) and the value is the data for that action.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    click { actions { message = \"Welcome to the shop!\" } }\n  }\n]\n```\n\nClicking the sword in-game now shows `Welcome to the shop!` in the player's chat.\n\n**Tip:** type `click { actions {` and press `Ctrl+Space` to see the full list of action types AbstractMenus supports.\n\n**Goal:** add a `click.actions.message` to the existing item that sends `\"Welcome to the shop!\"`.",
@@ -20,7 +20,7 @@
     "The message is just a string in double quotes.",
     "```\nclick { actions { message = \"Welcome to the shop!\" } }\n```"
   ],
-  "next": "17-click-command",
+  "next": "18-click-command",
   "translations": {
     "ru": {
       "title": "Click: отправка сообщения",

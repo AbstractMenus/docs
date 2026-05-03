@@ -1,5 +1,5 @@
 {
-  "id": "24-optional-subs",
+  "id": "25-optional-subs",
   "title": "Optional substitutions `${?var}`",
   "topic": "templates",
   "intro": "By default `${name}` **must** resolve - if the variable doesn't exist, you get an `Unresolved substitution` warning and the value falls back to null.\n\nThe `${?name}` form (note the `?`) marks the substitution as **optional**: missing variable is silent, no warning, value just resolves to absent / null.\n\n```\ntitle = ${?customTitle}     # quiet if customTitle isn't set\n```\n\nReal-world use: a shared template file that **maybe** sets some fields, where each menu using `include` decides whether to set them.\n\n```\n# template.conf\ntitle = ${?customTitle}\n\n# menu.conf\ninclude \"template.conf\"\ncustomTitle = \"Diamond Shop\"   # picked up by ${?customTitle}\n```\n\n**Goal:** assign `title = ${?customTitle}`. Since `customTitle` isn't defined, the `?` form keeps it quiet (a plain `${customTitle}` would warn).",
@@ -15,7 +15,7 @@
     "The variable doesn't have to exist anywhere - that's the whole point.",
     "```\ntitle = ${?customTitle}\n```"
   ],
-  "next": "25-placeholders",
+  "next": "26-placeholders",
   "translations": {
     "ru": {
       "title": "Опциональные подстановки `${?var}`",

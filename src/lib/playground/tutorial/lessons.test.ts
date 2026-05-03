@@ -24,12 +24,12 @@ describe('lessons loader', () => {
     expect(ids).toEqual(sorted);
   });
 
-  test('00-introduction is first', () => {
-    expect(firstLessonId()).toBe('00-introduction');
+  test('01-introduction is first', () => {
+    expect(firstLessonId()).toBe('01-introduction');
   });
 
   test('getLesson returns matching lesson', () => {
-    expect(getLesson('00-introduction')?.title).toBe('Introduction');
+    expect(getLesson('01-introduction')?.title).toBe('Introduction');
   });
 
   test('getLesson returns undefined for unknown id', () => {
@@ -185,8 +185,8 @@ describe('groupLessons / position helpers', () => {
   });
 
   test('lessonPosition is 1-based, 0 for unknown', () => {
-    expect(lessonPosition('00-introduction')).toBe(1);
-    expect(lessonPosition('01-comments')).toBe(2);
+    expect(lessonPosition('01-introduction')).toBe(1);
+    expect(lessonPosition('02-comments')).toBe(2);
     expect(lessonPosition('999-nope')).toBe(0);
   });
 
@@ -195,8 +195,8 @@ describe('groupLessons / position helpers', () => {
   });
 
   test('prevLessonId returns previous or null at the boundary', () => {
-    expect(prevLessonId('00-introduction')).toBeNull();
-    expect(prevLessonId('01-comments')).toBe('00-introduction');
+    expect(prevLessonId('01-introduction')).toBeNull();
+    expect(prevLessonId('02-comments')).toBe('01-introduction');
     expect(prevLessonId('999-nope')).toBeNull();
   });
 });

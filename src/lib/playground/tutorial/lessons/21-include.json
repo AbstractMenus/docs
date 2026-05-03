@@ -1,5 +1,5 @@
 {
-  "id": "20-include",
+  "id": "21-include",
   "title": "Include shared templates",
   "topic": "templates",
   "intro": "When several menus share fields (button styles, common click actions, color palette), don't copy them - put them in a separate file and **include** it.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nThe most common form is the simple string: `include \"path/to/file.conf\"`. AbstractMenus resolves the path relative to the menu file. Other forms (`classpath(...)`, `required(...)`) are for advanced cases (jar resources, fail-loudly).\n\nThe included file is parsed as if its contents were inlined where the `include` line stands. Any keys in the including file then override the included ones (last-wins / object-merge per the rules you've seen).\n\n**Caveat:** The playground shows a yellow warning on `include` lines because there are no other files here to load. The syntax check still passes - this lesson is about learning the form. In a real plugin install the include resolves normally.\n\n**Goal:** add an `include \"defaults.conf\"` line above the existing `title`.",
@@ -15,7 +15,7 @@
     "The yellow warning is fine - playground has no real `defaults.conf` to load.",
     "```\ninclude \"defaults.conf\"\ntitle = \"Shop\"\n```"
   ],
-  "next": "21-array-append",
+  "next": "22-array-append",
   "translations": {
     "ru": {
       "title": "Include - подключение файла-шаблона",

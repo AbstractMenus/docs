@@ -1,5 +1,5 @@
 {
-  "id": "17-click-command",
+  "id": "18-click-command",
   "title": "Click: run a command",
   "topic": "actions",
   "intro": "Sending a message is fine, but you usually want the menu to actually **change game state** - give items, teleport, set permissions. The standard way is running a command.\n\nThe `command` action takes a string. By default it runs as **console** so the player doesn't need permissions.\n\n```\nclick { actions { command = \"give @p diamond_sword 1\" } }\n```\n\nUse `@p` to refer to the clicking player (vanilla selector). Or use the AbstractMenus placeholder `%player_name%` (covered in lesson 25).\n\nFor a player-side command (run as the player, with their permissions), use the long form:\n```\ncommand {\n  cmd = \"warp spawn\"\n  as = PLAYER\n}\n```\n\n**Goal:** replace the message handler with a command that gives the player a diamond sword.",
@@ -20,7 +20,7 @@
     "The command goes in double quotes - it's just a string.",
     "```\nclick { actions { command = \"give @p diamond_sword 1\" } }\n```"
   ],
-  "next": "18-multiple-actions",
+  "next": "19-multiple-actions",
   "translations": {
     "ru": {
       "title": "Click: запуск команды",

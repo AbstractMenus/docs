@@ -1,5 +1,5 @@
 {
-  "id": "03-values",
+  "id": "04-values",
   "title": "Numbers, booleans, durations",
   "topic": "basics",
   "intro": "HOCON values aren't only strings. The most common typed values you'll write in menus:\n\n- **Number**: `5`, `3.14`, `-2` - integers and floats. No quotes.\n- **Boolean**: `true` / `false` - unquoted, lowercase. You'll meet booleans inside nested blocks like `firework { flicker = true }` or `bindings`.\n- **Duration**: `5s`, `1m`, `2h`, `500ms` - HOCON's own [duration format](https://github.com/lightbend/config/blob/main/HOCON.md#duration-format) (not ISO 8601). Unit suffix is case-sensitive lowercase: `ns`, `us`, `ms`, `s`, `m`, `h`, `d` (long forms `nanos`, `seconds`, ... also work).\n\nQuoting matters: `\"5\"` is a string, `5` is a number. AbstractMenus is strict here - a duration set to `\"5s\"` won't behave the same as `5s`.\n\n**Goal:** add a `size` key (number 3) and an `updateInterval` key (duration 5s). Both are real menu-level fields - `size` is rows of the menu, `updateInterval` is how often dynamic items re-render.",
@@ -25,7 +25,7 @@
     "Duration is a number with a unit suffix, also unquoted: `updateInterval = 5s`.",
     "```\nsize = 3\nupdateInterval = 5s\n```"
   ],
-  "next": "04-lists-vs-objects",
+  "next": "05-lists-vs-objects",
   "translations": {
     "ru": {
       "title": "Числа, булевы, длительности",

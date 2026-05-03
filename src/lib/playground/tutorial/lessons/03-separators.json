@@ -1,5 +1,5 @@
 {
-  "id": "02-separators",
+  "id": "03-separators",
   "title": "Key/value separators",
   "topic": "basics",
   "intro": "HOCON has three ways to write a key-value pair:\n\n- `key = value` - traditional\n- `key : value` - JSON-style colon\n- `key { ... }` - **the `=` is optional** when the value is an object\n\nAll three are equivalent. The third form is the trick: when the value is an object, the separator can be omitted. You'll see it constantly in real menu configs - it makes nested blocks read cleaner.\n\n**Goal:** rewrite `closeActions` without the `=` between the key and the `{`.",
@@ -15,7 +15,7 @@
     "Try: `closeActions { message = \"Bye!\" }`.",
     "```\ncloseActions { message = \"Bye!\" }\n```"
   ],
-  "next": "03-values",
+  "next": "04-values",
   "translations": {
     "ru": {
       "title": "Разделители ключ/значение",

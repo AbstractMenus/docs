@@ -1,5 +1,5 @@
 {
-  "id": "01-comments",
+  "id": "02-comments",
   "title": "Comments",
   "topic": "basics",
   "intro": "HOCON supports two comment styles:\n\n- `# this is a hash comment`\n- `// this is a slash comment`\n\nBoth run from the marker to the end of the line. Use comments to document menus or temporarily disable a line.\n\n**Goal:** add a comment to the file (any line that starts with `#` or `//`).",
@@ -15,7 +15,7 @@
     "Try `# this menu shows my shop` above the title line.",
     "`# this menu shows my shop`"
   ],
-  "next": "02-separators",
+  "next": "03-separators",
   "translations": {
     "ru": {
       "title": "Комментарии",

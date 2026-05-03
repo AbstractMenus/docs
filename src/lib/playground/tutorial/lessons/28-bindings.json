@@ -1,5 +1,5 @@
 {
-  "id": "27-bindings",
+  "id": "28-bindings",
   "title": "Bindings (rules + props)",
   "topic": "conditions",
   "intro": "What if you don't want to **hide** an item per-player but **change** how it looks? That's bindings.\n\nA binding is a `(rules, props)` pair attached to an item. When the rules pass, the props **override** the item's normal fields. Different players see different versions of the same slot - same item, different material, name, lore, click handler.\n\n```\nitems = [\n  {\n    slot = 4\n    material = STONE\n    name = \"&7Standard\"\n    bindings = [\n      {\n        rules { permission = \"vip\" }\n        props {\n          material = DIAMOND\n          name = \"&aVIP exclusive\"\n        }\n      }\n    ]\n  }\n]\n```\n\nNo permission -> sees STONE \"Standard\". With `vip` permission -> sees DIAMOND \"VIP exclusive\". Same slot, two faces.\n\nBindings are checked in array order, **first match wins**. Multiple bindings = a tier system:\n\n```\nbindings = [\n  {\n    rules { permission = \"admin\" }\n    props { name = \"&cAdmin\" }\n  }\n  {\n    rules { permission = \"vip\" }\n    props { name = \"&aVIP\" }\n  }\n]\n```\n\n`props` accepts any item-scope key (material, name, lore, click, count, ...) - it's a partial item override.\n\n**Goal:** add a `bindings` array on the item with one binding that swaps `material` to `DIAMOND` for players with the `vip` permission.",
@@ -30,7 +30,7 @@
     "Inside `props`, write any item-scope key you want to override - here just `material = DIAMOND`.",
     "```\nbindings = [\n  {\n    rules { permission = \"vip\" }\n    props { material = DIAMOND }\n  }\n]\n```"
   ],
-  "next": "28-rules-world",
+  "next": "29-rules-world",
   "translations": {
     "ru": {
       "title": "Bindings (rules + props)",

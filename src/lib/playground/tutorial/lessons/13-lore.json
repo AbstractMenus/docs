@@ -1,5 +1,5 @@
 {
-  "id": "12-lore",
+  "id": "13-lore",
   "title": "Lore (multi-line tooltip)",
   "topic": "items",
   "intro": "`lore` is the multi-line description shown below the item's name when the player hovers over it. It's a **list of strings** - one entry per line.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    lore = [\n      \"&7Click to buy\"\n      \"&7Costs 10 emeralds\"\n    ]\n  }\n]\n```\n\nMinecraft color codes (`&7` for grey, `&a` green, `&l` bold, etc.) work inside lore lines too.\n\n**Goal:** add `lore` to the existing item with the two lines `\"&7Click to buy\"` and `\"&7Costs 10 emeralds\"`.",
@@ -25,7 +25,7 @@
     "You can put it on one line or break across lines - both work. Strings separated by comma or newline.",
     "```\nlore = [\n  \"&7Click to buy\"\n  \"&7Costs 10 emeralds\"\n]\n```"
   ],
-  "next": "13-enchantments",
+  "next": "14-enchantments",
   "translations": {
     "ru": {
       "title": "Lore (многострочный tooltip)",

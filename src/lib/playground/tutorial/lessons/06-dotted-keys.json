@@ -1,5 +1,5 @@
 {
-  "id": "05-dotted-keys",
+  "id": "06-dotted-keys",
   "title": "Dotted keys",
   "topic": "basics",
   "intro": "A dot inside a key automatically creates a nested object. These two forms are **identical**:\n\n```\n# Verbose\ndefaults { material = STONE }\n\n# Dotted\ndefaults.material = STONE\n```\n\nUseful for setting one field deep in a nested object without all the braces, and for keeping configs narrow when menus grow.\n\nDots also work inside arbitrary depths: `theme.colors.primary = \"&a\"` is the same as `theme { colors { primary = \"&a\" } }`.\n\n**Goal:** add `defaults.material = STONE` using dotted-key syntax (no braces).",
@@ -20,7 +20,7 @@
     "Just write `defaults.material = STONE` on a new line.",
     "```\ndefaults.material = STONE\n```"
   ],
-  "next": "06-variables-inline",
+  "next": "07-variables-inline",
   "translations": {
     "ru": {
       "title": "Точечные ключи",

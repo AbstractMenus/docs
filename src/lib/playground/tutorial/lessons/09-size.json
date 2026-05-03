@@ -1,5 +1,5 @@
 {
-  "id": "08-size",
+  "id": "09-size",
   "title": "Menu size",
   "topic": "menu",
   "intro": "Time to start a real menu. The first key any menu needs is `size` - the number of **rows** (not slots). Vanilla Minecraft inventories are 1-6 rows tall, so valid values are 1-6.\n\n```\nsize = 3   # 3 rows = 27 slots\nsize = 6   # 6 rows = 54 slots (max)\n```\n\nSlots are numbered 0-based row by row: row 0 is slots 0-8, row 1 is 9-17, row 2 is 18-26.\n\n**Goal:** add `size = 3` to the menu.",
@@ -20,7 +20,7 @@
     "It's a plain number - no quotes, no units.",
     "```\nsize = 3\n```"
   ],
-  "next": "09-items-array",
+  "next": "10-items-array",
   "translations": {
     "ru": {
       "title": "Размер меню",

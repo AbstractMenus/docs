@@ -1,5 +1,5 @@
 {
-  "id": "26-rules-permission",
+  "id": "27-rules-permission",
   "title": "Permission rule",
   "topic": "conditions",
   "intro": "Most click handlers shouldn't fire for everyone. The `rules` block gates an action: when any rule fails, the action is silently skipped.\n\n```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```\n\nA rule attached to a `click` block gates **that click's actions**. The same `rules` syntax also works on `items` (gates visibility) and on `bindings` (the next lesson).\n\nMost common rule keys:\n\n- `permission = \"shop.use\"` - player must hold the permission\n- `money = 100` - player must have at least N Vault balance\n- `levels = 30` - player must have at least N XP levels\n- `gamemode = \"SURVIVAL\"` - gamemode match\n- `world = \"lobby\"` - world match\n\nMultiple rules in the same block are **AND**-ed: all must pass.\n\n**Goal:** add a `rules { permission = \"menu.admin\" }` block to the click so only admins can fire the command.",
@@ -25,7 +25,7 @@
     "Inside `rules`, just one key for now: `permission = \"menu.admin\"`.",
     "```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```"
   ],
-  "next": "27-bindings",
+  "next": "28-bindings",
   "translations": {
     "ru": {
       "title": "Permission rule",

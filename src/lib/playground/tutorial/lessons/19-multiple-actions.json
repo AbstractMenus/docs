@@ -1,5 +1,5 @@
 {
-  "id": "18-multiple-actions",
+  "id": "19-multiple-actions",
   "title": "Multiple actions in one click",
   "topic": "actions",
   "intro": "`actions` is an **object**, so you can stack multiple action types - they all fire on the same click in the order they appear.\n\n```\nclick {\n  actions {\n    message = \"Bought a sword!\"\n    command = \"give @p diamond_sword 1\"\n    sound = ENTITY_VILLAGER_YES\n    closeMenu = true\n  }\n}\n```\n\nThis sends a confirmation message, gives the item, plays a sound, and closes the menu - one click, four side-effects, declared inline.\n\n**Note on duplicates:** since `actions` is an object you can have at most one of each action type. To send two messages or run two commands, put a newline-separated string in `message`/`command`, or use the `bulk` grouping action (advanced).\n\n**Goal:** stack `message` + `command` + `sound = ENTITY_EXPERIENCE_ORB_PICKUP` so all three fire when the sword is clicked.",
@@ -30,7 +30,7 @@
     "`sound` value is an enum (uppercase), no quotes; `message` is a string in double quotes.",
     "```\nactions {\n  command = \"give @p diamond_sword 1\"\n  message = \"Bought!\"\n  sound = ENTITY_EXPERIENCE_ORB_PICKUP\n}\n```"
   ],
-  "next": "19-click-types",
+  "next": "20-click-types",
   "translations": {
     "ru": {
       "title": "Несколько действий в одном клике",

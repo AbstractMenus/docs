@@ -1,5 +1,5 @@
 {
-  "id": "04-lists-vs-objects",
+  "id": "05-lists-vs-objects",
   "title": "Lists vs objects",
   "topic": "basics",
   "intro": "HOCON has two structural shapes:\n\n- **Object** `{ key = value, ... }` - unordered collection of named fields. Used for menus, items, click actions, rules - anything with a known schema.\n- **Array** `[ value, value, ... ]` - ordered collection. Used for `items` (multiple slots in a menu), `lore` (a list of text lines), `actions` (a sequence to run on click).\n\nKey difference: objects have **names** for each field, arrays have **positions**. Use the right one or the parser will reject your config.\n\n**Goal:** add `metaList` as a list of strings AND `activators` as an object with a `command` field. Both are real menu-level keys - `metaList` seeds player meta values, `activators` configures how the menu opens.",
@@ -24,7 +24,7 @@
     "Objects go in `{...}`: `activators { command = \"/shop\" }`. Same separator rules. Recall `=` before `{` is optional.",
     "```\nmetaList = [\"a\", \"b\"]\nactivators { command = \"/shop\" }\n```"
   ],
-  "next": "05-dotted-keys",
+  "next": "06-dotted-keys",
   "translations": {
     "ru": {
       "title": "Списки и объекты",
