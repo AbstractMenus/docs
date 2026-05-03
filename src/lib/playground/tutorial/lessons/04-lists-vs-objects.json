@@ -8,8 +8,15 @@
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "has", "path": "metaList[1]" },
-      { "kind": "eq", "path": "activators.command", "value": "/shop" }
+      {
+        "kind": "has",
+        "path": "metaList[1]"
+      },
+      {
+        "kind": "eq",
+        "path": "activators.command",
+        "value": "/shop"
+      }
     ]
   },
   "hints": [

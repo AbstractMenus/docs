@@ -2,14 +2,22 @@
   "id": "12-lore",
   "title": "Lore (multi-line tooltip)",
   "topic": "items",
-  "intro": "`lore` is the multi-line description shown below the item's name when the player hovers over it. It's a **list of strings** - one entry per line.\n\n```\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\"\n    lore = [\n      \"&7Click to buy\"\n      \"&7Costs 10 emeralds\"\n    ]\n  }\n]\n```\n\nMinecraft color codes (`&7` for grey, `&a` green, `&l` bold, etc.) work inside lore lines too.\n\n**Goal:** add `lore` to the existing item with the two lines `\"&7Click to buy\"` and `\"&7Costs 10 emeralds\"`.",
-  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\" }\n]\n",
+  "intro": "`lore` is the multi-line description shown below the item's name when the player hovers over it. It's a **list of strings** - one entry per line.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    lore = [\n      \"&7Click to buy\"\n      \"&7Costs 10 emeralds\"\n    ]\n  }\n]\n```\n\nMinecraft color codes (`&7` for grey, `&a` green, `&l` bold, etc.) work inside lore lines too.\n\n**Goal:** add `lore` to the existing item with the two lines `\"&7Click to buy\"` and `\"&7Costs 10 emeralds\"`.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n",
   "goal": "Add `lore = [\"&7Click to buy\", \"&7Costs 10 emeralds\"]` to the item.",
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "items[0].lore[0]", "value": "&7Click to buy" },
-      { "kind": "eq", "path": "items[0].lore[1]", "value": "&7Costs 10 emeralds" }
+      {
+        "kind": "eq",
+        "path": "items[0].lore[0]",
+        "value": "&7Click to buy"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].lore[1]",
+        "value": "&7Costs 10 emeralds"
+      }
     ]
   },
   "hints": [
@@ -21,7 +29,7 @@
   "translations": {
     "ru": {
       "title": "Lore (многострочный tooltip)",
-      "intro": "`lore` это многострочное описание которое показывается под именем item'а при наведении. Это **список строк** - по одной на строку tooltip'а.\n\n```\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\"\n    lore = [\n      \"&7Click to buy\"\n      \"&7Costs 10 emeralds\"\n    ]\n  }\n]\n```\n\nЦвета Minecraft (`&7` серый, `&a` зелёный, `&l` жирный и т.д.) работают и внутри lore.\n\n**Цель:** добавь `lore` к существующему item с двумя строками `\"&7Click to buy\"` и `\"&7Costs 10 emeralds\"`.",
+      "intro": "`lore` это многострочное описание которое показывается под именем item'а при наведении. Это **список строк** - по одной на строку tooltip'а.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    lore = [\n      \"&7Click to buy\"\n      \"&7Costs 10 emeralds\"\n    ]\n  }\n]\n```\n\nЦвета Minecraft (`&7` серый, `&a` зелёный, `&l` жирный и т.д.) работают и внутри lore.\n\n**Цель:** добавь `lore` к существующему item с двумя строками `\"&7Click to buy\"` и `\"&7Costs 10 emeralds\"`.",
       "goal": "Добавь `lore = [\"&7Click to buy\", \"&7Costs 10 emeralds\"]` в item.",
       "hints": [
         "`lore` это список как и сам `items` - оборачивай в `[...]`. Каждая строка - элемент массива.",

@@ -3,13 +3,21 @@
   "title": "Permission rule",
   "topic": "conditions",
   "intro": "Most click handlers shouldn't fire for everyone. The `rules` block gates an action: when any rule fails, the action is silently skipped.\n\n```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```\n\nA rule attached to a `click` block gates **that click's actions**. The same `rules` syntax also works on `items` (gates visibility) and on `bindings` (the next lesson).\n\nMost common rule keys:\n\n- `permission = \"shop.use\"` - player must hold the permission\n- `money = 100` - player must have at least N Vault balance\n- `levels = 30` - player must have at least N XP levels\n- `gamemode = \"SURVIVAL\"` - gamemode match\n- `world = \"lobby\"` - world match\n\nMultiple rules in the same block are **AND**-ed: all must pass.\n\n**Goal:** add a `rules { permission = \"menu.admin\" }` block to the click so only admins can fire the command.",
-  "starter": "title = \"Admin\"\nsize = 3\nitems = [\n  { slot = 4, material = COMMAND_BLOCK, name = \"&cAdmin Panel\"\n    click {\n      actions { command = \"op @p\" }\n    }\n  }\n]\n",
+  "starter": "title = \"Admin\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = COMMAND_BLOCK\n    name = \"&cAdmin Panel\"\n    click { actions { command = \"op @p\" } }\n  }\n]\n",
   "goal": "Add `rules { permission = \"menu.admin\" }` to the click handler.",
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "items[0].click.rules.permission", "value": "menu.admin" },
-      { "kind": "eq", "path": "items[0].click.actions.command", "value": "op @p" }
+      {
+        "kind": "eq",
+        "path": "items[0].click.rules.permission",
+        "value": "menu.admin"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].click.actions.command",
+        "value": "op @p"
+      }
     ]
   },
   "hints": [

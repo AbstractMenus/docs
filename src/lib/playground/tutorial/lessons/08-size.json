@@ -8,7 +8,11 @@
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "size", "value": 3 }
+      {
+        "kind": "eq",
+        "path": "size",
+        "value": 3
+      }
     ]
   },
   "hints": [

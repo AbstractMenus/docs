@@ -8,8 +8,16 @@
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "size", "value": 3 },
-      { "kind": "eq", "path": "updateInterval", "value": "5s" }
+      {
+        "kind": "eq",
+        "path": "size",
+        "value": 3
+      },
+      {
+        "kind": "eq",
+        "path": "updateInterval",
+        "value": "5s"
+      }
     ]
   },
   "hints": [

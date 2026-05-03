@@ -2,31 +2,39 @@
   "id": "15-count-cooldown",
   "title": "Count & cooldown",
   "topic": "items",
-  "intro": "Two practical fields you'll set on real items:\n\n- **`count`** - stack size shown on the item icon (1-64). Default is 1. Set higher for visual emphasis or to display a quantity.\n- **`cooldown`** - per-item click cooldown (a duration like `5s`, `500ms`, `1m`). Prevents click spam when the action is expensive (gives item, runs command).\n\n```\nitems = [\n  { slot = 4, material = EMERALD\n    name = \"&a10 Emeralds\"\n    count = 10\n    cooldown = 3s\n  }\n]\n```\n\nNote: `count` is the AbstractMenus name; you might see `amount` in other plugins or in vanilla Bukkit API - they refer to the same thing.\n\n**Goal:** add `count = 16` and `cooldown = 5s` to the item.",
-  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  { slot = 4, material = DIAMOND, name = \"&aBuy\" }\n]\n",
+  "intro": "Two practical fields you'll set on real items:\n\n- **`count`** - stack size shown on the item icon (1-64). Default is 1. Set higher for visual emphasis or to display a quantity.\n- **`cooldown`** - per-item click cooldown (a duration like `5s`, `500ms`, `1m`). Prevents click spam when the action is expensive (gives item, runs command).\n\n```\nitems = [\n  {\n    slot = 4\n    material = EMERALD\n    name = \"&a10 Emeralds\"\n    count = 10\n    cooldown = 3s\n  }\n]\n```\n\nNote: `count` is the AbstractMenus name; you might see `amount` in other plugins or in vanilla Bukkit API - they refer to the same thing.\n\n**Goal:** add `count = 16` and `cooldown = 5s` to the item.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND\n    name = \"&aBuy\"\n  }\n]\n",
   "goal": "Add `count = 16` and `cooldown = 5s` to the item.",
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "items[0].count", "value": 16 },
-      { "kind": "eq", "path": "items[0].cooldown", "value": "5s" }
+      {
+        "kind": "eq",
+        "path": "items[0].count",
+        "value": 16
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].cooldown",
+        "value": "5s"
+      }
     ]
   },
   "hints": [
     "`count` is a number, no quotes: `count = 16`.",
     "`cooldown` is a duration with a unit suffix: `cooldown = 5s` (also `1m`, `500ms`).",
-    "```\nitems = [\n  { slot = 4, material = DIAMOND, name = \"&aBuy\"\n    count = 16\n    cooldown = 5s\n  }\n]\n```"
+    "```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND\n    name = \"&aBuy\"\n    count = 16\n    cooldown = 5s\n  }\n]\n```"
   ],
   "next": "16-click-message",
   "translations": {
     "ru": {
       "title": "Count и cooldown",
-      "intro": "Два практичных поля для реальных item'ов:\n\n- **`count`** - размер стака, показывается на иконке item'а (1-64). По умолчанию 1. Ставь больше для визуального акцента или чтобы показать количество.\n- **`cooldown`** - задержка между кликами на item (длительность типа `5s`, `500ms`, `1m`). Защита от спам-кликов когда действие дорогое (выдать предмет, запустить команду).\n\n```\nitems = [\n  { slot = 4, material = EMERALD\n    name = \"&a10 Emeralds\"\n    count = 10\n    cooldown = 3s\n  }\n]\n```\n\nЗаметь: `count` это имя в AbstractMenus; в других плагинах или vanilla Bukkit API можно встретить `amount` - это про то же самое.\n\n**Цель:** добавь `count = 16` и `cooldown = 5s` в item.",
+      "intro": "Два практичных поля для реальных item'ов:\n\n- **`count`** - размер стака, показывается на иконке item'а (1-64). По умолчанию 1. Ставь больше для визуального акцента или чтобы показать количество.\n- **`cooldown`** - задержка между кликами на item (длительность типа `5s`, `500ms`, `1m`). Защита от спам-кликов когда действие дорогое (выдать предмет, запустить команду).\n\n```\nitems = [\n  {\n    slot = 4\n    material = EMERALD\n    name = \"&a10 Emeralds\"\n    count = 10\n    cooldown = 3s\n  }\n]\n```\n\nЗаметь: `count` это имя в AbstractMenus; в других плагинах или vanilla Bukkit API можно встретить `amount` - это про то же самое.\n\n**Цель:** добавь `count = 16` и `cooldown = 5s` в item.",
       "goal": "Добавь `count = 16` и `cooldown = 5s` в item.",
       "hints": [
         "`count` это число, без кавычек: `count = 16`.",
         "`cooldown` это длительность с суффиксом единицы: `cooldown = 5s` (есть `1m`, `500ms`).",
-        "```\nitems = [\n  { slot = 4, material = DIAMOND, name = \"&aBuy\"\n    count = 16\n    cooldown = 5s\n  }\n]\n```"
+        "```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND\n    name = \"&aBuy\"\n    count = 16\n    cooldown = 5s\n  }\n]\n```"
       ]
     }
   }

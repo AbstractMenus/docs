@@ -2,13 +2,17 @@
   "id": "13-enchantments",
   "title": "Enchantments",
   "topic": "items",
-  "intro": "`enchantments` is an **object** mapping enchantment name to level. Each key is a Bukkit enchantment enum (uppercase), each value is the level.\n\n```\nitems = [\n  { slot = 4, material = DIAMOND_SWORD\n    enchantments {\n      SHARPNESS = 5\n      UNBREAKING = 3\n    }\n  }\n]\n```\n\nNote: this is the only place in `items` where the children aren't a fixed AbstractMenus schema - the keys are Bukkit's `Enchantment` enum names (`SHARPNESS`, `EFFICIENCY`, `MENDING`, `LOOTING`, `UNBREAKING`, ...). Use `Ctrl+Space` after `enchantments {` to see common ones.\n\nLooks more impressive in-game with `flags = [\"HIDE_ENCHANTS\"]` to keep the tooltip clean - that's the next lesson.\n\n**Goal:** enchant the sword with `SHARPNESS = 5`.",
-  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\" }\n]\n",
+  "intro": "`enchantments` is an **object** mapping enchantment name to level. Each key is a Bukkit enchantment enum (uppercase), each value is the level.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    enchantments {\n      SHARPNESS = 5\n      UNBREAKING = 3\n    }\n  }\n]\n```\n\nNote: this is the only place in `items` where the children aren't a fixed AbstractMenus schema - the keys are Bukkit's `Enchantment` enum names (`SHARPNESS`, `EFFICIENCY`, `MENDING`, `LOOTING`, `UNBREAKING`, ...). Use `Ctrl+Space` after `enchantments {` to see common ones.\n\nLooks more impressive in-game with `flags = [\"HIDE_ENCHANTS\"]` to keep the tooltip clean - that's the next lesson.\n\n**Goal:** enchant the sword with `SHARPNESS = 5`.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n",
   "goal": "Add `enchantments { SHARPNESS = 5 }` to the item.",
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "items[0].enchantments.SHARPNESS", "value": 5 }
+      {
+        "kind": "eq",
+        "path": "items[0].enchantments.SHARPNESS",
+        "value": 5
+      }
     ]
   },
   "hints": [
@@ -20,7 +24,7 @@
   "translations": {
     "ru": {
       "title": "Зачарования",
-      "intro": "`enchantments` это **объект** с маппингом имя-зачарования → уровень. Каждый ключ - Bukkit-enum зачарования (uppercase), значение - уровень.\n\n```\nitems = [\n  { slot = 4, material = DIAMOND_SWORD\n    enchantments {\n      SHARPNESS = 5\n      UNBREAKING = 3\n    }\n  }\n]\n```\n\nЗаметь: это единственное место в `items` где дети - не фиксированная схема AbstractMenus, а enum Bukkit'а: `SHARPNESS`, `EFFICIENCY`, `MENDING`, `LOOTING`, `UNBREAKING` и т.д. Жми `Ctrl+Space` после `enchantments {` чтобы увидеть популярные.\n\nВыглядит эффектнее в игре с `flags = [\"HIDE_ENCHANTS\"]` чтобы tooltip был чистым - это следующий урок.\n\n**Цель:** зачаруй меч `SHARPNESS = 5`.",
+      "intro": "`enchantments` это **объект** с маппингом имя-зачарования → уровень. Каждый ключ - Bukkit-enum зачарования (uppercase), значение - уровень.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    enchantments {\n      SHARPNESS = 5\n      UNBREAKING = 3\n    }\n  }\n]\n```\n\nЗаметь: это единственное место в `items` где дети - не фиксированная схема AbstractMenus, а enum Bukkit'а: `SHARPNESS`, `EFFICIENCY`, `MENDING`, `LOOTING`, `UNBREAKING` и т.д. Жми `Ctrl+Space` после `enchantments {` чтобы увидеть популярные.\n\nВыглядит эффектнее в игре с `flags = [\"HIDE_ENCHANTS\"]` чтобы tooltip был чистым - это следующий урок.\n\n**Цель:** зачаруй меч `SHARPNESS = 5`.",
       "goal": "Добавь `enchantments { SHARPNESS = 5 }` в item.",
       "hints": [
         "`enchantments` это объект - используй `{...}`. `=` перед `{` не нужен (видели в 02-separators).",

@@ -8,7 +8,11 @@
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "defaults.material", "value": "STONE" }
+      {
+        "kind": "eq",
+        "path": "defaults.material",
+        "value": "STONE"
+      }
     ]
   },
   "hints": [

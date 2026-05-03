@@ -2,31 +2,39 @@
   "id": "19-click-types",
   "title": "Click types: left vs right",
   "topic": "actions",
-  "intro": "Until now `click.actions` fired on **any** click. To react differently to different mouse buttons, nest under `left`, `right`, `middle`, `drop`, `shiftLeft`, `shiftRight`:\n\n```\nclick {\n  left {\n    actions {\n      message = \"Left clicked!\"\n    }\n  }\n  right {\n    actions {\n      message = \"Right clicked!\"\n    }\n  }\n}\n```\n\nClassic shop pattern: left-click to buy, right-click to inspect.\n\n```\nclick {\n  left  { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Costs 10 emeralds\" } }\n}\n```\n\nIf you also have a top-level `click.actions` and a `click.left.actions`, both fire on a left click - the top-level one is the catch-all.\n\n**Goal:** split the existing `click.actions` into two distinct handlers - `left` runs the `command`, `right` shows a `message = \"Costs 10 emeralds\"`.",
-  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  { slot = 4, material = DIAMOND_SWORD, name = \"&aBuy Sword\"\n    click {\n      actions {\n        command = \"give @p diamond_sword 1\"\n      }\n    }\n  }\n]\n",
+  "intro": "Until now `click.actions` fired on **any** click. To react differently to different mouse buttons, nest under `left`, `right`, `middle`, `drop`, `shiftLeft`, `shiftRight`:\n\n```\nclick {\n  left { actions { message = \"Left clicked!\" } }\n  right { actions { message = \"Right clicked!\" } }\n}\n```\n\nClassic shop pattern: left-click to buy, right-click to inspect.\n\n```\nclick {\n  left  { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Costs 10 emeralds\" } }\n}\n```\n\nIf you also have a top-level `click.actions` and a `click.left.actions`, both fire on a left click - the top-level one is the catch-all.\n\n**Goal:** split the existing `click.actions` into two distinct handlers - `left` runs the `command`, `right` shows a `message = \"Costs 10 emeralds\"`.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    click { actions { command = \"give @p diamond_sword 1\" } }\n  }\n]\n",
   "goal": "Restructure so left-click runs the give command and right-click shows `message = \"Costs 10 emeralds\"`.",
   "check": {
     "type": "shape",
     "asserts": [
-      { "kind": "eq", "path": "items[0].click.left.actions.command", "value": "give @p diamond_sword 1" },
-      { "kind": "eq", "path": "items[0].click.right.actions.message", "value": "Costs 10 emeralds" }
+      {
+        "kind": "eq",
+        "path": "items[0].click.left.actions.command",
+        "value": "give @p diamond_sword 1"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].click.right.actions.message",
+        "value": "Costs 10 emeralds"
+      }
     ]
   },
   "hints": [
     "Drop the top-level `actions {...}` and put two siblings under `click`: `left { ... }` and `right { ... }`.",
     "Each has its own `actions { ... }` with its own keys.",
-    "```\nclick {\n  left {\n    actions { command = \"give @p diamond_sword 1\" }\n  }\n  right {\n    actions { message = \"Costs 10 emeralds\" }\n  }\n}\n```"
+    "```\nclick {\n  left { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Costs 10 emeralds\" } }\n}\n```"
   ],
   "next": "20-include",
   "translations": {
     "ru": {
       "title": "Типы кликов: left vs right",
-      "intro": "До сих пор `click.actions` срабатывал на **любой** клик. Чтобы реагировать по-разному на разные кнопки мыши, кладёшь под `left`, `right`, `middle`, `drop`, `shiftLeft`, `shiftRight`:\n\n```\nclick {\n  left {\n    actions {\n      message = \"Left click!\"\n    }\n  }\n  right {\n    actions {\n      message = \"Right click!\"\n    }\n  }\n}\n```\n\nКлассический шоп-паттерн: левый клик - купить, правый - посмотреть детали.\n\n```\nclick {\n  left  { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Стоит 10 изумрудов\" } }\n}\n```\n\nЕсли есть и top-level `click.actions` и `click.left.actions` - оба сработают на левый клик. Top-level это catch-all.\n\n**Цель:** раздели существующий `click.actions` на два разных обработчика - `left` запускает `command`, `right` показывает `message = \"Costs 10 emeralds\"`.",
+      "intro": "До сих пор `click.actions` срабатывал на **любой** клик. Чтобы реагировать по-разному на разные кнопки мыши, кладёшь под `left`, `right`, `middle`, `drop`, `shiftLeft`, `shiftRight`:\n\n```\nclick {\n  left { actions { message = \"Left click!\" } }\n  right { actions { message = \"Right click!\" } }\n}\n```\n\nКлассический шоп-паттерн: левый клик - купить, правый - посмотреть детали.\n\n```\nclick {\n  left  { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Стоит 10 изумрудов\" } }\n}\n```\n\nЕсли есть и top-level `click.actions` и `click.left.actions` - оба сработают на левый клик. Top-level это catch-all.\n\n**Цель:** раздели существующий `click.actions` на два разных обработчика - `left` запускает `command`, `right` показывает `message = \"Costs 10 emeralds\"`.",
       "goal": "Перестрой так чтобы left-click запускал команду give, а right-click показывал `message = \"Costs 10 emeralds\"`.",
       "hints": [
         "Убери top-level `actions {...}` и положи два sibling'а под `click`: `left { ... }` и `right { ... }`.",
         "У каждого свой `actions { ... }` со своими ключами.",
-        "```\nclick {\n  left {\n    actions { command = \"give @p diamond_sword 1\" }\n  }\n  right {\n    actions { message = \"Costs 10 emeralds\" }\n  }\n}\n```"
+        "```\nclick {\n  left { actions { command = \"give @p diamond_sword 1\" } }\n  right { actions { message = \"Costs 10 emeralds\" } }\n}\n```"
       ]
     }
   }
