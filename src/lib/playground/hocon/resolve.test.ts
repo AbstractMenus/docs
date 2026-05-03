@@ -62,3 +62,45 @@ describe('resolve', () => {
     expect(r.warnings.some((w) => /circular/i.test(w.message))).toBe(true);
   });
 });
+
+describe('duplicate-key object merge', () => {
+  test('two object blocks at the same path merge', () => {
+    const r = run('defaults { a = 1 }\ndefaults { b = 2 }');
+    expect(r.resolved).toEqual({ defaults: { a: 1, b: 2 } });
+  });
+
+  test('three blocks all merge', () => {
+    const r = run('o { a = 1 }\no { b = 2 }\no { c = 3 }');
+    expect(r.resolved).toEqual({ o: { a: 1, b: 2, c: 3 } });
+  });
+
+  test('overlapping field within merge: last wins', () => {
+    const r = run('o { a = 1, b = 2 }\no { b = 99 }');
+    expect(r.resolved).toEqual({ o: { a: 1, b: 99 } });
+  });
+
+  test('merge is recursive on nested objects', () => {
+    const r = run('o { sub { a = 1 } }\no { sub { b = 2 } }');
+    expect(r.resolved).toEqual({ o: { sub: { a: 1, b: 2 } } });
+  });
+
+  test('non-object overwrites existing object (last wins)', () => {
+    const r = run('a { b = 1 }\na = 7');
+    expect(r.resolved).toEqual({ a: 7 });
+  });
+
+  test('object overwrites existing scalar (last wins)', () => {
+    const r = run('a = 7\na { b = 1 }');
+    expect(r.resolved).toEqual({ a: { b: 1 } });
+  });
+
+  test('scalar duplicate still last-wins (not changed by this fix)', () => {
+    const r = run('size = 3\nsize = 5');
+    expect(r.resolved).toEqual({ size: 5 });
+  });
+
+  test('dotted-key path also merges', () => {
+    const r = run('o.a = 1\no.b = 2');
+    expect(r.resolved).toEqual({ o: { a: 1, b: 2 } });
+  });
+});

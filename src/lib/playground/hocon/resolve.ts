@@ -33,10 +33,37 @@ function setPath(tree: Tree, path: string[], value: Node, warnings: Diagnostic[]
   }
   const lastKey = path[path.length - 1];
   if (value.kind === 'object') {
-    cur[lastKey] = buildTree(value.entries, warnings);
+    const incoming = buildTree(value.entries, warnings);
+    const existing = cur[lastKey];
+    // HOCON spec: when both the previous and the new value at a path are
+    // objects, merge them recursively. When either is non-object, the new
+    // value replaces the old (last-wins for scalars).
+    if (existing !== undefined && !isLeaf(existing)) {
+      cur[lastKey] = mergeTrees(existing as Tree, incoming, warnings);
+    } else {
+      cur[lastKey] = incoming;
+    }
   } else {
     cur[lastKey] = value;
   }
+}
+
+/**
+ * Recursively merge two object trees, last-wins for any non-object collision.
+ * Mutates neither input - returns a fresh tree.
+ */
+function mergeTrees(a: Tree, b: Tree, warnings: Diagnostic[]): Tree {
+  const out: Tree = { ...a };
+  for (const k of Object.keys(b)) {
+    const av = out[k];
+    const bv = b[k];
+    if (av !== undefined && !isLeaf(av) && !isLeaf(bv)) {
+      out[k] = mergeTrees(av as Tree, bv as Tree, warnings);
+    } else {
+      out[k] = bv;
+    }
+  }
+  return out;
 }
 
 function resolveSubsDeep(
