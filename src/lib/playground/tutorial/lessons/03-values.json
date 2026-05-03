@@ -1,0 +1,34 @@
+{
+  "id": "03-values",
+  "title": "Numbers, booleans, durations",
+  "topic": "basics",
+  "intro": "HOCON values aren't only strings. The most common typed values you'll write in menus:\n\n- **Number**: `5`, `3.14`, `-2` - integers and floats.\n- **Boolean**: `true` / `false` (unquoted, lowercase).\n- **Duration**: `5s`, `1m`, `2h`, `500ms` - HOCON parses these as time durations. Useful for cooldowns and animation timings.\n\nQuoting matters: `\"5\"` is a string, `5` is a number. AbstractMenus is strict here - a cooldown set to `\"5s\"` won't behave the same as `5s`.\n\n**Goal:** define three keys with the right types - `size = 3` (number), `cooldown = 5s` (duration), `closeOnClick = true` (bool).",
+  "starter": "title = \"Demo\"\n",
+  "goal": "Add three keys: `size` (number 3), `cooldown` (duration 5s), `closeOnClick` (bool true).",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "size", "value": 3 },
+      { "kind": "has", "path": "cooldown" },
+      { "kind": "eq", "path": "closeOnClick", "value": true }
+    ]
+  },
+  "hints": [
+    "No quotes for numbers and booleans: `size = 3`, `closeOnClick = true`.",
+    "Duration uses a unit suffix without quotes: `cooldown = 5s` (also `1m`, `2h`, `500ms`).",
+    "```\nsize = 3\ncooldown = 5s\ncloseOnClick = true\n```"
+  ],
+  "next": "04-lists-vs-objects",
+  "translations": {
+    "ru": {
+      "title": "Числа, булевы, длительности",
+      "intro": "В HOCON значения бывают не только строками. В меню чаще всего встречаются:\n\n- **Число**: `5`, `3.14`, `-2` - целые и дробные.\n- **Булево**: `true` / `false` (без кавычек, lowercase).\n- **Длительность**: `5s`, `1m`, `2h`, `500ms` - HOCON парсит как промежуток времени. Удобно для cooldown'ов и анимаций.\n\nКавычки важны: `\"5\"` - это строка, `5` - число. AbstractMenus строг к типам - cooldown заданный как `\"5s\"` поведёт себя не так же как `5s`.\n\n**Цель:** задай три ключа правильных типов - `size = 3` (число), `cooldown = 5s` (длительность), `closeOnClick = true` (булево).",
+      "goal": "Добавь три ключа: `size` (число 3), `cooldown` (длительность 5s), `closeOnClick` (булево true).",
+      "hints": [
+        "Числа и булевы пишутся без кавычек: `size = 3`, `closeOnClick = true`.",
+        "Длительность - число с суффиксом единицы, тоже без кавычек: `cooldown = 5s` (есть `1m`, `2h`, `500ms`).",
+        "```\nsize = 3\ncooldown = 5s\ncloseOnClick = true\n```"
+      ]
+    }
+  }
+}

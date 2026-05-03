@@ -1,0 +1,32 @@
+{
+  "id": "02-strings",
+  "title": "Strings & quoting",
+  "topic": "basics",
+  "intro": "HOCON strings come in three flavors:\n\n- `\"double-quoted\"` - the usual one. Supports `\\n`, `\\\"` and other escapes.\n- `unquoted` - bare identifiers like `STONE` or `true`. Stop at any whitespace, `=`, `:`, `{`, `[`, `,` etc. Use them for enum-ish values.\n- `\"\"\"triple-quoted\"\"\"` - raw multi-line string. No escape processing - perfect for lore lines or commands with quotes inside.\n\n**Goal:** make `subtitle` a triple-quoted string spanning **at least two lines**.",
+  "starter": "title = \"Shop\"\nsubtitle = \"single line\"\n",
+  "goal": "Replace the `subtitle` value with a triple-quoted string that contains a newline.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "matches", "path": "subtitle", "pattern": "\\n" }
+    ]
+  },
+  "hints": [
+    "Triple-quoted strings start and end with three double quotes: `\"\"\"...\"\"\"`.",
+    "Press Enter inside the `\"\"\"...\"\"\"` to add a real newline. Whatever you type is taken literally - no escapes needed.",
+    "`subtitle = \"\"\"\nWelcome to my shop\nBest deals in town\n\"\"\"`"
+  ],
+  "next": "03-values",
+  "translations": {
+    "ru": {
+      "title": "Строки и кавычки",
+      "intro": "В HOCON строки бывают трёх видов:\n\n- `\"в двойных кавычках\"` - обычные. Поддерживают `\\n`, `\\\"` и другие escape-последовательности.\n- `unquoted` - голые идентификаторы вроде `STONE` или `true`. Заканчиваются на любом пробеле, `=`, `:`, `{`, `[`, `,` и т.д. Удобны для enum-значений.\n- `\"\"\"в тройных кавычках\"\"\"` - многострочные \"сырые\" строки. Без обработки escape - идеально для lore-строк или команд с кавычками внутри.\n\n**Цель:** сделай `subtitle` триплет-кавычной строкой минимум **на две строки**.",
+      "goal": "Замени значение `subtitle` на triple-quoted строку с переносом строки.",
+      "hints": [
+        "Triple-quoted строки начинаются и заканчиваются тремя двойными кавычками: `\"\"\"...\"\"\"`.",
+        "Просто нажми Enter внутри `\"\"\"...\"\"\"` чтобы добавить реальный перенос строки. Всё что внутри - берётся буквально, escape не нужны.",
+        "`subtitle = \"\"\"\nДобро пожаловать в магазин\nЛучшие цены в городе\n\"\"\"`"
+      ]
+    }
+  }
+}
