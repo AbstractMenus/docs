@@ -1,0 +1,33 @@
+{
+  "id": "26-rules-permission",
+  "title": "Permission rule",
+  "topic": "conditions",
+  "intro": "Most click handlers shouldn't fire for everyone. The `rules` block gates an action: when any rule fails, the action is silently skipped.\n\n```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```\n\nA rule attached to a `click` block gates **that click's actions**. The same `rules` syntax also works on `items` (gates visibility) and on `bindings` (the next lesson).\n\nMost common rule keys:\n\n- `permission = \"shop.use\"` - player must hold the permission\n- `money = 100` - player must have at least N Vault balance\n- `levels = 30` - player must have at least N XP levels\n- `gamemode = \"SURVIVAL\"` - gamemode match\n- `world = \"lobby\"` - world match\n\nMultiple rules in the same block are **AND**-ed: all must pass.\n\n**Goal:** add a `rules { permission = \"menu.admin\" }` block to the click so only admins can fire the command.",
+  "starter": "title = \"Admin\"\nsize = 3\nitems = [\n  { slot = 4, material = COMMAND_BLOCK, name = \"&cAdmin Panel\"\n    click {\n      actions { command = \"op @p\" }\n    }\n  }\n]\n",
+  "goal": "Add `rules { permission = \"menu.admin\" }` to the click handler.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "items[0].click.rules.permission", "value": "menu.admin" },
+      { "kind": "eq", "path": "items[0].click.actions.command", "value": "op @p" }
+    ]
+  },
+  "hints": [
+    "`rules` is a sibling of `actions` inside the `click` block, not nested under it.",
+    "Inside `rules`, just one key for now: `permission = \"menu.admin\"`.",
+    "```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```"
+  ],
+  "next": "27-bindings",
+  "translations": {
+    "ru": {
+      "title": "Permission rule",
+      "intro": "Большинство click-обработчиков не должны срабатывать для всех. Блок `rules` гейтит действие: если хоть одно правило не прошло - action молча пропускается.\n\n```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```\n\nПравило на `click` гейтит **actions этого клика**. Тот же `rules` синтаксис работает на `items` (гейт видимости) и на `bindings` (следующий урок).\n\nСамые частые ключи rules:\n\n- `permission = \"shop.use\"` - у игрока должен быть пермишен\n- `money = 100` - у игрока должно быть хотя бы N Vault-баланса\n- `levels = 30` - хотя бы N уровней XP\n- `gamemode = \"SURVIVAL\"` - совпадение gamemode\n- `world = \"lobby\"` - совпадение мира\n\nНесколько правил в одном блоке - **AND**: должны пройти все.\n\n**Цель:** добавь `rules { permission = \"menu.admin\" }` в click - только админы смогут запустить команду.",
+      "goal": "Добавь `rules { permission = \"menu.admin\" }` в click.",
+      "hints": [
+        "`rules` - это sibling `actions` внутри `click`, а не вложен в него.",
+        "Внутри `rules` пока один ключ: `permission = \"menu.admin\"`.",
+        "```\nclick {\n  rules { permission = \"menu.admin\" }\n  actions { command = \"op @p\" }\n}\n```"
+      ]
+    }
+  }
+}

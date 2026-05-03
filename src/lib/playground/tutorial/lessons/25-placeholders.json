@@ -16,7 +16,7 @@
     "Color codes work too: `\"&aHello %player_name%!\"`.",
     "```\nitems = [\n  { slot = 4, material = PLAYER_HEAD, name = \"&aHello %player_name%!\" }\n]\n```"
   ],
-  "next": null,
+  "next": "26-rules-permission",
   "translations": {
     "ru": {
       "title": "Player-плейсхолдеры `%player_name%`",
