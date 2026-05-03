@@ -1,0 +1,33 @@
+{
+  "id": "09-items-array",
+  "title": "The items array",
+  "topic": "menu",
+  "intro": "`items` is a **list of objects** - one per slot you want to fill. Empty slots are just left out. Each item needs at minimum a `slot` (where it goes) and a `material` (what it looks like).\n\n```\nitems = [\n  { slot = 0, material = STONE }\n  { slot = 4, material = DIAMOND }\n]\n```\n\nNotice: items are separated by **newlines** (commas optional in HOCON). This is the same pattern you'll see across `lore`, `bindings`, `actions` - any place where order matters.\n\n**Tip:** press `Ctrl+Space` inside an item's `{...}` to see what other keys are available there (the editor knows the schema).\n\n**Goal:** put a single item in slot 4 with material `DIAMOND`.",
+  "starter": "title = \"Shop\"\nsize = 3\n",
+  "goal": "Add `items` with one entry: `slot = 4`, `material = DIAMOND`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "items[0].slot", "value": 4 },
+      { "kind": "eq", "path": "items[0].material", "value": "DIAMOND" }
+    ]
+  },
+  "hints": [
+    "`items` is an array - wrap in `[...]`. Each entry is an object - wrap in `{...}`.",
+    "Inside the object you need two keys: `slot = 4` and `material = DIAMOND`.",
+    "```\nitems = [\n  { slot = 4, material = DIAMOND }\n]\n```"
+  ],
+  "next": "10-slots",
+  "translations": {
+    "ru": {
+      "title": "Массив items",
+      "intro": "`items` это **список объектов** - по одному на каждый слот который хочешь заполнить. Пустые слоты просто опускаются. Каждый item обязательно имеет `slot` (куда поставить) и `material` (как выглядит).\n\n```\nitems = [\n  { slot = 0, material = STONE }\n  { slot = 4, material = DIAMOND }\n]\n```\n\nЗаметь: items разделяются **переносами строки** (запятые в HOCON опциональны). Тот же паттерн будет в `lore`, `bindings`, `actions` - везде где важен порядок.\n\n**Совет:** нажми `Ctrl+Space` внутри `{...}` item'а - редактор покажет какие ключи доступны (знает схему).\n\n**Цель:** положи один item в слот 4 с материалом `DIAMOND`.",
+      "goal": "Добавь `items` с одной записью: `slot = 4`, `material = DIAMOND`.",
+      "hints": [
+        "`items` это массив - оборачивай в `[...]`. Каждая запись это объект - оборачивай в `{...}`.",
+        "Внутри объекта два ключа: `slot = 4` и `material = DIAMOND`.",
+        "```\nitems = [\n  { slot = 4, material = DIAMOND }\n]\n```"
+      ]
+    }
+  }
+}

@@ -17,7 +17,7 @@
     "Reference the whole object: `click = ${closeAction}`.",
     "```\ncloseAction { close = true }\nclick = ${closeAction}\n```"
   ],
-  "next": null,
+  "next": "08-size",
   "translations": {
     "ru": {
       "title": "Кастомные переменные (объект)",

@@ -1,0 +1,32 @@
+{
+  "id": "08-size",
+  "title": "Menu size",
+  "topic": "menu",
+  "intro": "Time to start a real menu. The first key any menu needs is `size` - the number of **rows** (not slots). Vanilla Minecraft inventories are 1-6 rows tall, so valid values are 1-6.\n\n```\nsize = 3   # 3 rows = 27 slots\nsize = 6   # 6 rows = 54 slots (max)\n```\n\nSlots are numbered 0-based row by row: row 0 is slots 0-8, row 1 is 9-17, row 2 is 18-26.\n\n**Goal:** add `size = 3` to the menu.",
+  "starter": "title = \"Shop\"\n",
+  "goal": "Add `size = 3`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "size", "value": 3 }
+    ]
+  },
+  "hints": [
+    "Just one line: `size = 3`.",
+    "It's a plain number - no quotes, no units.",
+    "```\nsize = 3\n```"
+  ],
+  "next": "09-items-array",
+  "translations": {
+    "ru": {
+      "title": "Размер меню",
+      "intro": "Пора собрать настоящее меню. Первое что должно быть у любого меню - `size` - число **рядов** (не слотов). Стандартные инвентари в Minecraft 1-6 рядов в высоту, так что валидные значения 1-6.\n\n```\nsize = 3   # 3 ряда = 27 слотов\nsize = 6   # 6 рядов = 54 слота (максимум)\n```\n\nСлоты нумеруются с 0 по рядам: ряд 0 это слоты 0-8, ряд 1 это 9-17, ряд 2 это 18-26.\n\n**Цель:** добавь `size = 3`.",
+      "goal": "Добавь `size = 3`.",
+      "hints": [
+        "Одна строка: `size = 3`.",
+        "Это просто число - без кавычек и единиц.",
+        "```\nsize = 3\n```"
+      ]
+    }
+  }
+}
