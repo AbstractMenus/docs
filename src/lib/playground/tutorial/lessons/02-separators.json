@@ -2,29 +2,29 @@
   "id": "02-separators",
   "title": "Key/value separators",
   "topic": "basics",
-  "intro": "HOCON has three ways to write a key-value pair:\n\n- `key = value` - traditional\n- `key : value` - JSON-style colon\n- `key { ... }` - **the `=` is optional** when the value is an object\n\nAll three are equivalent. The third form is the trick: when the value is an object, the separator can be omitted. You'll see it constantly in real menu configs - it makes nested blocks read cleaner.\n\n**Goal:** rewrite `meta` without the `=` between the key and the `{`.",
-  "starter": "title = \"Demo\"\nmeta = { version = 1 }\n",
-  "goal": "Drop the `=` between `meta` and `{` (form: `meta { ... }`).",
+  "intro": "HOCON has three ways to write a key-value pair:\n\n- `key = value` - traditional\n- `key : value` - JSON-style colon\n- `key { ... }` - **the `=` is optional** when the value is an object\n\nAll three are equivalent. The third form is the trick: when the value is an object, the separator can be omitted. You'll see it constantly in real menu configs - it makes nested blocks read cleaner.\n\n**Goal:** rewrite `closeActions` without the `=` between the key and the `{`.",
+  "starter": "title = \"Demo\"\ncloseActions = { message = \"Bye!\" }\n",
+  "goal": "Drop the `=` between `closeActions` and `{` (form: `closeActions { ... }`).",
   "check": {
     "type": "regex",
-    "pattern": "meta\\s*\\{",
+    "pattern": "closeActions\\s*\\{",
     "flags": ""
   },
   "hints": [
     "The `=` (or `:`) before `{` is optional.",
-    "Try: `meta { version = 1 }`.",
-    "```\nmeta { version = 1 }\n```"
+    "Try: `closeActions { message = \"Bye!\" }`.",
+    "```\ncloseActions { message = \"Bye!\" }\n```"
   ],
   "next": "03-values",
   "translations": {
     "ru": {
       "title": "Разделители ключ/значение",
-      "intro": "В HOCON пары ключ-значение можно писать тремя способами:\n\n- `key = value` - традиционно\n- `key : value` - JSON-стиль\n- `key { ... }` - **`=` необязателен** когда значение это объект\n\nВсе три варианта эквивалентны. Третья форма - фишка: для объекта разделитель можно опустить. Увидишь её постоянно в реальных конфигах меню - вложенные блоки читаются чище.\n\n**Цель:** перепиши `meta` без `=` между ключом и `{`.",
-      "goal": "Убери `=` между `meta` и `{` (форма: `meta { ... }`).",
+      "intro": "В HOCON пары ключ-значение можно писать тремя способами:\n\n- `key = value` - традиционно\n- `key : value` - JSON-стиль\n- `key { ... }` - **`=` необязателен** когда значение это объект\n\nВсе три варианта эквивалентны. Третья форма - фишка: для объекта разделитель можно опустить. Увидишь её постоянно в реальных конфигах меню - вложенные блоки читаются чище.\n\n**Цель:** перепиши `closeActions` без `=` между ключом и `{`.",
+      "goal": "Убери `=` между `closeActions` и `{` (форма: `closeActions { ... }`).",
       "hints": [
         "`=` (или `:`) перед `{` необязателен.",
-        "Попробуй: `meta { version = 1 }`.",
-        "```\nmeta { version = 1 }\n```"
+        "Попробуй: `closeActions { message = \"Bye!\" }`.",
+        "```\ncloseActions { message = \"Bye!\" }\n```"
       ]
     }
   }
