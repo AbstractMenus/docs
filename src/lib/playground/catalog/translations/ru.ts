@@ -19,6 +19,7 @@ export const ru: Record<string, string> = {
   'menu-root.metaList': 'Начальные значения player-meta при открытии.',
   'menu-root.closeActions': 'Действия при закрытии меню.',
   'menu-root.matrix': 'Layout-матрица для генерируемых меню (каждый ряд - строка slot-кодов).',
+  'menu-root.defaults': 'Общий item-шаблон; переиспользуется через подстановку ${defaults}.',
 
   // item
   'item.slot': 'Слот в инвентаре. Один номер (0), диапазон "0-8", координаты "1,2", или матрица (объект).',

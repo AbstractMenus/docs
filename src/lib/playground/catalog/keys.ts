@@ -13,6 +13,12 @@ export const MENU_ROOT_KEYS: KeyDef[] = [
   { name: 'metaList', scope: 'menu-root', valueType: 'list', description: 'Initial player-meta values to set on open.' },
   { name: 'closeActions', scope: 'menu-root', valueType: 'object', childrenScope: 'actions', description: 'Actions to fire when the menu closes.' },
   { name: 'matrix', scope: 'menu-root', valueType: 'list', description: 'Layout matrix for generated menus (each row a string of slot codes).' },
+  // `defaults` is a community convention rather than a hard AbstractMenus
+  // field: it's the canonical name for "shared item template I substitute
+  // into each item via ${defaults}". Recognising it here keeps the DRY
+  // pattern lessons (05-dotted-keys, 22-object-merge, 23-defaults-merge)
+  // free of spurious unknown-key warnings.
+  { name: 'defaults', scope: 'menu-root', valueType: 'object', childrenScope: 'item', description: 'Shared item template; reused via ${defaults} substitution.' },
 ];
 
 export const ITEM_KEYS: KeyDef[] = [
