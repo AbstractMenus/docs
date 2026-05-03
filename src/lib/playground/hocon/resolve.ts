@@ -20,11 +20,11 @@ function isLeaf(v: Tree | Node): v is Node {
 
 function buildTree(entries: Entry[], warnings: Diagnostic[]): Tree {
   const tree: Tree = {};
-  for (const e of entries) setPath(tree, e.path, e.value, warnings);
+  for (const e of entries) setPath(tree, e.path, e.value, e.append, warnings);
   return tree;
 }
 
-function setPath(tree: Tree, path: string[], value: Node, warnings: Diagnostic[]): void {
+function setPath(tree: Tree, path: string[], value: Node, append: boolean, warnings: Diagnostic[]): void {
   let cur: Tree = tree;
   for (let i = 0; i < path.length - 1; i++) {
     const k = path[i];
@@ -32,6 +32,28 @@ function setPath(tree: Tree, path: string[], value: Node, warnings: Diagnostic[]
     cur = cur[k] as Tree;
   }
   const lastKey = path[path.length - 1];
+  if (append) {
+    // `key += value` per HOCON spec. Equivalent to `key = ${?key} [value]`
+    // when value is an array. We implement the common case (value is an
+    // array literal) directly at build time. Substitution-valued appends
+    // (`items += ${shared}`) fall back to overwrite.
+    if (value.kind !== 'array') {
+      cur[lastKey] = value;
+      return;
+    }
+    const existing = cur[lastKey];
+    if (existing === undefined) {
+      cur[lastKey] = value;
+      return;
+    }
+    if (isLeaf(existing) && existing.kind === 'array') {
+      cur[lastKey] = { ...existing, items: [...existing.items, ...value.items] };
+      return;
+    }
+    // existing is an object tree or a non-array leaf - fall back to overwrite.
+    cur[lastKey] = value;
+    return;
+  }
   if (value.kind === 'object') {
     const incoming = buildTree(value.entries, warnings);
     const existing = cur[lastKey];

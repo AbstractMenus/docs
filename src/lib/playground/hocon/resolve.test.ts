@@ -104,3 +104,37 @@ describe('duplicate-key object merge', () => {
     expect(r.resolved).toEqual({ o: { a: 1, b: 2 } });
   });
 });
+
+describe('+= array append', () => {
+  test('append to existing array concatenates', () => {
+    const r = run('items = [{ slot = 0 }]\nitems += [{ slot = 8 }]');
+    expect(r.resolved).toEqual({ items: [{ slot: 0 }, { slot: 8 }] });
+  });
+
+  test('append when key undefined treats as first assignment', () => {
+    const r = run('items += [{ slot = 0 }]');
+    expect(r.resolved).toEqual({ items: [{ slot: 0 }] });
+  });
+
+  test('multiple appends chain', () => {
+    const r = run('xs = [1]\nxs += [2]\nxs += [3]');
+    expect(r.resolved).toEqual({ xs: [1, 2, 3] });
+  });
+
+  test('append preserves item order', () => {
+    const r = run('xs = [1, 2]\nxs += [3, 4]');
+    expect(r.resolved).toEqual({ xs: [1, 2, 3, 4] });
+  });
+
+  test('append with non-array value falls back to overwrite', () => {
+    // Rare/error case; spec would dictate string concat for strings, but
+    // for menu configs you only += arrays. Keep behavior predictable.
+    const r = run('xs = [1]\nxs += "oops"');
+    expect(r.resolved).toEqual({ xs: 'oops' });
+  });
+
+  test('regular = still overwrites (not changed by this fix)', () => {
+    const r = run('xs = [1]\nxs = [2]');
+    expect(r.resolved).toEqual({ xs: [2] });
+  });
+});
