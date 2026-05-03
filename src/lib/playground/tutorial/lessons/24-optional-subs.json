@@ -1,0 +1,31 @@
+{
+  "id": "24-optional-subs",
+  "title": "Optional substitutions `${?var}`",
+  "topic": "templates",
+  "intro": "By default `${name}` **must** resolve - if the variable doesn't exist, you get an `Unresolved substitution` warning and the value falls back to null.\n\nThe `${?name}` form (note the `?`) marks the substitution as **optional**: missing variable is silent, no warning, value just resolves to absent / null.\n\n```\ntitle = \"Shop\"\nsubtitle = ${?customSubtitle}     # quiet if missing\n```\n\nReal-world use: a shared template file that **maybe** sets some fields, where each menu using `include` decides whether to set them.\n\n```\n# template.conf\nname = ${?customName}\ncolor = ${?accent}\n\n# menu.conf\ninclude \"template.conf\"\ncustomName = \"Diamond\"   # picked up by ${?customName}\n# accent not set -> color stays null, no warning\n```\n\n**Goal:** add `subtitle = ${?missingVar}` to the config. The `?` form means no warning even though `missingVar` doesn't exist.",
+  "starter": "title = \"Shop\"\n",
+  "goal": "Add `subtitle = ${?missingVar}` (the `?` form, so no warning fires).",
+  "check": {
+    "type": "regex",
+    "pattern": "subtitle\\s*=\\s*\\$\\{\\?[a-zA-Z_]\\w*\\}",
+    "flags": ""
+  },
+  "hints": [
+    "Same as `${name}` but with a `?` right after the opening brace: `${?name}`.",
+    "The variable doesn't have to exist anywhere - that's the whole point.",
+    "```\nsubtitle = ${?missingVar}\n```"
+  ],
+  "next": "25-placeholders",
+  "translations": {
+    "ru": {
+      "title": "Опциональные подстановки `${?var}`",
+      "intro": "По умолчанию `${name}` **обязан** разрешиться - если переменной нет, получишь warning `Unresolved substitution` и значение схлопнется в null.\n\nФорма `${?name}` (заметь `?`) помечает подстановку как **опциональную**: отсутствующая переменная - молчком, без warning'а, значение резолвится в absent / null.\n\n```\ntitle = \"Shop\"\nsubtitle = ${?customSubtitle}     # тихо если нет\n```\n\nРеальный случай использования: общий template-файл который **может быть** задаёт какие-то поля, а каждое меню через `include` решает - задавать их или нет.\n\n```\n# template.conf\nname = ${?customName}\ncolor = ${?accent}\n\n# menu.conf\ninclude \"template.conf\"\ncustomName = \"Diamond\"   # подхватывается через ${?customName}\n# accent не задан -> color остаётся null, без warning\n```\n\n**Цель:** добавь `subtitle = ${?missingVar}`. Форма с `?` - warning не сработает хотя `missingVar` нет.",
+      "goal": "Добавь `subtitle = ${?missingVar}` (форма с `?`, без warning'а).",
+      "hints": [
+        "Так же как `${name}` но с `?` сразу после открывающей скобки: `${?name}`.",
+        "Переменной может не существовать вообще - в этом и весь смысл.",
+        "```\nsubtitle = ${?missingVar}\n```"
+      ]
+    }
+  }
+}

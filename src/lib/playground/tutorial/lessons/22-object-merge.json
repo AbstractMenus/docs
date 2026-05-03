@@ -17,7 +17,7 @@
     "Inside: `count = 16`. Don't repeat `material` - it's already there.",
     "```\ndefaults { material = STONE }\ndefaults { count = 16 }\n```"
   ],
-  "next": null,
+  "next": "23-defaults-merge",
   "translations": {
     "ru": {
       "title": "Object merge на дубликатах ключей",
