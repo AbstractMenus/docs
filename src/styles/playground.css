@@ -742,6 +742,23 @@ html, body {
   font-family: var(--pg-mono);
   font-size: 0.85em;
 }
+/* Fenced code blocks (```...```) - separate styling from inline code so
+   the block has its own padding/scroll behaviour without inheriting the
+   tight inline pill look. */
+.pg-tutorial pre {
+  background: var(--pg-bg-elev-2);
+  margin: 0 0 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+.pg-tutorial pre code {
+  background: transparent;
+  padding: 0;
+  font-family: var(--pg-mono);
+  font-size: 0.85em;
+  white-space: pre;
+}
 .pg-tutorial-goal {
   background: var(--pg-bg-elev-2);
   border-left: 3px solid var(--pg-accent);

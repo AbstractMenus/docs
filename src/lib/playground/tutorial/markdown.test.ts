@@ -56,6 +56,39 @@ describe('renderMd', () => {
   });
 });
 
+describe('fenced code blocks', () => {
+  test('single fenced block renders as <pre><code>', () => {
+    const out = renderMd('```\nfoo\n```');
+    expect(out).toBe('<pre><code>foo</code></pre>');
+  });
+
+  test('language tag is accepted and ignored', () => {
+    const out = renderMd('```hocon\ntitle = "x"\n```');
+    expect(out).toBe('<pre><code>title = "x"</code></pre>');
+  });
+
+  test('fence preserves blank lines inside content', () => {
+    const out = renderMd('```\nline1\n\nline2\n```');
+    expect(out).toBe('<pre><code>line1\n\nline2</code></pre>');
+  });
+
+  test('html inside fence is escaped', () => {
+    const out = renderMd('```\n<script>\n```');
+    expect(out).toBe('<pre><code>&lt;script&gt;</code></pre>');
+  });
+
+  test('paragraph + fence + paragraph all render in order', () => {
+    const out = renderMd('intro text\n\n```\ncode\n```\n\noutro text');
+    expect(out).toBe('<p>intro text</p>\n<pre><code>code</code></pre>\n<p>outro text</p>');
+  });
+
+  test('fence content is not run through inline transforms', () => {
+    // **bold** and `inline-code` syntax inside the fence stays literal.
+    const out = renderMd('```\n**not bold** `not code`\n```');
+    expect(out).toBe('<pre><code>**not bold** `not code`</code></pre>');
+  });
+});
+
 describe('renderInlineMd', () => {
   test('renders code without paragraph wrap', () => {
     expect(renderInlineMd('set `size = 3`')).toBe('set <code>size = 3</code>');

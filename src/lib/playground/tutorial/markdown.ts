@@ -1,16 +1,38 @@
 /**
  * Tiny markdown renderer for lesson intros. Supports paragraphs (blank-line
- * separated), `**bold**`, `` `code` ``, `[text](https://...)` links, and
- * `- list` lines. No headings, no images. Swap to marked/remark if richer
- * markup is needed (~30KB bundle hit).
+ * separated), `**bold**`, `` `code` ``, `[text](https://...)` links,
+ * `- list` lines, and triple-backtick fenced code blocks. No headings, no
+ * images. Swap to marked/remark if richer markup is needed (~30KB bundle).
  *
  * Link safety: only http(s) URLs render as anchors; anything else (e.g. a
  * `javascript:` scheme) is replaced with `#`. Links open in a new tab with
  * `noopener noreferrer` so the target page can't reach back into us.
  */
+// 0x03 (ETX) - never appears in lesson sources; used as a placeholder
+// sentinel so blank lines inside fenced code blocks don't get mistaken for
+// paragraph breaks during the split below.
+const FENCE_MARK = String.fromCharCode(3);
+
 export function renderMd(input: string): string {
-  const blocks = input.split(/\n{2,}/);
-  return blocks.map(renderBlock).join('\n');
+  // Stash fenced code blocks first so blank lines INSIDE them don't split
+  // them when we paragraph-split below. Each fence becomes a single token
+  // that renderBlock recognises and renders as <pre><code>.
+  const fences: string[] = [];
+  const stashed = input.replace(/```[^\n]*\n([\s\S]*?)\n```/g, (_m, content) => {
+    fences.push(content);
+    return `\n\n${FENCE_MARK}${fences.length - 1}${FENCE_MARK}\n\n`;
+  });
+
+  // Drop empty blocks introduced by the fence-stash padding (`\n\n...\n\n`)
+  // so the output doesn't get sprinkled with `<p></p>` around fences.
+  const blocks = stashed.split(/\n{2,}/).filter((b) => b.trim().length > 0);
+  return blocks.map((b) => {
+    const m = b.trim().match(new RegExp(`^${FENCE_MARK}(\\d+)${FENCE_MARK}$`));
+    if (m) {
+      return `<pre><code>${escapeHtml(fences[Number(m[1])])}</code></pre>`;
+    }
+    return renderBlock(b);
+  }).join('\n');
 }
 
 function renderBlock(block: string): string {
