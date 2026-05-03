@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { renderMd } from './markdown';
+import { renderMd, renderInlineMd } from './markdown';
 
 describe('renderMd', () => {
   test('paragraph wraps in <p>', () => {
@@ -53,5 +53,25 @@ describe('renderMd', () => {
     // Code wraps first, so the brackets+parens stay literal inside the
     // <code> tag and the link regex never matches.
     expect(out).toBe('<p>use <code>[label](url)</code> syntax</p>');
+  });
+});
+
+describe('renderInlineMd', () => {
+  test('renders code without paragraph wrap', () => {
+    expect(renderInlineMd('set `size = 3`')).toBe('set <code>size = 3</code>');
+  });
+
+  test('bold + code combine', () => {
+    expect(renderInlineMd('**Set** `key`')).toBe('<strong>Set</strong> <code>key</code>');
+  });
+
+  test('link works inline', () => {
+    expect(renderInlineMd('see [docs](https://example.com)')).toBe(
+      'see <a href="https://example.com" target="_blank" rel="noopener noreferrer">docs</a>',
+    );
+  });
+
+  test('escapes raw html', () => {
+    expect(renderInlineMd('<script>')).toBe('&lt;script&gt;');
   });
 });

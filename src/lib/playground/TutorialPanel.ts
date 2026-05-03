@@ -1,5 +1,5 @@
 import type { Lesson } from './tutorial/types';
-import { renderMd } from './tutorial/markdown';
+import { renderMd, renderInlineMd } from './tutorial/markdown';
 import { groupLessons, type TopicGroup } from './tutorial/lessons';
 import { t, type TranslationKey } from './i18n';
 
@@ -67,7 +67,12 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
     const goalLabel = document.createElement('strong');
     goalLabel.textContent = t('tutorial.goalLabel');
     goal.appendChild(goalLabel);
-    goal.appendChild(document.createTextNode(lesson.goal));
+    // The goal often references HOCON keys/snippets via backticks; render
+    // them through the inline markdown pipeline so they show as <code>
+    // (and any link/bold) instead of literal characters.
+    const goalText = document.createElement('span');
+    goalText.innerHTML = renderInlineMd(lesson.goal);
+    goal.appendChild(goalText);
     wrap.appendChild(goal);
 
     if (opts.hintsUsed > 0) {

@@ -32,6 +32,15 @@ const STASH_OPEN = '';
 const STASH_CLOSE = '';
 const STASH_RE = new RegExp(`${STASH_OPEN}(\\d+)${STASH_CLOSE}`, 'g');
 
+/**
+ * Inline-only variant of renderMd for one-liners (lesson goal text, etc.).
+ * Same code/bold/link pipeline as paragraphs, but doesn't wrap in `<p>` so
+ * the result drops cleanly into a host element with its own layout.
+ */
+export function renderInlineMd(s: string): string {
+  return renderInline(s);
+}
+
 function renderInline(s: string): string {
   // Pull code spans out first so other transforms don't rewrite them.
   // Restored at the end with their original text intact (and HTML-escaped).
