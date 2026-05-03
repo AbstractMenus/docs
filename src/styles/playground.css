@@ -716,6 +716,23 @@ html, body {
 }
 .pg-tutorial-intro p { margin: 0 0 0.5rem 0; }
 .pg-tutorial-intro ul { margin: 0 0 0.5rem 1.25rem; padding: 0; }
+/* Hyperlinks inside lesson markdown - sky blue (GitHub-style), not the
+   browser-default vivid blue. Subtle dotted underline becomes solid on
+   hover; keeps the prose calm but still visibly clickable. */
+.pg-tutorial a {
+  color: #79c0ff;
+  text-decoration: underline;
+  text-decoration-color: rgba(121, 192, 255, 0.4);
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.pg-tutorial a:hover {
+  text-decoration-color: currentColor;
+}
+[data-theme="light"] .pg-tutorial a {
+  color: #0969da;
+  text-decoration-color: rgba(9, 105, 218, 0.4);
+}
 .pg-tutorial-intro code,
 .pg-tutorial-hint code,
 .pg-tutorial-goal code {
