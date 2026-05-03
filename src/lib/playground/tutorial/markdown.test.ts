@@ -43,8 +43,13 @@ describe('renderMd', () => {
     expect(out).not.toContain('javascript:');
   });
 
-  test('relative link without scheme is neutralised', () => {
-    const out = renderMd('[oops](/local/path)');
+  test('same-origin path is allowed for links', () => {
+    const out = renderMd('[docs](/docs/start/)');
+    expect(out).toContain('href="/docs/start/"');
+  });
+
+  test('schemeless relative path (no leading /) is neutralised', () => {
+    const out = renderMd('[oops](relative/path)');
     expect(out).toContain('href="#"');
   });
 
@@ -121,5 +126,31 @@ describe('renderInlineMd', () => {
 
   test('escapes raw html', () => {
     expect(renderInlineMd('<script>')).toBe('&lt;script&gt;');
+  });
+
+  test('image renders as <img> with alt and lazy loading', () => {
+    expect(renderInlineMd('see ![diagram](/img/foo.png)')).toBe(
+      'see <img src="/img/foo.png" alt="diagram" loading="lazy">',
+    );
+  });
+
+  test('image with https url is allowed', () => {
+    const out = renderInlineMd('![pic](https://example.com/x.png)');
+    expect(out).toContain('src="https://example.com/x.png"');
+  });
+
+  test('image with javascript: url is dropped', () => {
+    // Markdown image syntax doesn't allow `)` inside the URL, so we use a
+    // simpler payload; the safety check rejects any non-http(s)/non-/ url.
+    expect(renderInlineMd('![oops](javascript:alert)')).toBe('');
+  });
+
+  test('image is matched before link (no leftover `!`)', () => {
+    expect(renderInlineMd('![alt](/p.png)')).toBe('<img src="/p.png" alt="alt" loading="lazy">');
+  });
+
+  test('link with same-origin path is allowed', () => {
+    const out = renderInlineMd('see [docs](/docs/start/)');
+    expect(out).toContain('href="/docs/start/"');
   });
 });

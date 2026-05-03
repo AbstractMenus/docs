@@ -759,6 +759,16 @@ html, body {
   font-size: 0.85em;
   white-space: pre;
 }
+/* Inline images in lesson markdown - constrained to the panel width with
+   subtle border + corner so they sit cleanly inside paragraphs. */
+.pg-tutorial img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.5rem 0;
+  border: 1px solid var(--pg-border);
+  border-radius: 4px;
+}
 
 /* HOCON syntax highlighting for fenced code blocks in lesson markdown.
    Reuses the same palette as the editor's `.cm-tk-*` classes (defined
@@ -948,6 +958,12 @@ html, body {
   text-align: center;
   font-size: 0.85rem;
   color: var(--pg-fg-muted);
+}
+.pg-tutorial-popup-num {
+  min-width: 1.75rem;
+  text-align: right;
+  color: var(--pg-fg-muted);
+  font-variant-numeric: tabular-nums;
 }
 .pg-tutorial-popup-title {
   flex: 1 1 auto;

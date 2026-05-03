@@ -128,4 +128,17 @@ describe('TutorialPanel', () => {
     items[1].click();
     expect(jumped).toBe('01-comments');
   });
+
+  test('lessons popup prefixes each row with its 1-based position', () => {
+    const second: Lesson = { ...LESSON, id: '01-comments', title: 'Comments', topic: 'basics' };
+    const p = createTutorialPanel(dom());
+    p.showLesson(LESSON, mkOpts({
+      position: 1,
+      total: 2,
+      allLessons: [LESSON, second],
+    }));
+    document.querySelector<HTMLButtonElement>('[data-action="all-lessons"]')!.click();
+    const nums = document.querySelectorAll<HTMLElement>('.pg-tutorial-popup-num');
+    expect(Array.from(nums).map((n) => n.textContent)).toEqual(['1.', '2.']);
+  });
 });

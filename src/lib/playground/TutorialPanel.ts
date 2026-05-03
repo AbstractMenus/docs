@@ -209,6 +209,12 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
       return popup;
     }
 
+    // Pre-compute the global 1-based position for each lesson once so the
+    // grouped render can prefix each row with its number without repeated
+    // indexOf lookups.
+    const positions = new Map<string, number>();
+    opts.allLessons.forEach((l, i) => positions.set(l.id, i + 1));
+
     const groups: TopicGroup[] = groupLessons(opts.allLessons);
     for (const g of groups) {
       const topicEl = document.createElement('div');
@@ -228,7 +234,8 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
         const ul = document.createElement('ul');
         ul.className = 'pg-tutorial-popup-list';
         for (const ls of sub.lessons) {
-          ul.appendChild(buildLessonRow(ls, currentLesson, opts.progress, popup));
+          const pos = positions.get(ls.id) ?? 0;
+          ul.appendChild(buildLessonRow(ls, currentLesson, opts.progress, popup, pos));
         }
         topicEl.appendChild(ul);
       }
@@ -242,6 +249,7 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
     current: Lesson,
     progress: LessonProgressView,
     popup: HTMLElement,
+    position: number,
   ): HTMLLIElement {
     const li = document.createElement('li');
     const btn = document.createElement('button');
@@ -271,6 +279,12 @@ export function createTutorialPanel(host: HTMLElement): TutorialPanelApi {
       marker.textContent = '·';
     }
     btn.appendChild(marker);
+
+    // Number prefix - global 1-based index, e.g. "1. Introduction".
+    const num = document.createElement('span');
+    num.className = 'pg-tutorial-popup-num';
+    num.textContent = `${position}.`;
+    btn.appendChild(num);
 
     const title = document.createElement('span');
     title.className = 'pg-tutorial-popup-title';

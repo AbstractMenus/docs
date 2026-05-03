@@ -3,16 +3,17 @@ import { highlightHocon } from './highlight-hocon';
 /**
  * Tiny markdown renderer for lesson intros. Supports paragraphs (blank-line
  * separated), `**bold**`, `` `code` ``, `[text](https://...)` links,
- * `- list` lines, and triple-backtick fenced code blocks. No headings, no
- * images. Swap to marked/remark if richer markup is needed (~30KB bundle).
+ * `![alt](url)` images, `- list` lines, and triple-backtick fenced code
+ * blocks. No headings. Swap to marked/remark if richer markup is needed
+ * (~30KB bundle).
  *
  * Fenced blocks with the default language (no tag) or an explicit `hocon`
  * tag are syntax-highlighted using the same tokeniser the editor uses;
  * other lang tags fall through to plain text.
  *
- * Link safety: only http(s) URLs render as anchors; anything else (e.g. a
- * `javascript:` scheme) is replaced with `#`. Links open in a new tab with
- * `noopener noreferrer` so the target page can't reach back into us.
+ * URL safety: only http(s) URLs and same-origin paths starting with `/`
+ * are accepted for links and images; anything else (e.g. `javascript:`)
+ * collapses to `#`. Links open in a new tab with `noopener noreferrer`.
  */
 // 0x03 (ETX) - never appears in lesson sources; used as a placeholder
 // sentinel so blank lines inside fenced code blocks don't get mistaken for
@@ -87,8 +88,15 @@ function renderInline(s: string): string {
   });
 
   const transformed = escapeHtml(withoutCode)
+    // Image must come before link: `![alt](url)` would otherwise match the
+    // link regex with the literal `!` left dangling outside the anchor.
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt, url) => {
+      const safe = isSafeUrl(url) ? url : '';
+      if (!safe) return '';
+      return `<img src="${safe}" alt="${alt}" loading="lazy">`;
+    })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label, url) => {
-      const safe = /^https?:\/\/[^\s"<>]+$/.test(url) ? url : '#';
+      const safe = isSafeUrl(url) ? url : '#';
       return `<a href="${safe}" target="_blank" rel="noopener noreferrer">${label}</a>`;
     })
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
@@ -105,4 +113,15 @@ function escapeHtml(s: string): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
+}
+
+/**
+ * Allow http(s) absolute URLs and same-origin paths starting with `/`.
+ * Anything else (javascript:, data:, vbscript:, relative `./`, ...) is
+ * rejected so an untrusted lesson contributor can't inject an XSS vector.
+ */
+function isSafeUrl(url: string): boolean {
+  if (/^https?:\/\/[^\s"<>]+$/.test(url)) return true;
+  if (/^\/[^\s"<>]*$/.test(url)) return true;
+  return false;
 }
