@@ -17,7 +17,7 @@
     "Each has its own `actions { ... }` with its own keys.",
     "```\nclick {\n  left {\n    actions { command = \"give @p diamond_sword 1\" }\n  }\n  right {\n    actions { message = \"Costs 10 emeralds\" }\n  }\n}\n```"
   ],
-  "next": null,
+  "next": "20-include",
   "translations": {
     "ru": {
       "title": "Типы кликов: left vs right",
