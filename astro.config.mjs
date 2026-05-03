@@ -22,7 +22,9 @@ export default defineConfig({
     starlight({
       title: "AbstractMenus",
       description: "Documentation for the AbstractMenus Paper/Folia GUI plugin.",
-      favicon: "/favicon.ico",
+      // Astro 6 requires public-asset URLs to include the configured base.
+      // Starlight passes this through verbatim into <link rel="icon" href=...>.
+      favicon: BASE + "favicon.ico",
       logo: { src: "./src/assets/logo.png", alt: "AbstractMenus" },
       social: [
         { icon: "discord", label: "Discord", href: "https://discord.gg/4VGP3Gv" },
