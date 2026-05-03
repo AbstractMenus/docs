@@ -17,7 +17,7 @@
     "Objects go in `{...}`: `meta = { version = 1 }`. Same separator rules.",
     "```\ntags = [\"shop\", \"basic\", \"v1\"]\nmeta = { version = 1 }\n```"
   ],
-  "next": null,
+  "next": "05-dotted-keys",
   "translations": {
     "ru": {
       "title": "Списки и объекты",

@@ -1,0 +1,32 @@
+{
+  "id": "05-dotted-keys",
+  "title": "Dotted keys",
+  "topic": "basics",
+  "intro": "A dot inside a key automatically creates a nested object. These two forms are **identical**:\n\n```\n# Verbose\ndefaults { material = STONE }\n\n# Dotted\ndefaults.material = STONE\n```\n\nUseful for setting one field deep in a nested object without all the braces, and for keeping configs narrow when menus grow.\n\nDots also work inside arbitrary depths: `theme.colors.primary = \"&a\"` is the same as `theme { colors { primary = \"&a\" } }`.\n\n**Goal:** add `defaults.material = STONE` using dotted-key syntax (no braces).",
+  "starter": "title = \"Shop\"\n",
+  "goal": "Add `defaults.material = STONE` using dotted-key syntax (no braces).",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "defaults.material", "value": "STONE" }
+    ]
+  },
+  "hints": [
+    "A dot in the key creates nesting: `a.b = 1` is the same as `a { b = 1 }`.",
+    "Just write `defaults.material = STONE` on a new line.",
+    "```\ndefaults.material = STONE\n```"
+  ],
+  "next": null,
+  "translations": {
+    "ru": {
+      "title": "Точечные ключи",
+      "intro": "Точка внутри ключа автоматически создаёт вложенный объект. Эти две формы **идентичны**:\n\n```\n# Развёрнутый\ndefaults { material = STONE }\n\n# Точечный\ndefaults.material = STONE\n```\n\nУдобно когда нужно задать одно поле глубоко вложенного объекта без лишних скобок. И конфиг не разрастается вширь когда меню обрастает деталями.\n\nТочки работают на любой глубине: `theme.colors.primary = \"&a\"` это то же что `theme { colors { primary = \"&a\" } }`.\n\n**Цель:** добавь `defaults.material = STONE` через точечный синтаксис (без скобок).",
+      "goal": "Добавь `defaults.material = STONE` через точечный синтаксис (без скобок).",
+      "hints": [
+        "Точка в ключе создаёт вложенность: `a.b = 1` это то же что `a { b = 1 }`.",
+        "Просто напиши `defaults.material = STONE` на новой строке.",
+        "```\ndefaults.material = STONE\n```"
+      ]
+    }
+  }
+}
