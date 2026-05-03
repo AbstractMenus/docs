@@ -173,4 +173,31 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     onJump('00-introduction');
     expect(editor.__doc).toBe('user changes'); // not reloaded
   });
+
+  test('enter() falls back to first lesson when saved id is stale', () => {
+    const editor = fakeEditor();
+    const panel = fakePanel();
+    const ctl = new TutorialController(editor, panel, () => {});
+
+    // Simulate a leftover progress entry pointing at a removed lesson.
+    localStorage.setItem('am_playground_progress', JSON.stringify({
+      current: '99-was-removed', completed: [], skipped: [], hintsUsed: {},
+    }));
+    ctl.enter();
+
+    // Should land on the first real lesson (00-introduction starter), NOT
+    // show the "course complete" screen.
+    expect(panel.showCompleted).not.toHaveBeenCalled();
+    expect(editor.__doc).toMatch(/title = ""/); // 00-introduction starter
+  });
+
+  test('enter() with explicit unknown id also falls back', () => {
+    const editor = fakeEditor();
+    const panel = fakePanel();
+    const ctl = new TutorialController(editor, panel, () => {});
+
+    ctl.enter('does-not-exist');
+    expect(panel.showCompleted).not.toHaveBeenCalled();
+    expect(editor.__doc).toMatch(/title = ""/);
+  });
 });

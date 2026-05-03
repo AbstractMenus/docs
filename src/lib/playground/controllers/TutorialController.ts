@@ -44,8 +44,13 @@ export class TutorialController {
   }
 
   enter(initialLessonId?: string | null): void {
-    const id = initialLessonId ?? loadProgress().current ?? firstLessonId();
-    this.loadLesson(id || firstLessonId());
+    const requested = initialLessonId ?? loadProgress().current ?? firstLessonId();
+    // If the saved/url id no longer exists (lesson was renamed or removed in
+    // a content refactor), fall back to the first lesson rather than show
+    // "Course complete" - that screen is for actual completion, not for
+    // stale state.
+    const id = (requested && getLesson(requested)) ? requested : firstLessonId();
+    this.loadLesson(id);
   }
 
   leave(): void {
