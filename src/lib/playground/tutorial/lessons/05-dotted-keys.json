@@ -16,7 +16,7 @@
     "Just write `defaults.material = STONE` on a new line.",
     "```\ndefaults.material = STONE\n```"
   ],
-  "next": null,
+  "next": "06-variables-inline",
   "translations": {
     "ru": {
       "title": "Точечные ключи",

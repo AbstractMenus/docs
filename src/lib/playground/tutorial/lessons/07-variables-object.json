@@ -1,0 +1,33 @@
+{
+  "id": "07-variables-object",
+  "title": "Custom variables (object)",
+  "topic": "basics",
+  "intro": "Variables aren't limited to strings and numbers. You can stash a whole **object** in a variable and reuse it.\n\nThis is the foundation of every DRY pattern in AbstractMenus configs - shared click actions, repeating styles, common item shapes. Define once, reference many times.\n\n```\ncloseAction { close = true }\n\nclick = ${closeAction}\n# click resolves to { close = true }\n```\n\nWhen `${name}` resolves to an object, the whole object lands at that position. Same mechanic as scalar variables, just bigger payload.\n\n**Goal:** define `closeAction { close = true }` and use it as `click = ${closeAction}`.",
+  "starter": "title = \"Demo\"\n",
+  "goal": "Define `closeAction` as an object with `close = true`, then assign `click = ${closeAction}`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "closeAction.close", "value": true },
+      { "kind": "eq", "path": "click.close", "value": true }
+    ]
+  },
+  "hints": [
+    "Define the object: `closeAction { close = true }` (no `=` needed before `{`).",
+    "Reference the whole object: `click = ${closeAction}`.",
+    "```\ncloseAction { close = true }\nclick = ${closeAction}\n```"
+  ],
+  "next": null,
+  "translations": {
+    "ru": {
+      "title": "Кастомные переменные (объект)",
+      "intro": "Переменные не ограничены строками и числами. Можно закинуть в переменную **целый объект** и переиспользовать.\n\nЭто фундамент любого DRY-паттерна в конфигах AbstractMenus - общие click-действия, повторяющиеся стили, типовые формы предметов. Объяви раз - используй много.\n\n```\ncloseAction { close = true }\n\nclick = ${closeAction}\n# click резолвится в { close = true }\n```\n\nКогда `${name}` ссылается на объект - весь объект встаёт на это место. Механика та же что у скалярных переменных, просто пэйлоад больше.\n\n**Цель:** объяви `closeAction { close = true }` и используй как `click = ${closeAction}`.",
+      "goal": "Объяви `closeAction` как объект с `close = true`, затем присвой `click = ${closeAction}`.",
+      "hints": [
+        "Объяви объект: `closeAction { close = true }` (`=` перед `{` не нужен).",
+        "Сошлись на весь объект: `click = ${closeAction}`.",
+        "```\ncloseAction { close = true }\nclick = ${closeAction}\n```"
+      ]
+    }
+  }
+}

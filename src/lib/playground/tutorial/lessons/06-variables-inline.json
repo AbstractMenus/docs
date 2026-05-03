@@ -1,0 +1,33 @@
+{
+  "id": "06-variables-inline",
+  "title": "Custom variables (inline)",
+  "topic": "basics",
+  "intro": "HOCON lets you define your own keys and reference them elsewhere via `${name}` substitution. Useful for any value that repeats across the config.\n\n```\nitemName = \"Diamond Sword\"\nname = ${itemName}\n# name resolves to \"Diamond Sword\"\n```\n\nThe variable is just a regular key. Substitutions are resolved before AbstractMenus sees the config.\n\n**Gotcha:** if you assign the same scalar key twice, **the last one wins**:\n```\nsize = 3\nsize = 5      # final size is 5\n```\nObject values merge instead of overwriting - that's a separate lesson (`22-object-merge`).\n\n**Goal:** define `itemName = \"Diamond Sword\"` and reference it for `name`.",
+  "starter": "title = \"Demo\"\n",
+  "goal": "Define `itemName = \"Diamond Sword\"` and assign `name = ${itemName}` so both resolve to the same string.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      { "kind": "eq", "path": "itemName", "value": "Diamond Sword" },
+      { "kind": "eq", "path": "name", "value": "Diamond Sword" }
+    ]
+  },
+  "hints": [
+    "Define a variable like any other key: `itemName = \"Diamond Sword\"`.",
+    "Reference it without quotes: `name = ${itemName}`.",
+    "```\nitemName = \"Diamond Sword\"\nname = ${itemName}\n```"
+  ],
+  "next": "07-variables-object",
+  "translations": {
+    "ru": {
+      "title": "Кастомные переменные (inline)",
+      "intro": "HOCON позволяет объявить свои ключи и ссылаться на них через `${name}`. Удобно для любых значений которые повторяются в конфиге.\n\n```\nitemName = \"Алмазный меч\"\nname = ${itemName}\n# name резолвится в \"Алмазный меч\"\n```\n\nПеременная это обычный ключ. Подстановки раскрываются до того как конфиг попадёт в AbstractMenus.\n\n**Подводный камень:** если присвоить тот же скалярный ключ дважды - **последнее значение побеждает**:\n```\nsize = 3\nsize = 5      # итоговое size равно 5\n```\nДля объектов работает merge (а не перезапись) - это отдельный урок (`22-object-merge`).\n\n**Цель:** объяви `itemName = \"Diamond Sword\"` и используй для `name`.",
+      "goal": "Объяви `itemName = \"Diamond Sword\"` и присвой `name = ${itemName}` чтобы оба резолвились в одну строку.",
+      "hints": [
+        "Объяви переменную как обычный ключ: `itemName = \"Diamond Sword\"`.",
+        "Сошлись на неё без кавычек: `name = ${itemName}`.",
+        "```\nitemName = \"Diamond Sword\"\nname = ${itemName}\n```"
+      ]
+    }
+  }
+}
