@@ -1,8 +1,14 @@
+import { highlightHocon } from './highlight-hocon';
+
 /**
  * Tiny markdown renderer for lesson intros. Supports paragraphs (blank-line
  * separated), `**bold**`, `` `code` ``, `[text](https://...)` links,
  * `- list` lines, and triple-backtick fenced code blocks. No headings, no
  * images. Swap to marked/remark if richer markup is needed (~30KB bundle).
+ *
+ * Fenced blocks with the default language (no tag) or an explicit `hocon`
+ * tag are syntax-highlighted using the same tokeniser the editor uses;
+ * other lang tags fall through to plain text.
  *
  * Link safety: only http(s) URLs render as anchors; anything else (e.g. a
  * `javascript:` scheme) is replaced with `#`. Links open in a new tab with
@@ -13,13 +19,18 @@
 // paragraph breaks during the split below.
 const FENCE_MARK = String.fromCharCode(3);
 
+interface Fence {
+  lang: string;
+  content: string;
+}
+
 export function renderMd(input: string): string {
   // Stash fenced code blocks first so blank lines INSIDE them don't split
   // them when we paragraph-split below. Each fence becomes a single token
-  // that renderBlock recognises and renders as <pre><code>.
-  const fences: string[] = [];
-  const stashed = input.replace(/```[^\n]*\n([\s\S]*?)\n```/g, (_m, content) => {
-    fences.push(content);
+  // that we recognise after splitting and render as <pre><code>.
+  const fences: Fence[] = [];
+  const stashed = input.replace(/```([^\n]*)\n([\s\S]*?)\n```/g, (_m, lang, content) => {
+    fences.push({ lang: lang.trim(), content });
     return `\n\n${FENCE_MARK}${fences.length - 1}${FENCE_MARK}\n\n`;
   });
 
@@ -29,7 +40,10 @@ export function renderMd(input: string): string {
   return blocks.map((b) => {
     const m = b.trim().match(new RegExp(`^${FENCE_MARK}(\\d+)${FENCE_MARK}$`));
     if (m) {
-      return `<pre><code>${escapeHtml(fences[Number(m[1])])}</code></pre>`;
+      const fence = fences[Number(m[1])];
+      const isHocon = fence.lang === '' || fence.lang === 'hocon';
+      const inner = isHocon ? highlightHocon(fence.content) : escapeHtml(fence.content);
+      return `<pre><code>${inner}</code></pre>`;
     }
     return renderBlock(b);
   }).join('\n');

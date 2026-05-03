@@ -57,34 +57,49 @@ describe('renderMd', () => {
 });
 
 describe('fenced code blocks', () => {
-  test('single fenced block renders as <pre><code>', () => {
-    const out = renderMd('```\nfoo\n```');
+  // Use `text` lang to opt out of HOCON highlighting where the test is
+  // about structural rendering (escaping, blank-line preservation, etc.).
+  test('single fenced block (text) renders as <pre><code>', () => {
+    const out = renderMd('```text\nfoo\n```');
     expect(out).toBe('<pre><code>foo</code></pre>');
   });
 
-  test('language tag is accepted and ignored', () => {
-    const out = renderMd('```hocon\ntitle = "x"\n```');
-    expect(out).toBe('<pre><code>title = "x"</code></pre>');
+  test('default lang highlights as HOCON', () => {
+    // The string token should be wrapped in cm-tk-string regardless of how
+    // the rest of the line is split.
+    const out = renderMd('```\ntitle = "x"\n```');
+    expect(out).toContain('cm-tk-string');
+    expect(out).toContain('"x"');
+  });
+
+  test('explicit hocon lang highlights too', () => {
+    const out = renderMd('```hocon\nsize = 3\n```');
+    expect(out).toContain('cm-tk-number');
+  });
+
+  test('non-hocon lang skips highlighting', () => {
+    const out = renderMd('```bash\nls -la\n```');
+    expect(out).toBe('<pre><code>ls -la</code></pre>');
   });
 
   test('fence preserves blank lines inside content', () => {
-    const out = renderMd('```\nline1\n\nline2\n```');
+    const out = renderMd('```text\nline1\n\nline2\n```');
     expect(out).toBe('<pre><code>line1\n\nline2</code></pre>');
   });
 
   test('html inside fence is escaped', () => {
-    const out = renderMd('```\n<script>\n```');
+    const out = renderMd('```text\n<script>\n```');
     expect(out).toBe('<pre><code>&lt;script&gt;</code></pre>');
   });
 
   test('paragraph + fence + paragraph all render in order', () => {
-    const out = renderMd('intro text\n\n```\ncode\n```\n\noutro text');
+    const out = renderMd('intro text\n\n```text\ncode\n```\n\noutro text');
     expect(out).toBe('<p>intro text</p>\n<pre><code>code</code></pre>\n<p>outro text</p>');
   });
 
   test('fence content is not run through inline transforms', () => {
     // **bold** and `inline-code` syntax inside the fence stays literal.
-    const out = renderMd('```\n**not bold** `not code`\n```');
+    const out = renderMd('```text\n**not bold** `not code`\n```');
     expect(out).toBe('<pre><code>**not bold** `not code`</code></pre>');
   });
 });

@@ -759,6 +759,35 @@ html, body {
   font-size: 0.85em;
   white-space: pre;
 }
+
+/* HOCON syntax highlighting for fenced code blocks in lesson markdown.
+   Reuses the same palette as the editor's `.cm-tk-*` classes (defined
+   below for `.cm-editor`); we just respec the colours here so they apply
+   inside the tutorial panel where the editor styles don't. */
+.pg-tutorial pre .cm-tk-comment      { color: #8b949e; font-style: italic; }
+.pg-tutorial pre .cm-tk-string       { color: #a5d6ff; }
+.pg-tutorial pre .cm-tk-substitution { color: #f0b070; }
+.pg-tutorial pre .cm-tk-key          { color: #79c0ff; }
+.pg-tutorial pre .cm-tk-operator     { color: #ff7b72; }
+.pg-tutorial pre .cm-tk-bracket      { color: #c9d1d9; }
+.pg-tutorial pre .cm-tk-punctuation  { color: #c9d1d9; }
+.pg-tutorial pre .cm-tk-bool         { color: #d2a8ff; }
+.pg-tutorial pre .cm-tk-null         { color: #d2a8ff; }
+.pg-tutorial pre .cm-tk-keyword      { color: #ff7b72; font-weight: 600; }
+.pg-tutorial pre .cm-tk-includeFn    { color: #f0b070; }
+.pg-tutorial pre .cm-tk-number       { color: #79c0ff; }
+.pg-tutorial pre .cm-tk-duration     { color: #79c0ff; }
+.pg-tutorial pre .cm-tk-value        { color: #c9d1d9; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-comment      { color: #6e7781; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-string       { color: #0a3069; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-substitution { color: #953800; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-key          { color: #0550ae; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-operator     { color: #cf222e; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-bool         { color: #8250df; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-keyword      { color: #cf222e; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-includeFn    { color: #953800; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-number       { color: #0550ae; }
+[data-theme="light"] .pg-tutorial pre .cm-tk-duration     { color: #0550ae; }
 .pg-tutorial-goal {
   background: var(--pg-bg-elev-2);
   border-left: 3px solid var(--pg-accent);
