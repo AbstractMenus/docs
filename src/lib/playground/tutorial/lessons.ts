@@ -133,12 +133,37 @@ export function validateLesson(raw: unknown, source = '<inline>'): Validation {
   const c = r.check;
   if (!c || typeof c !== 'object') return fail('missing `check` object');
   const ck = c as Record<string, unknown>;
-  if (ck.type !== 'regex') return fail(`unsupported check.type \`${String(ck.type)}\` (expected "regex")`);
-  if (typeof ck.pattern !== 'string') return fail('`check.pattern` must be a string');
-  try {
-    new RegExp(ck.pattern, typeof ck.flags === 'string' ? ck.flags : '');
-  } catch (e) {
-    return fail(`check.pattern is not a valid regex: ${(e as Error).message}`);
+  if (ck.type === 'regex') {
+    if (typeof ck.pattern !== 'string') return fail('`check.pattern` must be a string');
+    try {
+      new RegExp(ck.pattern, typeof ck.flags === 'string' ? ck.flags : '');
+    } catch (e) {
+      return fail(`check.pattern is not a valid regex: ${(e as Error).message}`);
+    }
+  } else if (ck.type === 'shape') {
+    if (!Array.isArray(ck.asserts)) return fail('`check.asserts` must be an array');
+    for (let i = 0; i < ck.asserts.length; i++) {
+      const a = ck.asserts[i];
+      if (!a || typeof a !== 'object' || Array.isArray(a)) return fail(`check.asserts[${i}] must be an object`);
+      const aa = a as Record<string, unknown>;
+      if (typeof aa.path !== 'string' || !aa.path) return fail(`check.asserts[${i}].path must be a non-empty string`);
+      if (aa.kind === 'has') {
+        // no extra fields
+      } else if (aa.kind === 'eq') {
+        if (!('value' in aa)) return fail(`check.asserts[${i}] (eq) requires \`value\``);
+      } else if (aa.kind === 'matches') {
+        if (typeof aa.pattern !== 'string') return fail(`check.asserts[${i}] (matches) requires string \`pattern\``);
+        try {
+          new RegExp(aa.pattern, typeof aa.flags === 'string' ? aa.flags : '');
+        } catch (e) {
+          return fail(`check.asserts[${i}].pattern is not a valid regex: ${(e as Error).message}`);
+        }
+      } else {
+        return fail(`check.asserts[${i}].kind must be "has", "eq", or "matches" (got \`${String(aa.kind)}\`)`);
+      }
+    }
+  } else {
+    return fail(`unsupported check.type \`${String(ck.type)}\` (expected "regex" or "shape")`);
   }
   if (r.next !== undefined && r.next !== null && typeof r.next !== 'string') {
     return fail('`next` must be string, null, or omitted');

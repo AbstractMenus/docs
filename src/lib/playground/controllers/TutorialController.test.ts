@@ -128,7 +128,7 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     onPrev();
     expect(editor.__doc).toMatch(/title = ""/); // 00 starter
     // Progress not mutated by Prev: localStorage progress should not list 01 as completed
-    const progress = JSON.parse(localStorage.getItem('pg-tutorial-progress') ?? '{}');
+    const progress = JSON.parse(localStorage.getItem('am_playground_progress') ?? '{}');
     expect(progress.completed ?? []).not.toContain('01-comments');
     expect(progress.skipped ?? []).not.toContain('01-comments');
   });
@@ -157,7 +157,7 @@ describe('TutorialController navigation (Prev / Jump)', () => {
     onJump('01-comments');
     expect(editor.__doc).toContain('My menu');
 
-    const progress = JSON.parse(localStorage.getItem('pg-tutorial-progress') ?? '{}');
+    const progress = JSON.parse(localStorage.getItem('am_playground_progress') ?? '{}');
     expect(progress.completed ?? []).not.toContain('00-introduction');
   });
 

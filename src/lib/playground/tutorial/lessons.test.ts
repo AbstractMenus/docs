@@ -118,6 +118,49 @@ describe('validateLesson', () => {
     expect(validateLesson({ ...valid, subtopic: '' }).ok).toBe(false);
     expect(validateLesson({ ...valid, subtopic: 5 }).ok).toBe(false);
   });
+
+  test('shape check is accepted', () => {
+    const r = validateLesson({
+      ...valid,
+      check: { type: 'shape', asserts: [{ kind: 'has', path: 'title' }] },
+    });
+    expect(r.ok).toBe(true);
+  });
+
+  test('shape check requires asserts array', () => {
+    expect(validateLesson({
+      ...valid,
+      check: { type: 'shape', asserts: 'nope' },
+    }).ok).toBe(false);
+  });
+
+  test('shape check rejects unknown assert kind', () => {
+    expect(validateLesson({
+      ...valid,
+      check: { type: 'shape', asserts: [{ kind: 'whatever', path: 'x' }] },
+    }).ok).toBe(false);
+  });
+
+  test('shape eq requires value field', () => {
+    expect(validateLesson({
+      ...valid,
+      check: { type: 'shape', asserts: [{ kind: 'eq', path: 'x' }] },
+    }).ok).toBe(false);
+  });
+
+  test('shape matches validates pattern as regex', () => {
+    expect(validateLesson({
+      ...valid,
+      check: { type: 'shape', asserts: [{ kind: 'matches', path: 'x', pattern: '(' }] },
+    }).ok).toBe(false);
+  });
+
+  test('unknown check.type rejected', () => {
+    expect(validateLesson({
+      ...valid,
+      check: { type: 'whatever' },
+    }).ok).toBe(false);
+  });
 });
 
 describe('groupLessons / position helpers', () => {

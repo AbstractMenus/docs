@@ -4,7 +4,43 @@ export interface RegexCheck {
   flags?: string;
 }
 
-export type CheckSpec = RegexCheck;
+/**
+ * Path-based assertion against the resolved JSON. Cleaner than regex once
+ * lessons start asking for nested structure - the engine parses + resolves
+ * the editor content the same way the analysis pipeline does, then walks
+ * each assert against the produced tree.
+ *
+ * Supported assert kinds:
+ *   - `has`     : path resolves to a non-undefined value
+ *   - `eq`      : path equals literal value (deep equality for objects/arrays)
+ *   - `matches` : path is a string and matches the regex pattern
+ *
+ * Path syntax is dot+bracket: `items[0].click.message`, `defaults.material`.
+ * Numeric segments inside `[]` index arrays; everything else is an object key.
+ */
+export interface ShapeAssertHas {
+  kind: 'has';
+  path: string;
+}
+export interface ShapeAssertEq {
+  kind: 'eq';
+  path: string;
+  value: unknown;
+}
+export interface ShapeAssertMatches {
+  kind: 'matches';
+  path: string;
+  pattern: string;
+  flags?: string;
+}
+export type ShapeAssert = ShapeAssertHas | ShapeAssertEq | ShapeAssertMatches;
+
+export interface ShapeCheck {
+  type: 'shape';
+  asserts: ShapeAssert[];
+}
+
+export type CheckSpec = RegexCheck | ShapeCheck;
 
 /**
  * Per-locale overrides for the human-readable parts of a lesson. `starter`
