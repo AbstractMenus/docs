@@ -77,34 +77,65 @@ const RAW: Record<string, WikiEntry> = {
 
   // --- standalone reference pages ---
   actions: {
-    en: '/docs/en/general/actions/',
-    ru: '/docs/ru/general/actions/',
+    en: '/docs/en/general/actions/#all-actions',
+    ru: '/docs/ru/general/actions/#все-действия',
+  },
+  // Per-action anchors. Headings in actions.md are English in both
+  // locales (## Message / ## Command / ...), so slugs are identical.
+  'action.message': {
+    en: '/docs/en/general/actions/#message',
+    ru: '/docs/ru/general/actions/#message',
+  },
+  'action.command': {
+    en: '/docs/en/general/actions/#command',
+    ru: '/docs/ru/general/actions/#command',
+  },
+  'action.sound': {
+    en: '/docs/en/general/actions/#sound',
+    ru: '/docs/ru/general/actions/#sound',
+  },
+  'action.teleport': {
+    en: '/docs/en/general/actions/#teleport',
+    ru: '/docs/ru/general/actions/#teleport',
+  },
+  'action.delay': {
+    en: '/docs/en/general/actions/#delay',
+    ru: '/docs/ru/general/actions/#delay',
+  },
+  'action.bulk': {
+    en: '/docs/en/general/actions/#bulk',
+    ru: '/docs/ru/general/actions/#bulk',
   },
   rules: {
-    en: '/docs/en/general/rules/',
-    ru: '/docs/ru/general/rules/',
+    en: '/docs/en/general/rules/#all-rules',
+    ru: '/docs/ru/general/rules/#все-правила',
   },
   variables: {
     en: '/docs/en/general/variables/',
     ru: '/docs/ru/general/variables/',
   },
   placeholders: {
-    en: '/docs/en/general/placeholders/',
-    ru: '/docs/ru/general/placeholders/',
+    en: '/docs/en/general/placeholders/#built-in-placeholders',
+    ru: '/docs/ru/general/placeholders/#встроенные-плейсхолдеры',
   },
   activators: {
-    en: '/docs/en/general/activators/',
-    ru: '/docs/ru/general/activators/',
+    en: '/docs/en/general/activators/#all-activators',
+    ru: '/docs/ru/general/activators/#все-активаторы',
   },
   // HOCON syntax overview (covers include, value types, etc.)
   hocon: {
-    en: '/docs/en/start/hocon/',
-    ru: '/docs/ru/start/hocon/',
+    en: '/docs/en/start/hocon/#basic-hocon-syntax',
+    ru: '/docs/ru/start/hocon/#базовый-синтаксис-hocon',
   },
   // Templates / DRY patterns (defaults, includes)
   templates: {
-    en: '/docs/en/advanced/templates/',
-    ru: '/docs/ru/advanced/templates/',
+    en: '/docs/en/advanced/templates/#templates-basics',
+    ru: '/docs/ru/advanced/templates/#основы-шаблонов',
+  },
+  // Templates pulled from a separate include file (the "include" pattern)
+  'templates.include': {
+    en: '/docs/en/advanced/templates/#templates-in-separate-file',
+    ru: '/docs/ru/advanced/templates/#шаблоны-в-отдельном-файле',
   },
 };
 

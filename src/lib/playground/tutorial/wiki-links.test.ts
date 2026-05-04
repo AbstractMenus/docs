@@ -39,4 +39,17 @@ describe('resolveWikiUrl', () => {
     expect(hasWikiConcept('click')).toBe(true);
     expect(hasWikiConcept('not-a-thing')).toBe(false);
   });
+
+  test('every wiki: ref in shipped lessons resolves to a registered concept', async () => {
+    const { listLessons } = await import('./lessons');
+    const refs = new Set<string>();
+    for (const l of listLessons()) {
+      const texts: string[] = [l.intro, ...l.hints];
+      for (const t of texts) {
+        for (const m of t.matchAll(/wiki:([\w.-]+)/g)) refs.add(m[1]);
+      }
+    }
+    const orphans = [...refs].filter((c) => !hasWikiConcept(c));
+    expect(orphans).toEqual([]);
+  });
 });
