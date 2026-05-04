@@ -219,7 +219,7 @@ export class PlaygroundApp {
 
   private runAnalysis(): void {
     const text = this.editor.getValue();
-    const r = parse(tokenizeText(text));
+    const r = parse(tokenizeText(text), text);
     const res = resolve(r.ast);
     const unknown = validateUnknownKeys(r.ast);
     const all = [...r.diagnostics, ...res.warnings, ...unknown];

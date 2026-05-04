@@ -25,7 +25,6 @@ export interface Loc {
  */
 export type DiagCode =
   // parser.ts
-  | 'parser.include-not-supported'
   | 'parser.unexpected-token'
   | 'parser.expected-value-after-sep'
   | 'parser.expected-key-separator'

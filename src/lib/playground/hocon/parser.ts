@@ -1,9 +1,9 @@
 import type { TokenWithPos, Node, Entry, Loc, Diagnostic, DiagCode, DiagParams, ParseResult } from './types';
 import { formatDiagMessage } from './diag';
 
-export function parse(tokens: TokenWithPos[]): ParseResult {
+export function parse(tokens: TokenWithPos[], source = ''): ParseResult {
   const meaningful = tokens.filter((t) => t.type !== 'comment');
-  const p = new Parser(meaningful);
+  const p = new Parser(meaningful, source);
   const root = p.parseRoot();
   return { ast: root, diagnostics: p.diagnostics };
 }
@@ -12,7 +12,7 @@ class Parser {
   pos = 0;
   diagnostics: Diagnostic[] = [];
 
-  constructor(private toks: TokenWithPos[]) {}
+  constructor(private toks: TokenWithPos[], private source: string) {}
 
   peek(offset = 0): TokenWithPos | null {
     return this.toks[this.pos + offset] ?? null;
@@ -84,11 +84,35 @@ class Parser {
 
     if (first.type === 'keyword' && first.text === 'include') {
       this.pos++;
+      const argTokens: TokenWithPos[] = [];
       while (this.peek() && this.peek()!.type !== 'newline') {
-        this.consume();
+        const t = this.consume();
+        if (t) argTokens.push(t);
       }
-      this.emitWarning('parser.include-not-supported', undefined, first);
-      return null;
+      const firstArg = argTokens[0];
+      // The tokenizer drops punctuation it doesn't recognise (parens around
+      // wrappers like `classpath(...)`), so reconstructing `raw` from token
+      // text loses them. Slice the original source from the first arg token
+      // up to the next newline (or end of source) to preserve every char the
+      // author typed - parens, whitespace, everything. Trailing whitespace
+      // is trimmed because the source.slice may extend past the last arg.
+      const nextNewline = this.peek();
+      const sliceEnd = nextNewline ? nextNewline.offset : this.source.length;
+      const raw = firstArg
+        ? this.source.slice(firstArg.offset, sliceEnd).replace(/[ \t]+$/, '')
+        : '';
+      const argLocAnchor = firstArg ?? first;
+      const lastLocAnchor = argTokens[argTokens.length - 1] ?? first;
+      return {
+        path: [],
+        value: {
+          kind: 'include',
+          raw,
+          loc: this.locFromTo(argLocAnchor, lastLocAnchor),
+        },
+        append: false,
+        loc: this.locFromTo(first, lastLocAnchor),
+      };
     }
 
     // Inline spread: `${ref}` at entry position (instead of `key = value`).

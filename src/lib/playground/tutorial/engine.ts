@@ -20,7 +20,7 @@ export function runCheck(text: string, check: CheckSpec): boolean {
   if (check.type === 'shape') {
     let resolved: unknown;
     try {
-      const parsed = parse(tokenizeText(text));
+      const parsed = parse(tokenizeText(text), text);
       // A parse error doesn't fail the check immediately - the resolver is
       // best-effort and the user might still satisfy the shape with the
       // partial AST. But if the resolved value isn't a plain object/array,

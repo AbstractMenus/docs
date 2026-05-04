@@ -9,7 +9,6 @@ import { en } from '../i18n/translations/en';
  * removed a code without dropping its translation key.
  */
 const ALL_CODES: DiagCode[] = [
-  'parser.include-not-supported',
   'parser.unexpected-token',
   'parser.expected-value-after-sep',
   'parser.expected-key-separator',

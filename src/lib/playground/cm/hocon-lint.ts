@@ -54,7 +54,7 @@ export function hoconLinter() {
     linter(
       (view) => {
         const text = view.state.doc.toString();
-        const r = parse(tokenizeText(text));
+        const r = parse(tokenizeText(text), text);
         const res = resolve(r.ast);
         const unknown = validateUnknownKeys(r.ast);
         const all = [...r.diagnostics, ...res.warnings, ...unknown];

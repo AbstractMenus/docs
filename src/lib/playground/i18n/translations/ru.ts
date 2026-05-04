@@ -75,7 +75,6 @@ export const ru: Partial<Dict> = {
 
   'topic.basics': 'Основы',
 
-  'diag.parser.include-not-supported': 'Директива include не поддерживается в песочнице',
   'diag.parser.unexpected-token': 'Неожиданный токен `${text}`',
   'diag.parser.expected-value-after-sep': 'Ожидалось значение после `${sep}`',
   'diag.parser.expected-key-separator': 'Ожидался `=`, `:` или `{` после ключа',

@@ -92,7 +92,6 @@ export const en = {
   // placeholders are interpolated with the params the emitter passes.
   // Identifier-like values (scope, kind) stay in English by design - they're
   // technical tokens, like type names in TS errors.
-  'diag.parser.include-not-supported': 'include is not supported in playground',
   'diag.parser.unexpected-token': 'Unexpected token `${text}`',
   'diag.parser.expected-value-after-sep': 'Expected a value after `${sep}`',
   'diag.parser.expected-key-separator': 'Expected `=`, `:`, or `{` after key',

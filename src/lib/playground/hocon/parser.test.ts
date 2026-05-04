@@ -4,7 +4,7 @@ import { tokenizeText } from './tokenize';
 import type { Node, Entry } from './types';
 
 function parseString(input: string) {
-  return parse(tokenizeText(input));
+  return parse(tokenizeText(input), input);
 }
 
 function getEntries(root: Node): Entry[] {
@@ -111,10 +111,35 @@ describe('parser - happy path', () => {
     expect(getEntries(r.ast)[0].append).toBe(true);
   });
 
-  test('include emitted as warning, parse continues', () => {
-    const r = parseString('include file("a.conf")\na = 1');
-    expect(r.diagnostics.some((d) => d.severity === 'warning' && /include/i.test(d.message))).toBe(true);
-    expect(getEntries(r.ast)).toHaveLength(1);
+  test('include is preserved in the AST as a top-level entry', () => {
+    const r = parseString('include "defaults.conf"\na = 1');
+    expect(r.diagnostics.filter((d) => d.severity === 'error')).toEqual([]);
+    if (r.ast.kind !== 'object') throw new Error('expected object root');
+    const includeEntry = r.ast.entries.find((e) => e.value.kind === 'include');
+    expect(includeEntry).toBeDefined();
+    expect(includeEntry!.path).toEqual([]);
+    if (includeEntry!.value.kind !== 'include') throw new Error('shape');
+    expect(includeEntry!.value.raw).toContain('"defaults.conf"');
+    const aEntry = r.ast.entries.find((e) => e.path[0] === 'a');
+    expect(aEntry).toBeDefined();
+  });
+
+  test('include with classpath wrapper preserves raw', () => {
+    const r = parseString('include classpath("base")\n');
+    if (r.ast.kind !== 'object') throw new Error('expected object root');
+    const inc = r.ast.entries.find((e) => e.value.kind === 'include');
+    expect(inc).toBeDefined();
+    if (inc!.value.kind !== 'include') throw new Error('shape');
+    expect(inc!.value.raw).toContain('classpath("base")');
+  });
+
+  test('include preserves whitespace inside wrapper', () => {
+    const r = parseString('include classpath( "base" )\n');
+    if (r.ast.kind !== 'object') throw new Error('expected object root');
+    const inc = r.ast.entries.find((e) => e.value.kind === 'include');
+    expect(inc).toBeDefined();
+    if (inc!.value.kind !== 'include') throw new Error('shape');
+    expect(inc!.value.raw).toBe('classpath( "base" )');
   });
 });
 
