@@ -21,47 +21,77 @@ const PERCENT_ENCODE_ANCHOR = (s: string): string =>
   s.replace(/#(.+)$/, (_, anchor) => '#' + encodeURIComponent(anchor));
 
 const RAW: Record<string, WikiEntry> = {
+  // --- menu-structure.md sections ---
   // Click handling (item.click block, scope: click)
   click: {
-    en: '/docs/en/general/menu-structure/#click-handling',
+    en: '/docs/en/general/menu-structure/#click-processing',
     ru: '/docs/ru/general/menu-structure/#обработка-кликов',
   },
-  // Slot positions / numbering
-  slot: {
-    en: '/docs/en/general/menu-structure/#slots',
-    ru: '/docs/ru/general/menu-structure/#слоты',
-  },
-  // Items array (top-level)
+  // Items array (top-level "buttons" section)
   items: {
-    en: '/docs/en/general/menu-structure/#items',
-    ru: '/docs/ru/general/menu-structure/#items',
+    en: '/docs/en/general/menu-structure/#buttons',
+    ru: '/docs/ru/general/menu-structure/#кнопки',
   },
-  // Item format - all per-item fields (material, name, lore, ...)
+  // Menu-level properties (size, title, updateInterval, ...)
+  size: {
+    en: '/docs/en/general/menu-structure/#menu-properties',
+    ru: '/docs/ru/general/menu-structure/#свойства-меню',
+  },
+  // Per-item display rules (visibility gating)
+  'display-rules': {
+    en: '/docs/en/general/menu-structure/#display-rules',
+    ru: '/docs/ru/general/menu-structure/#правила-отображения',
+  },
+  // Bindings: per-player property swap based on rules
+  bindings: {
+    en: '/docs/en/general/menu-structure/#binding-button-properties-to-rules',
+    ru: '/docs/ru/general/menu-structure/#привязка-свойств-кнопки-к-правилам',
+  },
+
+  // --- item-format.md sections ---
+  // Item format root (all per-item fields)
   'item-format': {
     en: '/docs/en/general/item-format/',
     ru: '/docs/ru/general/item-format/',
   },
-  // Actions reference (message, command, sound, ...)
+  // Slot positions (4 forms - index, range, x/y, matrix)
+  slot: {
+    en: '/docs/en/general/item-format/#slot',
+    ru: '/docs/ru/general/item-format/#слот',
+  },
+  // count + cooldown (and other slot-adjacent fields)
+  cooldown: {
+    en: '/docs/en/general/item-format/#slot-and-cooldown',
+    ru: '/docs/ru/general/item-format/#слот-и-кулдаун',
+  },
+  // Display section: name, lore, material, flags
+  display: {
+    en: '/docs/en/general/item-format/#display',
+    ru: '/docs/ru/general/item-format/#отображение',
+  },
+  // Mechanics: enchantments, effects, firework, etc.
+  mechanics: {
+    en: '/docs/en/general/item-format/#mechanics',
+    ru: '/docs/ru/general/item-format/#механики',
+  },
+
+  // --- standalone reference pages ---
   actions: {
     en: '/docs/en/general/actions/',
     ru: '/docs/ru/general/actions/',
   },
-  // Rules reference (permission, world, gamemode, ...)
   rules: {
     en: '/docs/en/general/rules/',
     ru: '/docs/ru/general/rules/',
   },
-  // ${var} substitution variables
   variables: {
     en: '/docs/en/general/variables/',
     ru: '/docs/ru/general/variables/',
   },
-  // %placeholder% (PlaceholderAPI)
   placeholders: {
     en: '/docs/en/general/placeholders/',
     ru: '/docs/ru/general/placeholders/',
   },
-  // How players open menus (commands, regions, click triggers)
   activators: {
     en: '/docs/en/general/activators/',
     ru: '/docs/ru/general/activators/',
@@ -71,7 +101,7 @@ const RAW: Record<string, WikiEntry> = {
     en: '/docs/en/start/hocon/',
     ru: '/docs/ru/start/hocon/',
   },
-  // Templates / DRY patterns (defaults, bindings, includes)
+  // Templates / DRY patterns (defaults, includes)
   templates: {
     en: '/docs/en/advanced/templates/',
     ru: '/docs/ru/advanced/templates/',
