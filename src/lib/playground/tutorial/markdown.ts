@@ -1,4 +1,5 @@
 import { highlightHocon } from './highlight-hocon';
+import { resolveWikiUrl } from './wiki-links';
 
 /**
  * Tiny markdown renderer for lesson intros. Supports paragraphs (blank-line
@@ -96,6 +97,13 @@ function renderInline(s: string): string {
       return `<img src="${safe}" alt="${alt}" loading="lazy">`;
     })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label, url) => {
+      // Custom `wiki:concept` scheme - resolve to a per-locale docs URL.
+      // Unknown concepts collapse to `#` so the broken link is visible.
+      if (url.startsWith('wiki:')) {
+        const resolved = resolveWikiUrl(url.slice(5));
+        const safe = resolved && isSafeUrl(resolved) ? resolved : '#';
+        return `<a href="${safe}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      }
       const safe = isSafeUrl(url) ? url : '#';
       return `<a href="${safe}" target="_blank" rel="noopener noreferrer">${label}</a>`;
     })

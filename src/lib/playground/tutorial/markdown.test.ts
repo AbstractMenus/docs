@@ -153,4 +153,15 @@ describe('renderInlineMd', () => {
     const out = renderInlineMd('see [docs](/docs/start/)');
     expect(out).toContain('href="/docs/start/"');
   });
+
+  test('wiki: scheme resolves to a docs URL', () => {
+    const out = renderInlineMd('learn about [click](wiki:click)');
+    expect(out).toContain('href="/docs/en/general/menu-structure/');
+    expect(out).toContain('target="_blank"');
+  });
+
+  test('wiki: with unknown concept becomes a # link', () => {
+    const out = renderInlineMd('[broken](wiki:does-not-exist)');
+    expect(out).toContain('href="#"');
+  });
 });

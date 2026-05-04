@@ -2,7 +2,7 @@
   "id": "12-name-and-material",
   "title": "Name + material",
   "topic": "menu",
-  "intro": "Two keys you'll set on almost every item:\n\n- **`material`** - what the item looks like in the slot. It's a Bukkit material name (uppercase enum, like `DIAMOND_SWORD`, `OAK_LOG`, `BARRIER`).\n- **`name`** - the display name shown when the player hovers over the item. Just a string. Use Minecraft color codes with `&` like `&aGreen` or `&l` for bold.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n```\n\n**Tip:** type `material = ` and press `Ctrl+Space` - the editor offers a list of common materials.\n\n**Goal:** change the existing item to `material = DIAMOND_SWORD` and add `name = \"&aBuy Sword\"`.",
+  "intro": "Two keys you'll set on almost every [item](wiki:item-format):\n\n- **`material`** - what the item looks like in the slot. It's a Bukkit material name (uppercase enum, like `DIAMOND_SWORD`, `OAK_LOG`, `BARRIER`).\n- **`name`** - the display name shown when the player hovers over the item. Just a string. Use Minecraft color codes with `&` like `&aGreen` or `&l` for bold.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n```\n\n**Tip:** type `material = ` and press `Ctrl+Space` - the editor offers a list of common materials.\n\n**Goal:** change the existing item to `material = DIAMOND_SWORD` and add `name = \"&aBuy Sword\"`.",
   "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = STONE\n  }\n]\n",
   "goal": "Set the item's material to `DIAMOND_SWORD` and add `name = \"&aBuy Sword\"`.",
   "check": {
@@ -29,7 +29,7 @@
   "translations": {
     "ru": {
       "title": "Имя и материал",
-      "intro": "Два ключа которые ставятся почти на каждом item:\n\n- **`material`** - как item выглядит в слоте. Bukkit-имя материала (uppercase enum, например `DIAMOND_SWORD`, `OAK_LOG`, `BARRIER`).\n- **`name`** - отображаемое имя при наведении. Просто строка. Цвета Minecraft через `&`: `&aGreen`, `&l` для жирного.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n```\n\n**Совет:** напечатай `material = ` и нажми `Ctrl+Space` - редактор предложит список популярных материалов.\n\n**Цель:** поменяй существующий item на `material = DIAMOND_SWORD` и добавь `name = \"&aBuy Sword\"`.",
+      "intro": "Два ключа которые ставятся почти на каждом [item](wiki:item-format):\n\n- **`material`** - как item выглядит в слоте. Bukkit-имя материала (uppercase enum, например `DIAMOND_SWORD`, `OAK_LOG`, `BARRIER`).\n- **`name`** - отображаемое имя при наведении. Просто строка. Цвета Minecraft через `&`: `&aGreen`, `&l` для жирного.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n```\n\n**Совет:** напечатай `material = ` и нажми `Ctrl+Space` - редактор предложит список популярных материалов.\n\n**Цель:** поменяй существующий item на `material = DIAMOND_SWORD` и добавь `name = \"&aBuy Sword\"`.",
       "goal": "Поставь item'у материал `DIAMOND_SWORD` и добавь `name = \"&aBuy Sword\"`.",
       "hints": [
         "Замени `STONE` на `DIAMOND_SWORD`. Материалы это uppercase enum, кавычки не нужны.",
