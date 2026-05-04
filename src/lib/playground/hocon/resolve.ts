@@ -1,12 +1,32 @@
 import type { Node, Entry, Diagnostic, ResolveResult } from './types';
 import { formatDiagMessage } from './diag';
+import { extractIncludeTarget } from '../files/include-match';
 
-export function resolve(root: Node): ResolveResult {
+export interface ResolveOptions {
+  /**
+   * Called for each include entry encountered during buildTree. Receives the
+   * extracted target name (e.g. `"defaults.conf"` from `include classpath("defaults.conf")`)
+   * and a stack of names currently being resolved (passed for caller use; cycle
+   * detection itself happens in resolve.ts using `opts.includeStack`).
+   *
+   * Return the parsed AST of the included file, or undefined if not found.
+   * Returning undefined produces a `parser.include-not-resolved` warning.
+   */
+  lookupInclude?: (target: string, stack: string[]) => Node | undefined;
+  /**
+   * Stack of include target names currently being resolved. Seeded by
+   * resolve-multi.ts (Task 5). Used internally for cycle detection: if an
+   * include entry's target appears in this stack, it's a cycle.
+   */
+  includeStack?: string[];
+}
+
+export function resolve(root: Node, opts: ResolveOptions = {}): ResolveResult {
   const warnings: Diagnostic[] = [];
   if (root.kind !== 'object') {
     return { resolved: nodeToValueNoSubs(root), warnings };
   }
-  const tree = buildTree(root.entries, warnings);
+  const tree = buildTree(root.entries, warnings, opts);
   const visiting = new Set<string>();
   const resolved = resolveSubsDeep(tree, tree, visiting, warnings);
   return { resolved, warnings };
@@ -26,13 +46,11 @@ function isLeaf(v: Tree | Node): v is Node {
   return v !== null && typeof v === 'object' && 'kind' in v;
 }
 
-function buildTree(entries: Entry[], warnings: Diagnostic[]): Tree {
+function buildTree(entries: Entry[], warnings: Diagnostic[], opts: ResolveOptions = {}): Tree {
   const tree: TreeWithSpreads = {};
   for (const e of entries) {
     if (e.value.kind === 'include') {
-      // Includes have path: [] - calling setPath would write a literal
-      // "undefined" key into the tree. Task 4 will replace this with a
-      // real handler that loads and merges the referenced file.
+      handleInclude(tree, e.value, warnings, opts);
       continue;
     }
     if (e.spread) {
@@ -40,13 +58,79 @@ function buildTree(entries: Entry[], warnings: Diagnostic[]): Tree {
       list.push(e.value);
       tree[SPREADS] = list;
     } else {
-      setPath(tree, e.path, e.value, e.append, warnings);
+      setPath(tree, e.path, e.value, e.append, warnings, opts);
     }
   }
   return tree;
 }
 
-function setPath(tree: Tree, path: string[], value: Node, append: boolean, warnings: Diagnostic[]): void {
+function handleInclude(
+  tree: Tree,
+  inc: Extract<Node, { kind: 'include' }>,
+  warnings: Diagnostic[],
+  opts: ResolveOptions,
+): void {
+  const target = extractIncludeTarget(inc.raw);
+  const stack = opts.includeStack ?? [];
+
+  // Cycle: target already in the chain of includes that led us here.
+  if (target && stack.includes(target)) {
+    const chain = [...stack, target].join(' -> ');
+    warnings.push({
+      severity: 'warning',
+      code: 'parser.include-cycle',
+      params: { chain },
+      message: formatDiagMessage('parser.include-cycle', { chain }),
+      line: inc.loc.line,
+      column: inc.loc.column,
+      offset: inc.loc.offset,
+      length: inc.loc.length,
+    });
+    return;
+  }
+
+  const resolved = target && opts.lookupInclude
+    ? opts.lookupInclude(target, stack)
+    : undefined;
+  if (!resolved || resolved.kind !== 'object') {
+    warnings.push({
+      severity: 'warning',
+      code: 'parser.include-not-resolved',
+      params: { name: target ?? inc.raw },
+      message: formatDiagMessage('parser.include-not-resolved', { name: target ?? inc.raw }),
+      line: inc.loc.line,
+      column: inc.loc.column,
+      offset: inc.loc.offset,
+      length: inc.loc.length,
+    });
+    return;
+  }
+
+  // Recurse with target pushed onto the stack. Pushed copy is local to this
+  // frame; when control returns the parent's stack is unchanged - sibling
+  // includes do not see this target on the chain.
+  const childOpts: ResolveOptions = {
+    ...opts,
+    includeStack: target ? [...stack, target] : stack,
+  };
+  const sub = buildTree(resolved.entries, warnings, childOpts);
+  for (const k of Object.keys(sub)) {
+    const av = tree[k];
+    const bv = sub[k];
+    if (av !== undefined && !isLeaf(av) && !isLeaf(bv)) {
+      tree[k] = mergeTrees(av as Tree, bv as Tree, warnings);
+    } else {
+      tree[k] = bv;
+    }
+  }
+  const incomingSpreads = (sub as TreeWithSpreads)[SPREADS];
+  if (incomingSpreads) {
+    const own = (tree as TreeWithSpreads)[SPREADS] ?? [];
+    (tree as TreeWithSpreads)[SPREADS] = [...incomingSpreads, ...own];
+  }
+}
+
+function setPath(tree: Tree, path: string[], value: Node, append: boolean, warnings: Diagnostic[], opts: ResolveOptions = {}): void {
   let cur: Tree = tree;
   for (let i = 0; i < path.length - 1; i++) {
     const k = path[i];
@@ -77,7 +161,7 @@ function setPath(tree: Tree, path: string[], value: Node, append: boolean, warni
     return;
   }
   if (value.kind === 'object') {
-    const incoming = buildTree(value.entries, warnings);
+    const incoming = buildTree(value.entries, warnings, opts);
     const existing = cur[lastKey];
     // HOCON spec: when both the previous and the new value at a path are
     // objects, merge them recursively. When either is non-object, the new

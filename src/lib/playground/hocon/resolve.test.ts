@@ -191,3 +191,55 @@ describe('include entries do not pollute resolved tree', () => {
     expect(Object.keys(r.resolved as object)).toEqual(['foo']);
   });
 });
+
+describe('resolve with include resolver', () => {
+  function parseConf(text: string) {
+    return parse(tokenizeText(text), text).ast;
+  }
+
+  test('include resolver is invoked and result is merged', () => {
+    const ast = parseConf('include "defaults.conf"\nname = "main"\n');
+    const r = resolve(ast, {
+      lookupInclude: (target) => {
+        if (target === 'defaults.conf') {
+          return parseConf('size = 3\n');
+        }
+        return undefined;
+      },
+    });
+    expect(r.resolved).toEqual({ size: 3, name: 'main' });
+    expect(r.warnings).toEqual([]);
+  });
+
+  test('substitutions cross include boundary', () => {
+    const ast = parseConf('include "tpl.conf"\ntitle = ${color}\n');
+    const r = resolve(ast, {
+      lookupInclude: (target) =>
+        target === 'tpl.conf' ? parseConf('color = "red"\n') : undefined,
+    });
+    expect(r.resolved).toEqual({ color: 'red', title: 'red' });
+  });
+
+  test('missing include emits include-not-resolved warning', () => {
+    const ast = parseConf('include "missing.conf"\nname = "x"\n');
+    const r = resolve(ast, { lookupInclude: () => undefined });
+    expect(r.warnings.some((w) => w.code === 'parser.include-not-resolved')).toBe(true);
+    expect(r.resolved).toEqual({ name: 'x' });
+  });
+
+  test('no resolver provided -> include emits warning, treated as empty', () => {
+    const ast = parseConf('include "x.conf"\nname = "y"\n');
+    const r = resolve(ast);
+    expect(r.warnings.some((w) => w.code === 'parser.include-not-resolved')).toBe(true);
+    expect(r.resolved).toEqual({ name: 'y' });
+  });
+
+  test('include cycle is detected and emits warning', () => {
+    const ast = parseConf('include "self.conf"\nname = "x"\n');
+    const r = resolve(ast, {
+      includeStack: ['main.conf', 'self.conf'],
+      lookupInclude: () => parseConf('extra = 1\n'),
+    });
+    expect(r.warnings.some((w) => w.code === 'parser.include-cycle')).toBe(true);
+  });
+});
