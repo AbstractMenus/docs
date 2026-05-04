@@ -154,8 +154,8 @@ const REGISTRY: Record<string, WikiEntry> = Object.fromEntries(
 export function resolveWikiUrl(concept: string): string | null {
   const entry = REGISTRY[concept];
   if (!entry) return null;
-  const lang = getLang();
-  return (entry as Record<string, string | undefined>)[lang] ?? entry.en;
+  const lang = getLang() as keyof WikiEntry;
+  return entry[lang] ?? entry.en;
 }
 
 /** Whether a concept exists in the registry (for tests / sanity checks). */
