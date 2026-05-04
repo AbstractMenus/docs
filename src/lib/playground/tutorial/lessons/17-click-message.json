@@ -1,0 +1,36 @@
+{
+  "id": "17-click-message",
+  "title": "Click: send a message",
+  "topic": "actions",
+  "intro": "Time to make the menu **do** something. The simplest reaction to a click is sending the player a chat message.\n\n[Click handlers](wiki:click) live under `click.actions`. Each key inside `actions` is an **[action type](wiki:actions)** (one of [message](wiki:action.message), [command](wiki:action.command), [sound](wiki:action.sound), openMenu, closeMenu, ...) and the value is the data for that action.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    click { actions { message = \"Welcome to the shop!\" } }\n  }\n]\n```\n\nClicking the sword in-game now shows `Welcome to the shop!` in the player's chat.\n\n**Tip:** type `click { actions {` and press `Ctrl+Space` to see the full list of action types AbstractMenus supports.\n\n**Goal:** add a `click.actions.message` to the existing item that sends `\"Welcome to the shop!\"`.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n  }\n]\n",
+  "goal": "Wire up `click.actions.message = \"Welcome to the shop!\"` on the item.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "items[0].click.actions.message",
+        "value": "Welcome to the shop!"
+      }
+    ]
+  },
+  "hints": [
+    "Three nested objects: `click { actions { message = ... } }`. Remember `=` before `{` is optional.",
+    "The message is just a string in double quotes.",
+    "```\nclick { actions { message = \"Welcome to the shop!\" } }\n```"
+  ],
+  "next": "18-click-command",
+  "translations": {
+    "ru": {
+      "title": "Click: отправка сообщения",
+      "intro": "Пора заставить меню что-то **делать**. Самая простая реакция на клик - отправить игроку сообщение в чат.\n\n[Click-обработчики](wiki:click) живут в `click.actions`. Каждый ключ внутри `actions` - это **[тип действия](wiki:actions)** ([message](wiki:action.message), [command](wiki:action.command), [sound](wiki:action.sound), openMenu, closeMenu, ...) а значение - данные для этого действия.\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    click { actions { message = \"Добро пожаловать в магазин!\" } }\n  }\n]\n```\n\nКлик по мечу в игре теперь покажет `Добро пожаловать в магазин!` в чате игрока.\n\n**Совет:** напиши `click { actions {` и нажми `Ctrl+Space` - увидишь полный список action-типов которые поддерживает AbstractMenus.\n\n**Цель:** добавь `click.actions.message` к существующему item с текстом `\"Welcome to the shop!\"`.",
+      "goal": "Подключи `click.actions.message = \"Welcome to the shop!\"` на item.",
+      "hints": [
+        "Три вложенных объекта: `click { actions { message = ... } }`. Помни - `=` перед `{` опционален.",
+        "Message - просто строка в двойных кавычках.",
+        "```\nclick { actions { message = \"Welcome to the shop!\" } }\n```"
+      ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "05-lists-vs-objects",
+  "title": "Lists vs objects",
+  "topic": "basics",
+  "intro": "HOCON has two structural shapes:\n\n- **Object** `{ key = value, ... }` - unordered collection of named fields. Used for menus, items, click actions, rules - anything with a known schema.\n- **Array** `[ value, value, ... ]` - ordered collection. Used for `items` (multiple slots in a menu), `lore` (a list of text lines), `actions` (a sequence to run on click).\n\nKey difference: objects have **names** for each field, arrays have **positions**. Use the right one or the parser will reject your config.\n\n**Goal:** add `metaList` as a list of strings AND `activators` as an object with a `command` field. Both are real menu-level keys - `metaList` seeds player meta values, `activators` configures how the menu opens.",
+  "starter": "title = \"Demo\"\n",
+  "goal": "Add `metaList = [\"a\", \"b\"]` (list) and `activators { command = \"/shop\" }` (object).",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "has",
+        "path": "metaList[1]"
+      },
+      {
+        "kind": "eq",
+        "path": "activators.command",
+        "value": "/shop"
+      }
+    ]
+  },
+  "hints": [
+    "Arrays go in `[...]`: `metaList = [\"a\", \"b\"]`. Elements separated by comma OR newline.",
+    "Objects go in `{...}`: `activators { command = \"/shop\" }`. Same separator rules. Recall `=` before `{` is optional.",
+    "```\nmetaList = [\"a\", \"b\"]\nactivators { command = \"/shop\" }\n```"
+  ],
+  "next": "06-dotted-keys",
+  "translations": {
+    "ru": {
+      "title": "Списки и объекты",
+      "intro": "У HOCON две структурные формы:\n\n- **Объект** `{ key = value, ... }` - неупорядоченный набор именованных полей. Используется для меню, items, click-действий, rules - всего где есть схема.\n- **Массив** `[ value, value, ... ]` - упорядоченный набор. Используется для `items` (несколько slot'ов в меню), `lore` (список строк текста), `actions` (последовательность действий на клик).\n\nКлючевая разница: у объектов поля **именованные**, у массивов - **по позиции**. Используй правильную форму - иначе парсер ругнётся.\n\n**Цель:** добавь `metaList` как список строк И `activators` как объект с полем `command`. Оба - реальные menu-level ключи: `metaList` инициализирует player-meta значения, `activators` настраивает как меню открывается.",
+      "goal": "Добавь `metaList = [\"a\", \"b\"]` (список) и `activators { command = \"/shop\" }` (объект).",
+      "hints": [
+        "Массивы оборачиваются в `[...]`: `metaList = [\"a\", \"b\"]`. Элементы разделяются запятой ИЛИ переносом строки.",
+        "Объекты оборачиваются в `{...}`: `activators { command = \"/shop\" }`. Те же правила. `=` перед `{` опционален.",
+        "```\nmetaList = [\"a\", \"b\"]\nactivators { command = \"/shop\" }\n```"
+      ]
+    }
+  }
+}

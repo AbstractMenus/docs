@@ -1,0 +1,41 @@
+{
+  "id": "29-rules-world",
+  "title": "World/gamemode rules + multi-rule blocks",
+  "topic": "conditions",
+  "intro": "[`rules`](wiki:rules) works in three places, each with slightly different meaning:\n\n- on a **`click`** - gates the actions (lesson 26)\n- inside a **`binding`** - gates the props swap (lesson 27)\n- on an **`item`** itself - gates the **[visibility](wiki:display-rules)** of the slot (this lesson)\n\nWhen rules on an item fail, the slot is just not rendered - the player sees an empty inventory cell.\n\nMultiple rule keys in one block are **AND**-ed:\n\n```\nitems = [\n  {\n    slot = 4\n    material = ENDER_PEARL\n    name = \"&aLobby teleport\"\n    rules {\n      world = \"lobby\"\n      gamemode = \"SURVIVAL\"\n    }\n    click { actions { command = \"warp spawn\" } }\n  }\n]\n```\n\nThe pearl shows up only for survival players in the `lobby` world. Anyone else sees an empty slot.\n\nFor **OR** logic, write multiple bindings (each its own rule set) or use the more advanced `if`/`js` rule kinds.\n\n**Goal:** put the existing item under `rules { world = \"lobby\" }` so it only shows in the lobby world.",
+  "starter": "title = \"Lobby\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = ENDER_PEARL\n    name = \"&aSpawn\"\n    click { actions { command = \"warp spawn\" } }\n  }\n]\n",
+  "goal": "Add `rules { world = \"lobby\" }` directly inside the item (sibling of `click`).",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "items[0].rules.world",
+        "value": "lobby"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].click.actions.command",
+        "value": "warp spawn"
+      }
+    ]
+  },
+  "hints": [
+    "On the **item** (not on click), add `rules { world = \"lobby\" }` next to the `click` block.",
+    "It's the same `rules` shape as on click, just one level higher in the structure.",
+    "```\nitems = [\n  {\n    slot = 4\n    material = ENDER_PEARL\n    name = \"&aSpawn\"\n    rules { world = \"lobby\" }\n    click { actions { command = \"warp spawn\" } }\n  }\n]\n```"
+  ],
+  "next": null,
+  "translations": {
+    "ru": {
+      "title": "Rules world/gamemode + multi-rule блоки",
+      "intro": "[`rules`](wiki:rules) работает в трёх местах, в каждом немного другой смысл:\n\n- на **`click`** - гейтит actions (урок 26)\n- внутри **`binding`** - гейтит swap props (урок 27)\n- на **`item`** - гейтит **[видимость](wiki:display-rules)** слота (этот урок)\n\nКогда rules на item не прошли - слот просто не рендерится, игрок видит пустую ячейку инвентаря.\n\nНесколько правил в одном блоке - **AND**:\n\n```\nitems = [\n  {\n    slot = 4\n    material = ENDER_PEARL\n    name = \"&aLobby teleport\"\n    rules {\n      world = \"lobby\"\n      gamemode = \"SURVIVAL\"\n    }\n    click { actions { command = \"warp spawn\" } }\n  }\n]\n```\n\nЖемчуг показывается только survival-игрокам в мире `lobby`. Остальные видят пустой слот.\n\nДля **OR** логики используй несколько bindings (каждый со своим набором правил) или продвинутые `if`/`js` rules.\n\n**Цель:** оберни существующий item в `rules { world = \"lobby\" }` чтобы он показывался только в мире lobby.",
+      "goal": "Добавь `rules { world = \"lobby\" }` прямо внутри item (sibling `click`).",
+      "hints": [
+        "На **item** (не на click) добавь `rules { world = \"lobby\" }` рядом с блоком `click`.",
+        "Тот же `rules` что и на click, просто на уровень выше.",
+        "```\nitems = [\n  {\n    slot = 4\n    material = ENDER_PEARL\n    name = \"&aSpawn\"\n    rules { world = \"lobby\" }\n    click { actions { command = \"warp spawn\" } }\n  }\n]\n```"
+      ]
+    }
+  }
+}

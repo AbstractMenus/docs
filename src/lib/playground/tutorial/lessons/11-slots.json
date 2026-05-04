@@ -1,0 +1,46 @@
+{
+  "id": "11-slots",
+  "title": "Slot positions",
+  "topic": "menu",
+  "intro": "[Slots](wiki:slot) are 0-indexed and run **left-to-right, top-to-bottom**. For a 3-row menu (27 slots) the layout is:\n\n```\nrow 0:   0  1  2  3  4  5  6  7  8\nrow 1:   9 10 11 12 13 14 15 16 17\nrow 2:  18 19 20 21 22 23 24 25 26\n```\n\n![Slot ID layout reference](/docs/img/items_slots_id.png)\n\nFormula: `slot = row * 9 + column`. Slot 4 is the center of the top row, slot 13 is the center of a 3-row menu, slot 22 is the bottom row's center.\n\nYou can place multiple items in one menu by adding more entries to the `items` array.\n\n**Goal:** add a second item at slot 8 (top-right corner) with material `EMERALD`. Keep the first item.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 0\n    material = STONE\n  }\n]\n",
+  "goal": "Add a second entry to `items`: `slot = 8`, `material = EMERALD`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "items[0].slot",
+        "value": 0
+      },
+      {
+        "kind": "eq",
+        "path": "items[1].slot",
+        "value": 8
+      },
+      {
+        "kind": "eq",
+        "path": "items[1].material",
+        "value": "EMERALD"
+      }
+    ]
+  },
+  "hints": [
+    "Add a second `{ ... }` inside the existing `[...]`. New line = new array element.",
+    "The new item: `{ slot = 8, material = EMERALD }`.",
+    "```\nitems = [\n  {\n    slot = 0\n    material = STONE\n  }\n  {\n    slot = 8\n    material = EMERALD\n  }\n]\n```"
+  ],
+  "next": "12-name-and-material",
+  "translations": {
+    "ru": {
+      "title": "Позиции слотов",
+      "intro": "[Слоты](wiki:slot) нумеруются с 0 **слева-направо, сверху-вниз**. Для меню в 3 ряда (27 слотов) раскладка:\n\n```\nряд 0:   0  1  2  3  4  5  6  7  8\nряд 1:   9 10 11 12 13 14 15 16 17\nряд 2:  18 19 20 21 22 23 24 25 26\n```\n\n![Раскладка ID слотов](/docs/img/items_slots_id.png)\n\nФормула: `slot = ряд * 9 + колонка`. Слот 4 - центр верхнего ряда, слот 13 - центр меню в 3 ряда, слот 22 - центр нижнего.\n\nНесколько предметов в меню = больше записей в массиве `items`.\n\n**Цель:** добавь второй item в слот 8 (правый верхний угол) с материалом `EMERALD`. Первый item сохрани.",
+      "goal": "Добавь вторую запись в `items`: `slot = 8`, `material = EMERALD`.",
+      "hints": [
+        "Допиши второй `{ ... }` внутри существующего `[...]`. Новая строка = новый элемент массива.",
+        "Новый item: `{ slot = 8, material = EMERALD }`.",
+        "```\nitems = [\n  {\n    slot = 0\n    material = STONE\n  }\n  {\n    slot = 8\n    material = EMERALD\n  }\n]\n```"
+      ]
+    }
+  }
+}

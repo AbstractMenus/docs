@@ -22,7 +22,9 @@ export default defineConfig({
     starlight({
       title: "AbstractMenus",
       description: "Documentation for the AbstractMenus Paper/Folia GUI plugin.",
-      favicon: "/favicon.ico",
+      // Astro 6 requires public-asset URLs to include the configured base.
+      // Starlight passes this through verbatim into <link rel="icon" href=...>.
+      favicon: BASE + "favicon.ico",
       logo: { src: "./src/assets/logo.png", alt: "AbstractMenus" },
       social: [
         { icon: "discord", label: "Discord", href: "https://discord.gg/4VGP3Gv" },
@@ -189,6 +191,15 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Playground',
+          translations: { ru: 'Песочница' },
+          // Full URL because Starlight rewrites relative links per locale
+          // (would otherwise become /docs/en/playground/, which 404s).
+          link: SITE + BASE + 'playground/',
+          badge: { text: 'beta', variant: 'note' },
+          attrs: { 'data-playground-link': 'true' },
+        },
+        {
           slug: "changelog",
           attrs: { "data-changelog-link": "true" },
         },
@@ -254,6 +265,23 @@ export default defineConfig({
             "refreshFab();",
             "}",
             "if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}",
+            "})();",
+          ].join(""),
+        },
+        {
+          // Sidebar's Playground entry has to be a full URL because Starlight
+          // would otherwise rewrite a relative path through the locale segment
+          // and 404. The static URL is a production fallback; this script
+          // rewrites it to the current origin on every load so the link works
+          // identically in dev (localhost), preview, and production.
+          tag: "script",
+          content: [
+            "(function(){",
+            "function fix(){",
+            "var as=document.querySelectorAll('a[data-playground-link]');",
+            "for(var i=0;i<as.length;i++){as[i].href=window.location.origin+'" + BASE + "playground/';}",
+            "}",
+            "if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fix);}else{fix();}",
             "})();",
           ].join(""),
         },

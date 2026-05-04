@@ -1,0 +1,41 @@
+{
+  "id": "04-values",
+  "title": "Numbers, booleans, durations",
+  "topic": "basics",
+  "intro": "HOCON values aren't only strings. The most common typed values you'll write in menus:\n\n- **Number**: `5`, `3.14`, `-2` - integers and floats. No quotes.\n- **Boolean**: `true` / `false` - unquoted, lowercase. You'll meet booleans inside nested blocks like `firework { flicker = true }` or `bindings`.\n- **Duration**: `5s`, `1m`, `2h`, `500ms` - HOCON's own [duration format](https://github.com/lightbend/config/blob/main/HOCON.md#duration-format) (not ISO 8601). Unit suffix is case-sensitive lowercase: `ns`, `us`, `ms`, `s`, `m`, `h`, `d` (long forms `nanos`, `seconds`, ... also work).\n\nQuoting matters: `\"5\"` is a string, `5` is a number. AbstractMenus is strict here - a duration set to `\"5s\"` won't behave the same as `5s`.\n\n**Goal:** add a `size` key (number 3) and an `updateInterval` key (duration 5s). Both are real menu-level fields - `size` is rows of the menu, `updateInterval` is how often dynamic items re-render.",
+  "starter": "title = \"Demo\"\n",
+  "goal": "Add `size = 3` (number) and `updateInterval = 5s` (duration).",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "size",
+        "value": 3
+      },
+      {
+        "kind": "eq",
+        "path": "updateInterval",
+        "value": "5s"
+      }
+    ]
+  },
+  "hints": [
+    "Numbers don't need quotes: `size = 3`.",
+    "Duration is a number with a unit suffix, also unquoted: `updateInterval = 5s`.",
+    "```\nsize = 3\nupdateInterval = 5s\n```"
+  ],
+  "next": "05-lists-vs-objects",
+  "translations": {
+    "ru": {
+      "title": "Числа, булевы, длительности",
+      "intro": "В HOCON значения бывают не только строками. В меню чаще всего встречаются:\n\n- **Число**: `5`, `3.14`, `-2` - целые и дробные. Без кавычек.\n- **Булево**: `true` / `false` - без кавычек, lowercase. Булевы тебе встретятся внутри вложенных блоков типа `firework { flicker = true }` или `bindings`.\n- **Длительность**: `5s`, `1m`, `2h`, `500ms` - собственный [duration format](https://github.com/lightbend/config/blob/main/HOCON.md#duration-format) HOCON (не ISO 8601). Суффикс единицы регистро-зависимый, lowercase: `ns`, `us`, `ms`, `s`, `m`, `h`, `d` (длинные формы `nanos`, `seconds`, ... тоже работают).\n\nКавычки важны: `\"5\"` - это строка, `5` - число. AbstractMenus строг к типам - длительность заданная как `\"5s\"` поведёт себя не так же как `5s`.\n\n**Цель:** добавь ключ `size` (число 3) и `updateInterval` (длительность 5s). Оба - реальные menu-level поля: `size` это число рядов меню, `updateInterval` это как часто динамические items пере-рендерятся.",
+      "goal": "Добавь `size = 3` (число) и `updateInterval = 5s` (длительность).",
+      "hints": [
+        "Числа без кавычек: `size = 3`.",
+        "Длительность это число с суффиксом единицы, тоже без кавычек: `updateInterval = 5s`.",
+        "```\nsize = 3\nupdateInterval = 5s\n```"
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "01-introduction",
+  "title": "Introduction",
+  "topic": "basics",
+  "intro": "Welcome to the **AbstractMenus** HOCON tutorial.\n\nHOCON is the menu config format. Every menu file is a HOCON document. In each lesson you will edit the editor on the left to match the **goal** below.\n\nTo finish this lesson, set the `title` key to anything you want.",
+  "starter": "# Hello! Try editing the line below.\ntitle = \"\"\n",
+  "goal": "Set `title` to a non-empty string.",
+  "check": {
+    "type": "regex",
+    "pattern": "title\\s*=\\s*\"[^\"]+\""
+  },
+  "hints": [
+    "Pick any name and put it between the quotes after `title =`.",
+    "Try `title = \"My first menu\"` for example.",
+    "`title = \"My first menu\"`"
+  ],
+  "next": "02-comments",
+  "translations": {
+    "ru": {
+      "title": "Введение",
+      "intro": "Добро пожаловать в HOCON-туториал **AbstractMenus**.\n\nHOCON - это формат конфигов меню. Каждый файл меню - это HOCON-документ. В каждом уроке вы правите редактор слева, чтобы выполнить **цель** снизу.\n\nЧтобы пройти урок, задайте ключу `title` любое значение.",
+      "goal": "Задайте `title` непустую строку.",
+      "hints": [
+        "Придумайте имя и впишите его в кавычки после `title =`.",
+        "Например: `title = \"Моё первое меню\"`.",
+        "`title = \"Моё первое меню\"`"
+      ]
+    }
+  }
+}

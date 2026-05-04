@@ -1,0 +1,46 @@
+{
+  "id": "19-multiple-actions",
+  "title": "Multiple actions in one click",
+  "topic": "actions",
+  "intro": "[`actions`](wiki:actions) is an **object**, so you can stack multiple action types - they all fire on the same click in the order they appear.\n\n```\nclick {\n  actions {\n    message = \"Bought a sword!\"\n    command = \"give @p diamond_sword 1\"\n    sound = ENTITY_VILLAGER_YES\n    closeMenu = true\n  }\n}\n```\n\nThis sends a confirmation message, gives the item, plays a sound, and closes the menu - one click, four side-effects, declared inline.\n\n**Note on duplicates:** since `actions` is an object you can have at most one of each action type. To send two messages or run two commands, put a newline-separated string in `message`/`command`, or use the `bulk` grouping action (advanced).\n\n**Goal:** stack `message` + `command` + `sound = ENTITY_EXPERIENCE_ORB_PICKUP` so all three fire when the sword is clicked.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    click { actions { command = \"give @p diamond_sword 1\" } }\n  }\n]\n",
+  "goal": "Add `message = \"Bought!\"` and `sound = ENTITY_EXPERIENCE_ORB_PICKUP` alongside the existing `command`.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "items[0].click.actions.command",
+        "value": "give @p diamond_sword 1"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].click.actions.message",
+        "value": "Bought!"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].click.actions.sound",
+        "value": "ENTITY_EXPERIENCE_ORB_PICKUP"
+      }
+    ]
+  },
+  "hints": [
+    "Just add two more lines inside the existing `actions { ... }` block.",
+    "`sound` value is an enum (uppercase), no quotes; `message` is a string in double quotes.",
+    "```\nactions {\n  command = \"give @p diamond_sword 1\"\n  message = \"Bought!\"\n  sound = ENTITY_EXPERIENCE_ORB_PICKUP\n}\n```"
+  ],
+  "next": "20-click-types",
+  "translations": {
+    "ru": {
+      "title": "Несколько действий в одном клике",
+      "intro": "[`actions`](wiki:actions) это **объект**, так что можно стекать несколько типов действий - все сработают на один клик в порядке записи.\n\n```\nclick {\n  actions {\n    message = \"Купил меч!\"\n    command = \"give @p diamond_sword 1\"\n    sound = ENTITY_VILLAGER_YES\n    closeMenu = true\n  }\n}\n```\n\nПри клике: отправляется сообщение, выдаётся предмет, проигрывается звук, закрывается меню - один клик, четыре сайд-эффекта, всё декларативно.\n\n**О дубликатах:** так как `actions` это объект, каждого типа может быть максимум по одному. Чтобы отправить два сообщения или запустить две команды - кладёшь несколько строк через перенос в `message`/`command`, либо используешь `bulk` (продвинутое).\n\n**Цель:** добавь `message` + `sound = ENTITY_EXPERIENCE_ORB_PICKUP` к существующему `command` чтобы все три срабатывали на клик.",
+      "goal": "Добавь `message = \"Bought!\"` и `sound = ENTITY_EXPERIENCE_ORB_PICKUP` рядом с существующим `command`.",
+      "hints": [
+        "Просто допиши две строки внутри существующего `actions { ... }`.",
+        "`sound` это enum (uppercase), без кавычек; `message` - строка в двойных кавычках.",
+        "```\nactions {\n  command = \"give @p diamond_sword 1\"\n  message = \"Bought!\"\n  sound = ENTITY_EXPERIENCE_ORB_PICKUP\n}\n```"
+      ]
+    }
+  }
+}

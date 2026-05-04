@@ -1,0 +1,31 @@
+{
+  "id": "02-comments",
+  "title": "Comments",
+  "topic": "basics",
+  "intro": "HOCON supports two comment styles:\n\n- `# this is a hash comment`\n- `// this is a slash comment`\n\nBoth run from the marker to the end of the line. Use comments to document menus or temporarily disable a line.\n\n**Goal:** add a comment to the file (any line that starts with `#` or `//`).",
+  "starter": "title = \"My menu\"\nsize = 3\n",
+  "goal": "Add at least one `#` or `//` comment line.",
+  "check": {
+    "type": "regex",
+    "pattern": "^[\\t ]*(#|//).*$",
+    "flags": "m"
+  },
+  "hints": [
+    "Add a new line and start it with `#` or `//`.",
+    "Try `# this menu shows my shop` above the title line.",
+    "`# this menu shows my shop`"
+  ],
+  "next": "03-separators",
+  "translations": {
+    "ru": {
+      "title": "Комментарии",
+      "intro": "HOCON поддерживает два стиля комментариев:\n\n- `# это hash-комментарий`\n- `// это slash-комментарий`\n\nОба идут от маркера до конца строки. Комментарии нужны, чтобы пояснить меню или временно отключить строку.\n\n**Цель:** добавьте в файл комментарий (любую строку, начинающуюся с `#` или `//`).",
+      "goal": "Добавьте хотя бы одну строку-комментарий с `#` или `//`.",
+      "hints": [
+        "Допишите новую строку и начните её с `#` или `//`.",
+        "Например, `# это меню моего магазина` над строкой с title.",
+        "`# это меню моего магазина`"
+      ]
+    }
+  }
+}

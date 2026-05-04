@@ -1,0 +1,46 @@
+{
+  "id": "28-bindings",
+  "title": "Bindings (rules + props)",
+  "topic": "conditions",
+  "intro": "What if you don't want to **hide** an item per-player but **change** how it looks? That's [bindings](wiki:bindings).\n\nA binding is a `(rules, props)` pair attached to an item. When the rules pass, the props **override** the item's normal fields. Different players see different versions of the same slot - same item, different material, name, lore, click handler.\n\n```\nitems = [\n  {\n    slot = 4\n    material = STONE\n    name = \"&7Standard\"\n    bindings = [\n      {\n        rules { permission = \"vip\" }\n        props {\n          material = DIAMOND\n          name = \"&aVIP exclusive\"\n        }\n      }\n    ]\n  }\n]\n```\n\nNo permission -> sees STONE \"Standard\". With `vip` permission -> sees DIAMOND \"VIP exclusive\". Same slot, two faces.\n\nBindings are checked in array order, **first match wins**. Multiple bindings = a tier system:\n\n```\nbindings = [\n  {\n    rules { permission = \"admin\" }\n    props { name = \"&cAdmin\" }\n  }\n  {\n    rules { permission = \"vip\" }\n    props { name = \"&aVIP\" }\n  }\n]\n```\n\n`props` accepts any item-scope key (material, name, lore, click, count, ...) - it's a partial item override.\n\n**Goal:** add a `bindings` array on the item with one binding that swaps `material` to `DIAMOND` for players with the `vip` permission.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = STONE\n    name = \"&7Standard\"\n  }\n]\n",
+  "goal": "Add `bindings = [{ rules { permission = \"vip\" }, props { material = DIAMOND } }]` on the item.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "items[0].material",
+        "value": "STONE"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].bindings[0].rules.permission",
+        "value": "vip"
+      },
+      {
+        "kind": "eq",
+        "path": "items[0].bindings[0].props.material",
+        "value": "DIAMOND"
+      }
+    ]
+  },
+  "hints": [
+    "`bindings` is a list (`[...]`) of binding objects. Each binding has `rules` and `props`.",
+    "Inside `props`, write any item-scope key you want to override - here just `material = DIAMOND`.",
+    "```\nbindings = [\n  {\n    rules { permission = \"vip\" }\n    props { material = DIAMOND }\n  }\n]\n```"
+  ],
+  "next": "29-rules-world",
+  "translations": {
+    "ru": {
+      "title": "Bindings (rules + props)",
+      "intro": "А если ты хочешь не **скрыть** item для конкретного игрока, а **изменить** как он выглядит? Это [bindings](wiki:bindings).\n\nBinding это пара `(rules, props)` прикреплённая к item'у. Когда rules проходят - props **перекрывают** обычные поля item'а. Разные игроки видят разные версии одного слота - один item, разные material, name, lore, click.\n\n```\nitems = [\n  {\n    slot = 4\n    material = STONE\n    name = \"&7Standard\"\n    bindings = [\n      {\n        rules { permission = \"vip\" }\n        props {\n          material = DIAMOND\n          name = \"&aVIP exclusive\"\n        }\n      }\n    ]\n  }\n]\n```\n\nБез пермишена - видит STONE \"Standard\". С `vip` - DIAMOND \"VIP exclusive\". Один слот, два лица.\n\nBindings проверяются по порядку в массиве, **первое совпадение побеждает**. Несколько bindings = tier-система:\n\n```\nbindings = [\n  {\n    rules { permission = \"admin\" }\n    props { name = \"&cAdmin\" }\n  }\n  {\n    rules { permission = \"vip\" }\n    props { name = \"&aVIP\" }\n  }\n]\n```\n\n`props` принимает любой item-scope ключ (material, name, lore, click, count, ...) - это частичный override item'а.\n\n**Цель:** добавь массив `bindings` на item с одним binding'ом который меняет `material` на `DIAMOND` для игроков с пермишеном `vip`.",
+      "goal": "Добавь `bindings = [{ rules { permission = \"vip\" }, props { material = DIAMOND } }]` на item.",
+      "hints": [
+        "`bindings` это список (`[...]`) объектов-binding'ов. У каждого binding'а - `rules` и `props`.",
+        "Внутри `props` пиши любой item-scope ключ который хочешь перекрыть - здесь просто `material = DIAMOND`.",
+        "```\nbindings = [\n  {\n    rules { permission = \"vip\" }\n    props { material = DIAMOND }\n  }\n]\n```"
+      ]
+    }
+  }
+}

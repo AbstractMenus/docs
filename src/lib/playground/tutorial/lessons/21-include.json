@@ -1,0 +1,31 @@
+{
+  "id": "21-include",
+  "title": "Include shared templates",
+  "topic": "templates",
+  "intro": "When several menus share fields (button styles, common click actions, color palette), don't copy them - put them in a separate file and **[include](wiki:templates.include)** it.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nThe most common form is the simple string: `include \"path/to/file.conf\"`. AbstractMenus resolves the path relative to the menu file. Other forms (`classpath(...)`, `required(...)`) are for advanced cases (jar resources, fail-loudly).\n\nThe included file is parsed as if its contents were inlined where the `include` line stands. Any keys in the including file then override the included ones (last-wins / object-merge per the rules you've seen).\n\n**Caveat:** The playground shows a yellow warning on `include` lines because there are no other files here to load. The syntax check still passes - this lesson is about learning the form. In a real plugin install the include resolves normally.\n\n**Goal:** add an `include \"defaults.conf\"` line above the existing `title`.",
+  "starter": "title = \"Shop\"\nsize = 3\n",
+  "goal": "Add `include \"defaults.conf\"` (the warning on this line is expected in playground).",
+  "check": {
+    "type": "regex",
+    "pattern": "include\\s+\"[^\"]+\\.conf\"",
+    "flags": ""
+  },
+  "hints": [
+    "Just one line: `include \"defaults.conf\"`. Note the bare `include` keyword (no `=`).",
+    "The yellow warning is fine - playground has no real `defaults.conf` to load.",
+    "```\ninclude \"defaults.conf\"\ntitle = \"Shop\"\n```"
+  ],
+  "next": "22-array-append",
+  "translations": {
+    "ru": {
+      "title": "Include - подключение файла-шаблона",
+      "intro": "Когда несколько меню разделяют общие поля (стили кнопок, общие click-действия, палитру цветов), не копируй их - вынеси в отдельный файл и **[подключи](wiki:templates.include)** через include.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nСамая частая форма - просто строка: `include \"path/to/file.conf\"`. AbstractMenus резолвит путь относительно файла меню. Другие формы (`classpath(...)`, `required(...)`) для продвинутых случаев (ресурсы из jar, падать-если-нет).\n\nПодключённый файл парсится как если бы его содержимое было встроено вместо `include`. Ключи из подключающего файла потом перекрывают подключённые (last-wins / object-merge по правилам которые ты уже видел).\n\n**Внимание:** Playground показывает жёлтое предупреждение на строке `include` потому что других файлов здесь нет. Проверка урока всё равно проходит - этот урок про форму. В реальном плагине include резолвится нормально.\n\n**Цель:** добавь `include \"defaults.conf\"` над существующим `title`.",
+      "goal": "Добавь `include \"defaults.conf\"` (warning на этой строке ожидаем в playground).",
+      "hints": [
+        "Одна строка: `include \"defaults.conf\"`. Заметь - голое слово `include` (без `=`).",
+        "Жёлтое предупреждение это норм - в playground нет реального `defaults.conf`.",
+        "```\ninclude \"defaults.conf\"\ntitle = \"Shop\"\n```"
+      ]
+    }
+  }
+}

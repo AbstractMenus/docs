@@ -1,0 +1,36 @@
+{
+  "id": "15-flags",
+  "title": "Item flags",
+  "topic": "items",
+  "intro": "[`flags`](wiki:display) is a **list of strings** that hide parts of the item's tooltip. Useful for keeping the menu visually clean - by default, an enchanted item shows the enchantment list and an attribute-modified item shows attribute lines.\n\nCommon flags:\n\n- `HIDE_ENCHANTS` - hide the enchant list\n- `HIDE_ATTRIBUTES` - hide attribute modifiers (damage, speed)\n- `HIDE_UNBREAKABLE` - hide the \"unbreakable\" line\n- `HIDE_DESTROYS`, `HIDE_PLACED_ON` - hide block-restriction lines\n- `HIDE_POTION_EFFECTS` - hide potion effect details\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    enchantments { SHARPNESS = 5 }\n    flags = [\"HIDE_ENCHANTS\"]\n  }\n]\n```\n\n**Goal:** the sword from previous lesson now has SHARPNESS visible. Add `flags = [\"HIDE_ENCHANTS\"]` to clean it up.",
+  "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    name = \"&aBuy Sword\"\n    enchantments { SHARPNESS = 5 }\n  }\n]\n",
+  "goal": "Add `flags = [\"HIDE_ENCHANTS\"]` to the item.",
+  "check": {
+    "type": "shape",
+    "asserts": [
+      {
+        "kind": "eq",
+        "path": "items[0].flags[0]",
+        "value": "HIDE_ENCHANTS"
+      }
+    ]
+  },
+  "hints": [
+    "`flags` is a list of strings - just like `lore`, but with enum values inside the strings.",
+    "Single-line form is fine: `flags = [\"HIDE_ENCHANTS\"]`.",
+    "```\nflags = [\"HIDE_ENCHANTS\"]\n```"
+  ],
+  "next": "16-count-cooldown",
+  "translations": {
+    "ru": {
+      "title": "Item flags",
+      "intro": "[`flags`](wiki:display) это **список строк** скрывающих части tooltip'а. Полезно для визуальной чистоты меню - по умолчанию у зачарованного item видны зачарования, у item'а с модификаторами - строки атрибутов.\n\nПопулярные флаги:\n\n- `HIDE_ENCHANTS` - скрыть зачарования\n- `HIDE_ATTRIBUTES` - скрыть модификаторы (урон, скорость)\n- `HIDE_UNBREAKABLE` - скрыть \"unbreakable\"\n- `HIDE_DESTROYS`, `HIDE_PLACED_ON` - скрыть блочные ограничения\n- `HIDE_POTION_EFFECTS` - скрыть детали зелий\n\n```\nitems = [\n  {\n    slot = 4\n    material = DIAMOND_SWORD\n    enchantments { SHARPNESS = 5 }\n    flags = [\"HIDE_ENCHANTS\"]\n  }\n]\n```\n\n**Цель:** меч из прошлого урока теперь показывает SHARPNESS в tooltip'е. Добавь `flags = [\"HIDE_ENCHANTS\"]` чтобы убрать.",
+      "goal": "Добавь `flags = [\"HIDE_ENCHANTS\"]` в item.",
+      "hints": [
+        "`flags` это список строк - как `lore`, только внутри enum-значения.",
+        "Однострочно тоже ок: `flags = [\"HIDE_ENCHANTS\"]`.",
+        "```\nflags = [\"HIDE_ENCHANTS\"]\n```"
+      ]
+    }
+  }
+}
