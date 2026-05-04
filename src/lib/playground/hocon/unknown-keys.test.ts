@@ -4,7 +4,7 @@ import { parse } from './parser';
 import { validateUnknownKeys } from './unknown-keys';
 
 function check(input: string) {
-  const r = parse(tokenizeText(input));
+  const r = parse(tokenizeText(input), input);
   return validateUnknownKeys(r.ast);
 }
 

@@ -4,7 +4,7 @@ import { parse } from './parser';
 import { buildScopeRanges, scopeAt } from './scope-ranges';
 
 function rangesFor(input: string) {
-  const r = parse(tokenizeText(input));
+  const r = parse(tokenizeText(input), input);
   return buildScopeRanges(r.ast);
 }
 

@@ -4,7 +4,7 @@ import { parse } from './parser';
 import { resolve } from './resolve';
 
 function run(input: string) {
-  const r = parse(tokenizeText(input));
+  const r = parse(tokenizeText(input), input);
   return resolve(r.ast);
 }
 
@@ -180,5 +180,14 @@ describe('inline spread `${ref}` in object', () => {
     // Sanity: parsing+resolving shouldn't raise spread-related parse errors.
     const r = run('defaults { a = 1 }\nx { ${defaults} }');
     expect(r.warnings.filter((w) => w.severity === 'error')).toEqual([]);
+  });
+});
+
+describe('include entries do not pollute resolved tree', () => {
+  test('include entry does not pollute resolved tree with "undefined" key', () => {
+    const src = 'include "a.conf"\nfoo = 1\n';
+    const ast = parse(tokenizeText(src), src).ast;
+    const r = resolve(ast);
+    expect(Object.keys(r.resolved as object)).toEqual(['foo']);
   });
 });

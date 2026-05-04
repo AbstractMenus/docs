@@ -141,6 +141,23 @@ describe('parser - happy path', () => {
     if (inc!.value.kind !== 'include') throw new Error('shape');
     expect(inc!.value.raw).toBe('classpath( "base" )');
   });
+
+  test('include with trailing comment does NOT include comment in raw', () => {
+    const r = parseString('include "a.conf" # trailing\nfoo = 1\n');
+    if (r.ast.kind !== 'object') throw new Error('shape');
+    const inc = r.ast.entries.find((e) => e.value.kind === 'include');
+    expect(inc).toBeDefined();
+    if (inc!.value.kind !== 'include') throw new Error('shape');
+    expect(inc!.value.raw).toBe('"a.conf"');
+  });
+
+  test('bare include with no args emits a diagnostic and is not preserved', () => {
+    const r = parseString('include\nfoo = 1\n');
+    expect(r.diagnostics.length).toBeGreaterThan(0);
+    if (r.ast.kind !== 'object') throw new Error('shape');
+    const inc = r.ast.entries.find((e) => e.value.kind === 'include');
+    expect(inc).toBeUndefined();
+  });
 });
 
 describe('parser - errors', () => {

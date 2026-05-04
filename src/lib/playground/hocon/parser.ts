@@ -1,11 +1,46 @@
 import type { TokenWithPos, Node, Entry, Loc, Diagnostic, DiagCode, DiagParams, ParseResult } from './types';
 import { formatDiagMessage } from './diag';
 
-export function parse(tokens: TokenWithPos[], source = ''): ParseResult {
+export function parse(tokens: TokenWithPos[], source: string): ParseResult {
   const meaningful = tokens.filter((t) => t.type !== 'comment');
   const p = new Parser(meaningful, source);
   const root = p.parseRoot();
   return { ast: root, diagnostics: p.diagnostics };
+}
+
+/**
+ * Strip a trailing HOCON line comment (`#...` or `//...`) from a single
+ * line of source. Honours `"..."` and `"""..."""` quoting so a `#` or `//`
+ * inside a string is left intact. Used by the include parser to clean
+ * `raw` after slicing the source line, since the tokenizer filters out
+ * comment tokens before the parser sees them.
+ */
+function stripTrailingComment(s: string): string {
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === '"') {
+      // Triple quote: skip until matching `"""`.
+      if (s.startsWith('"""', i)) {
+        const end = s.indexOf('"""', i + 3);
+        if (end < 0) return s;
+        i = end + 3;
+        continue;
+      }
+      // Single-quoted string: skip until unescaped closing `"`.
+      i++;
+      while (i < s.length && s[i] !== '"') {
+        if (s[i] === '\\' && i + 1 < s.length) { i += 2; continue; }
+        i++;
+      }
+      if (i < s.length) i++;
+      continue;
+    }
+    if (c === '#') return s.slice(0, i);
+    if (c === '/' && s[i + 1] === '/') return s.slice(0, i);
+    i++;
+  }
+  return s;
 }
 
 class Parser {
@@ -89,29 +124,35 @@ class Parser {
         const t = this.consume();
         if (t) argTokens.push(t);
       }
+      if (argTokens.length === 0) {
+        // Bare `include` with no args. Treat as malformed and skip the
+        // entry; otherwise the resolver downstream would emit a confusing
+        // "name '' not resolved" warning. TODO(Task 4): once a real
+        // include resolver lands, consider a dedicated diag code.
+        this.emitError('parser.unexpected-token', { text: first.text }, first);
+        return null;
+      }
       const firstArg = argTokens[0];
+      const lastArg = argTokens[argTokens.length - 1];
       // The tokenizer drops punctuation it doesn't recognise (parens around
-      // wrappers like `classpath(...)`), so reconstructing `raw` from token
-      // text loses them. Slice the original source from the first arg token
-      // up to the next newline (or end of source) to preserve every char the
-      // author typed - parens, whitespace, everything. Trailing whitespace
-      // is trimmed because the source.slice may extend past the last arg.
+      // wrappers like `classpath(...)`), so reconstructing `raw` from arg
+      // tokens alone loses them. Slice the original source from the first
+      // arg token up to the next newline (or end of source), then strip
+      // any trailing line comment (which the tokenizer filtered out before
+      // the parser saw it) and trailing whitespace.
       const nextNewline = this.peek();
       const sliceEnd = nextNewline ? nextNewline.offset : this.source.length;
-      const raw = firstArg
-        ? this.source.slice(firstArg.offset, sliceEnd).replace(/[ \t]+$/, '')
-        : '';
-      const argLocAnchor = firstArg ?? first;
-      const lastLocAnchor = argTokens[argTokens.length - 1] ?? first;
+      const rawWithComment = this.source.slice(firstArg.offset, sliceEnd);
+      const raw = stripTrailingComment(rawWithComment).replace(/[ \t]+$/, '');
       return {
         path: [],
         value: {
           kind: 'include',
           raw,
-          loc: this.locFromTo(argLocAnchor, lastLocAnchor),
+          loc: this.locFromTo(firstArg, lastArg),
         },
         append: false,
-        loc: this.locFromTo(first, lastLocAnchor),
+        loc: this.locFromTo(first, lastArg),
       };
     }
 

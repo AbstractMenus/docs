@@ -29,6 +29,12 @@ function isLeaf(v: Tree | Node): v is Node {
 function buildTree(entries: Entry[], warnings: Diagnostic[]): Tree {
   const tree: TreeWithSpreads = {};
   for (const e of entries) {
+    if (e.value.kind === 'include') {
+      // Includes have path: [] - calling setPath would write a literal
+      // "undefined" key into the tree. Task 4 will replace this with a
+      // real handler that loads and merges the referenced file.
+      continue;
+    }
     if (e.spread) {
       const list = tree[SPREADS] ?? [];
       list.push(e.value);
