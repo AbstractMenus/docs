@@ -16,6 +16,8 @@ const ALL_CODES: DiagCode[] = [
   'parser.unexpected-after-array-element',
   'parser.unexpected-in-array',
   'parser.expected-closing-bracket',
+  'parser.include-not-resolved',
+  'parser.include-cycle',
   'resolve.circular-substitution',
   'resolve.unresolved-substitution',
   'validate.unknown-key',

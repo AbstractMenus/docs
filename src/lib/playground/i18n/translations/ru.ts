@@ -84,6 +84,8 @@ export const ru: Partial<Dict> = {
   'diag.parser.unexpected-in-array':
     'Неожиданный `${text}` в массиве. Ожидалось значение или объект `{ ... }`.',
   'diag.parser.expected-closing-bracket': 'Ожидалась закрывающая `]`',
+  'diag.parser.include-not-resolved': 'include не разрешён: нет вкладки с именем `${name}`',
+  'diag.parser.include-cycle': 'цикл include: ${chain}',
 
   'diag.resolve.circular-substitution': 'Циклическая подстановка `${ref}`',
   'diag.resolve.unresolved-substitution': 'Неразрешённая подстановка `${ref}`',

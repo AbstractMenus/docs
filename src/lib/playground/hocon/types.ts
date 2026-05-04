@@ -32,6 +32,8 @@ export type DiagCode =
   | 'parser.unexpected-after-array-element'
   | 'parser.unexpected-in-array'
   | 'parser.expected-closing-bracket'
+  | 'parser.include-not-resolved'
+  | 'parser.include-cycle'
   // resolve.ts
   | 'resolve.circular-substitution'
   | 'resolve.unresolved-substitution'

@@ -101,6 +101,8 @@ export const en = {
   'diag.parser.unexpected-in-array':
     'Unexpected `${text}` in array. Expected a value or `{ ... }` object literal.',
   'diag.parser.expected-closing-bracket': 'Expected closing `]`',
+  'diag.parser.include-not-resolved': 'include not resolved: no tab named `${name}`',
+  'diag.parser.include-cycle': 'include cycle: ${chain}',
 
   'diag.resolve.circular-substitution': 'Circular substitution `${ref}`',
   'diag.resolve.unresolved-substitution': 'Unresolved substitution `${ref}`',
