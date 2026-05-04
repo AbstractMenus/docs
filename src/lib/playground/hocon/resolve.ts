@@ -238,6 +238,11 @@ function resolveNode(
     case 'value': return n.value;
     case 'array': return n.items.map((it) => resolveNode(it, root, visiting, warnings));
     case 'object': {
+      // opts not threaded: object literals encountered during substitution
+      // resolution come from already-included trees, so any nested `include`
+      // here would have been processed at top-level buildTree time. If a future
+      // case puts include nodes inside object-valued substitutions and they
+      // need resolving, thread opts here too.
       const sub = buildTree(n.entries, warnings);
       return resolveSubsDeep(sub, root, visiting, warnings);
     }

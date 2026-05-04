@@ -242,4 +242,20 @@ describe('resolve with include resolver', () => {
     });
     expect(r.warnings.some((w) => w.code === 'parser.include-cycle')).toBe(true);
   });
+
+  test('own scalar after include overrides included scalar', () => {
+    const ast = parseConf('include "d.conf"\nname = "main"\n');
+    const r = resolve(ast, {
+      lookupInclude: (t) => t === 'd.conf' ? parseConf('name = "default"\nsize = 3\n') : undefined,
+    });
+    expect(r.resolved).toEqual({ name: 'main', size: 3 });
+  });
+
+  test('include after own scalar overrides own (source-order last-wins)', () => {
+    const ast = parseConf('name = "main"\ninclude "d.conf"\n');
+    const r = resolve(ast, {
+      lookupInclude: (t) => t === 'd.conf' ? parseConf('name = "default"\n') : undefined,
+    });
+    expect(r.resolved).toEqual({ name: 'default' });
+  });
 });
