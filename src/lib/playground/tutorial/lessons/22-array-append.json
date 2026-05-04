@@ -1,6 +1,6 @@
 {
   "id": "22-array-append",
-  "title": "Array append `+=`",
+  "title": "Array append +=",
   "topic": "templates",
   "intro": "The `+=` operator concatenates onto an existing array instead of overwriting it. Useful when an included file (or a base block) defines some items and you want to add more without losing the originals.\n\n```\nitems = [\n  {\n    slot = 0\n    material = STONE\n  }\n]\n\nitems += [\n  {\n    slot = 8\n    material = DIAMOND\n  }\n]\n\n# resolves to a 2-element items array\n```\n\nWithout `+=`, the second `items =` would replace the first - last-wins for scalars, and the array is treated as a scalar value (not an object). With `+=`, the new items are appended in declaration order.\n\nReal-world pattern: include a base file with default items, then `+=` to add menu-specific extras.\n\n**Goal:** the starter has one item at slot 0. **Append** a second item at slot 8 (`material = EMERALD`) using `+=`, **without** removing the first.",
   "starter": "title = \"Shop\"\nsize = 3\nitems = [\n  {\n    slot = 0\n    material = STONE\n  }\n]\n",
@@ -33,7 +33,7 @@
   "next": "23-object-merge",
   "translations": {
     "ru": {
-      "title": "Array append `+=`",
+      "title": "Array append +=",
       "intro": "Оператор `+=` дописывает в существующий массив вместо перезаписи. Полезно когда подключённый файл (или базовый блок) объявляет какие-то items, а ты хочешь добавить ещё без потери оригиналов.\n\n```\nitems = [\n  {\n    slot = 0\n    material = STONE\n  }\n]\n\nitems += [\n  {\n    slot = 8\n    material = DIAMOND\n  }\n]\n\n# резолвится в массив items из 2 элементов\n```\n\nБез `+=` второй `items =` заменил бы первый - last-wins для скаляров, а массив трактуется как скалярное значение (не объект). С `+=` новые items добавляются в порядке объявления.\n\nРеальный паттерн: include базового файла с дефолтными items, потом `+=` для меню-специфичных доп.\n\n**Цель:** в стартере один item в слоте 0. **Допиши** второй в слот 8 (`material = EMERALD`) через `+=`, **не удаляя** первый.",
       "goal": "Используй `items += [{ slot = 8, material = EMERALD }]`; в результирующем `items` должно быть обе записи.",
       "hints": [

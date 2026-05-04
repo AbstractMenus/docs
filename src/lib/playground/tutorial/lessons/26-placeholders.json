@@ -1,6 +1,6 @@
 {
   "id": "26-placeholders",
-  "title": "Player placeholders `%player_name%`",
+  "title": "Player placeholders %player_name%",
   "topic": "templates",
   "intro": "Two different things look similar but happen at totally different times:\n\n- **`${var}`** - HOCON substitution. Resolved when the config is **loaded** by AbstractMenus. The reference must point at another key in the same config.\n- **`%player_name%`** - [PlaceholderAPI placeholder](wiki:placeholders) (and similar). Resolved at **runtime**, every time the menu is rendered for a specific player. The HOCON parser doesn't touch it - the literal `%...%` text passes through into the value.\n\n```\nitems = [\n  {\n    slot = 4\n    material = PLAYER_HEAD\n    name = \"&aHello %player_name%!\"\n    lore = [\n      \"&7Balance: %vault_eco_balance%\"\n      \"&7Rank: %luckperms_prefix%\"\n    ]\n  }\n]\n```\n\nUse `%...%` placeholders for anything **per-player**: their name, their balance, their permissions, their location. Use `${var}` for **structural** reuse (defaults, color palette, button templates).\n\nAvailable placeholders depend on which plugins you have installed - any PlaceholderAPI extension contributes its own.\n\n**Goal:** add a `name` to the existing item that greets the player by their name using `%player_name%`.",
   "starter": "title = \"Welcome\"\nsize = 3\nitems = [\n  {\n    slot = 4\n    material = PLAYER_HEAD\n  }\n]\n",
@@ -23,7 +23,7 @@
   "next": "27-rules-permission",
   "translations": {
     "ru": {
-      "title": "Player-плейсхолдеры `%player_name%`",
+      "title": "Player-плейсхолдеры %player_name%",
       "intro": "Две вещи выглядят похоже но происходят в совершенно разное время:\n\n- **`${var}`** - HOCON-подстановка. Резолвится когда конфиг **загружается** AbstractMenus'ом. Ссылка должна указывать на другой ключ того же конфига.\n- **`%player_name%`** - [плейсхолдер из PlaceholderAPI](wiki:placeholders) (и подобных). Резолвится **в рантайме**, каждый раз при отрисовке меню для конкретного игрока. HOCON-парсер их не трогает - текст `%...%` проходит насквозь в значение.\n\n```\nitems = [\n  {\n    slot = 4\n    material = PLAYER_HEAD\n    name = \"&aПривет %player_name%!\"\n    lore = [\n      \"&7Баланс: %vault_eco_balance%\"\n      \"&7Ранг: %luckperms_prefix%\"\n    ]\n  }\n]\n```\n\nИспользуй `%...%` плейсхолдеры для всего **per-player**: имя, баланс, права, локация. `${var}` - для **структурного** реюза (defaults, палитра цветов, шаблоны кнопок).\n\nДоступные плейсхолдеры зависят от установленных плагинов - любой PlaceholderAPI extension добавляет свои.\n\n**Цель:** добавь существующему item'у `name` который приветствует игрока по имени через `%player_name%`.",
       "goal": "Поставь `items[0].name` на строку содержащую `%player_name%` (например `\"&aПривет %player_name%!\"`).",
       "hints": [
