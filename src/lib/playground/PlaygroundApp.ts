@@ -200,7 +200,10 @@ export class PlaygroundApp {
     this.scheduleAnalysis();
     this.updateScopeHint(this.editor.view.state);
 
-    const jumpTo = (line: number, column: number) => this.jumpTo(line, column);
+    // Task 15 will read `_file` to switch tabs before jumping; for now we
+    // ignore it so single-file behavior is preserved while the multi-file
+    // pipeline is being wired up.
+    const jumpTo = (_file: string, line: number, column: number) => this.jumpTo(line, column);
     this.validation.errors?.onJump(jumpTo);
     this.validation.warnings?.onJump(jumpTo);
 

@@ -62,6 +62,11 @@ export interface Diagnostic {
   endColumn?: number;
   offset?: number;
   length?: number;
+  /**
+   * Source file (tab name) the diagnostic was emitted from. Set by the
+   * multi-file analysis pipeline; absent for legacy single-file paths.
+   */
+  file?: string;
 }
 
 export type Node =

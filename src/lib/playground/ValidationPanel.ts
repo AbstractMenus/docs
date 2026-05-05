@@ -2,7 +2,7 @@ import type { Diagnostic } from './hocon/types';
 import { formatDiagMessage } from './hocon/diag';
 import { t, type TranslationKey } from './i18n';
 
-type JumpListener = (line: number, column: number) => void;
+type JumpListener = (file: string, line: number, column: number) => void;
 
 export interface ValidationPanelApi {
   update(diagnostics: Diagnostic[]): void;
@@ -30,9 +30,16 @@ export function createValidationPanel(
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `pg-diag pg-diag-${d.severity}`;
+      // Stash the source file on the row so the click handler can pull it
+      // back out without closing over `d` (and so tests can assert it).
+      btn.dataset.file = d.file ?? '';
       const loc = document.createElement('span');
       loc.className = 'pg-diag-loc';
-      loc.textContent = `${d.line}:${d.column}`;
+      // When the diagnostic carries a source file (multi-file pipeline),
+      // prefix with `[file:line:col]` so the user can tell which tab the
+      // problem came from. Single-file path keeps the existing `line:col`
+      // (unbracketed) so legacy DOM/text assertions still match.
+      loc.textContent = d.file ? `[${d.file}:${d.line}:${d.column}]` : `${d.line}:${d.column}`;
       const msg = document.createElement('span');
       msg.className = 'pg-diag-msg';
       // Re-render via the active locale every time. Diagnostics carry the
@@ -44,7 +51,8 @@ export function createValidationPanel(
       btn.appendChild(document.createTextNode(' '));
       btn.appendChild(msg);
       btn.addEventListener('click', () => {
-        for (const fn of listeners) fn(d.line, d.column);
+        const file = btn.dataset.file ?? '';
+        for (const fn of listeners) fn(file, d.line, d.column);
       });
       li.appendChild(btn);
       list.appendChild(li);
