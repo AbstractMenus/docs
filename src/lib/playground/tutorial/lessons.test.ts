@@ -251,4 +251,17 @@ describe('shipped lessons sanity', () => {
       }
     }
   });
+
+  test('lesson 21 has extraFiles with defaults.conf', () => {
+    const lesson = listLessons().find((l) => l.id === '21-include')!;
+    expect(lesson.extraFiles).toBeDefined();
+    expect(lesson.extraFiles).toHaveLength(1);
+    expect(lesson.extraFiles![0].name).toBe('defaults.conf');
+    expect(lesson.extraFiles![0].content).toContain('cooldown');
+  });
+
+  test('lessons without extraFiles still parse', () => {
+    const lesson = listLessons().find((l) => l.id === '01-introduction')!;
+    expect(lesson.extraFiles).toBeUndefined();
+  });
 });

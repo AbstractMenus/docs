@@ -2,9 +2,15 @@
   "id": "21-include",
   "title": "Include shared templates",
   "topic": "templates",
-  "intro": "When several menus share fields (button styles, common click actions, color palette), don't copy them - put them in a separate file and **[include](wiki:templates.include)** it.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nThe most common form is the simple string: `include \"path/to/file.conf\"`. AbstractMenus resolves the path relative to the menu file. Other forms (`classpath(...)`, `required(...)`) are for advanced cases (jar resources, fail-loudly).\n\nThe included file is parsed as if its contents were inlined where the `include` line stands. Any keys in the including file then override the included ones (last-wins / object-merge per the rules you've seen).\n\n**Caveat:** The playground shows a yellow warning on `include` lines because there are no other files here to load. The syntax check still passes - this lesson is about learning the form. In a real plugin install the include resolves normally.\n\n**Goal:** add an `include \"defaults.conf\"` line above the existing `title`.",
-  "starter": "title = \"Shop\"\nsize = 3\n",
-  "goal": "Add `include \"defaults.conf\"` (the warning on this line is expected in playground).",
+  "intro": "When several menus share fields (button styles, common click actions, color palette), don't copy them - put them in a separate file and **[include](wiki:templates.include)** it.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nThe most common form is the simple string: `include \"path/to/file.conf\"`. AbstractMenus resolves the path relative to the menu file. Other forms (`classpath(...)`, `required(...)`) are for advanced cases (jar resources, fail-loudly).\n\nThe included file is parsed as if its contents were inlined where the `include` line stands. Any keys in the including file then override the included ones (last-wins / object-merge per the rules you've seen).\n\nThere's a second tab `defaults.conf` next to this one with the shared defaults. Add an include line, then try changing `cooldown` in `defaults.conf` and watch the resolved JSON on the right pick it up.\n\n**Goal:** add an `include \"defaults.conf\"` line above the existing `title`.",
+  "starter": "# A second tab `defaults.conf` next to this one holds shared\n# defaults you want here. Pull them in with an include line.\n\ntitle = \"Shop\"\nsize = 3\n",
+  "extraFiles": [
+    {
+      "name": "defaults.conf",
+      "content": "# This file is included by menu.conf.\n# Keys defined here become available in the menu.\n\ndefaults {\n  cooldown = 5s\n}\n"
+    }
+  ],
+  "goal": "Add `include \"defaults.conf\"` so the shared defaults are pulled into your menu.",
   "check": {
     "type": "regex",
     "pattern": "include\\s+\"[^\"]+\\.conf\"",
@@ -12,18 +18,18 @@
   },
   "hints": [
     "Just one line: `include \"defaults.conf\"`. Note the bare `include` keyword (no `=`).",
-    "The yellow warning is fine - playground has no real `defaults.conf` to load.",
+    "Look at the second tab to see what defaults are pulled in.",
     "```\ninclude \"defaults.conf\"\ntitle = \"Shop\"\n```"
   ],
   "next": "22-array-append",
   "translations": {
     "ru": {
       "title": "Include - подключение файла-шаблона",
-      "intro": "Когда несколько меню разделяют общие поля (стили кнопок, общие click-действия, палитру цветов), не копируй их - вынеси в отдельный файл и **[подключи](wiki:templates.include)** через include.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nСамая частая форма - просто строка: `include \"path/to/file.conf\"`. AbstractMenus резолвит путь относительно файла меню. Другие формы (`classpath(...)`, `required(...)`) для продвинутых случаев (ресурсы из jar, падать-если-нет).\n\nПодключённый файл парсится как если бы его содержимое было встроено вместо `include`. Ключи из подключающего файла потом перекрывают подключённые (last-wins / object-merge по правилам которые ты уже видел).\n\n**Внимание:** Playground показывает жёлтое предупреждение на строке `include` потому что других файлов здесь нет. Проверка урока всё равно проходит - этот урок про форму. В реальном плагине include резолвится нормально.\n\n**Цель:** добавь `include \"defaults.conf\"` над существующим `title`.",
-      "goal": "Добавь `include \"defaults.conf\"` (warning на этой строке ожидаем в playground).",
+      "intro": "Когда несколько меню разделяют общие поля (стили кнопок, общие click-действия, палитру цветов), не копируй их - вынеси в отдельный файл и **[подключи](wiki:templates.include)** через include.\n\n```\ninclude \"defaults.conf\"\ninclude classpath(\"defaults.conf\")\ninclude required(\"defaults.conf\")\n```\n\nСамая частая форма - просто строка: `include \"path/to/file.conf\"`. AbstractMenus резолвит путь относительно файла меню. Другие формы (`classpath(...)`, `required(...)`) для продвинутых случаев (ресурсы из jar, падать-если-нет).\n\nПодключённый файл парсится как если бы его содержимое было встроено вместо `include`. Ключи из подключающего файла потом перекрывают подключённые (last-wins / object-merge по правилам которые ты уже видел).\n\nРядом с этой вкладкой открыта вторая - `defaults.conf` с общими дефолтами. Добавь строку include, затем поменяй `cooldown` в `defaults.conf` и посмотри как resolved JSON справа подхватит изменение.\n\n**Цель:** добавь `include \"defaults.conf\"` над существующим `title`.",
+      "goal": "Добавь `include \"defaults.conf\"` чтобы подтянуть общие дефолты в меню.",
       "hints": [
         "Одна строка: `include \"defaults.conf\"`. Заметь - голое слово `include` (без `=`).",
-        "Жёлтое предупреждение это норм - в playground нет реального `defaults.conf`.",
+        "Глянь во вторую вкладку - там лежат подтягиваемые дефолты.",
         "```\ninclude \"defaults.conf\"\ntitle = \"Shop\"\n```"
       ]
     }

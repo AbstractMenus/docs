@@ -74,6 +74,16 @@ export interface Lesson {
   goal: string;
   check: CheckSpec;
   hints: string[];
+  /**
+   * Additional files seeded into the workspace as extra tabs alongside
+   * `menu.conf` (the default tab containing `starter`). Used by lessons
+   * that demonstrate cross-file features (`include`, etc.).
+   *
+   * The translations field can override `extraFiles[i].content` per locale
+   * by index if needed, but the current schema does not require it - keep
+   * extra-file content language-neutral when possible.
+   */
+  extraFiles?: { name: string; content: string }[];
   next?: string | null;
   translations?: Record<string, LessonTranslation>;
 }
