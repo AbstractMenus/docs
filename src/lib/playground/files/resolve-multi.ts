@@ -18,6 +18,16 @@ export function resolveWorkspace(
   const activeAst = parsedAsts.get(activeName);
   if (!activeAst) return { resolved: {}, warnings: [] };
 
+  // Diagnostic: enable in DevTools with `__pgDebugIncludes = true` then
+  // retrigger analysis (type any char). Logs the full set of tab names
+  // resolveWorkspace was called with, alongside the active tab name.
+  if (typeof console !== 'undefined' && (globalThis as { __pgDebugIncludes?: boolean }).__pgDebugIncludes) {
+    console.warn('[playground] resolveWorkspace called:', {
+      activeName,
+      availableNames: Array.from(parsedAsts.keys()),
+    });
+  }
+
   return resolve(activeAst, {
     includeStack: [activeName],
     lookupInclude: (target) => parsedAsts.get(target),
