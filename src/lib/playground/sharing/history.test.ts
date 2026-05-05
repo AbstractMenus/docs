@@ -2,7 +2,6 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import {
   loadHistory,
   saveSnapshot,
-  pushSnapshot,
   entryPreview,
   MAX_HISTORY_SIZE,
 } from './history';
@@ -104,17 +103,4 @@ describe('history', () => {
     expect(list[1].tabs[0].content).toBe('old');
   });
 
-  test('pushSnapshot back-compat shim wraps content into one tab', () => {
-    pushSnapshot('hello = 1');
-    const list = loadHistory();
-    expect(list).toHaveLength(1);
-    expect(list[0].tabs).toHaveLength(1);
-    expect(list[0].tabs[0].name).toBe('menu.conf');
-    expect(list[0].tabs[0].content).toBe('hello = 1');
-  });
-
-  test('pushSnapshot skips empty content', () => {
-    pushSnapshot('');
-    expect(loadHistory()).toEqual([]);
-  });
 });

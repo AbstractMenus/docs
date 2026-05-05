@@ -1,5 +1,5 @@
 import type { TabFile, Workspace } from '../files/types';
-import { WORKSPACE_VERSION, DEFAULT_TAB_NAME } from '../files/types';
+import { DEFAULT_TAB_NAME } from '../files/types';
 
 const KEY = 'am_playground_history';
 export const MAX_HISTORY_SIZE = 5;
@@ -87,7 +87,7 @@ export function saveSnapshot(ws: Workspace): void {
   const prev = cur[0];
   if (prev && tabsEqual(prev.tabs, ws.tabs)) return;
   const entry: HistoryEntry = {
-    v: WORKSPACE_VERSION,
+    v: 2 as const,
     timestamp: Date.now(),
     tabs: ws.tabs.map((t) => ({ id: t.id, name: t.name, content: t.content })),
   };
@@ -97,25 +97,6 @@ export function saveSnapshot(ws: Workspace): void {
   } catch {
     // quota / private mode - ignore
   }
-}
-
-/**
- * Back-compat shim for callers that still hold a single editor buffer
- * (HistoryController's share-button flow + the snapshot debounce until Task
- * 15 wires a real WorkspaceHost). Wraps `content` in a one-tab workspace so
- * everything downstream sees the v2 shape.
- */
-export function pushSnapshot(content: string): void {
-  if (!content) return;
-  saveSnapshot({
-    v: WORKSPACE_VERSION,
-    tabs: [{
-      id: 't' + Math.random().toString(36).slice(2),
-      name: DEFAULT_TAB_NAME,
-      content,
-    }],
-    activeTabId: '',
-  });
 }
 
 /** First non-empty line of an entry's main tab, capped at PREVIEW_LEN. */
