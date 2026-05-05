@@ -25,6 +25,12 @@ export const en = {
   'tab.json': 'Resolved JSON',
   'tab.tutorial': 'Tutorial',
 
+  // File tab bar (multi-file editor)
+  'tab.add.aria': 'New tab',
+  'tab.close.aria': 'Close tab',
+  'tab.menu.aria': 'Tab options',
+  'tab.menu.rename': 'Rename',
+
   // Empty states
   'empty.errors': 'No errors.',
   'empty.warnings':
