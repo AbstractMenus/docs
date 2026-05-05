@@ -22,6 +22,7 @@ import { decodeShare } from './sharing/share-url';
 import { loadHistory } from './sharing/history';
 import { createTutorialPanel, type TutorialPanelApi } from './TutorialPanel';
 import { TutorialController } from './controllers/TutorialController';
+import { WORKSPACE_VERSION } from './files/types';
 import { HistoryController } from './controllers/HistoryController';
 import { ToolbarController } from './controllers/ToolbarController';
 import type { PlaygroundMode, TabId } from './types';
@@ -278,8 +279,15 @@ export class PlaygroundApp {
 
   private setupControllers(): void {
     if (this.tutorialPanelApi) {
+      // TODO(Task 15): wire a real WorkspaceHost that drives the editor +
+      // tab bar. The temporary stub keeps the build green while leaving
+      // tutorial mode functionally broken (lesson content does not reach
+      // the editor) until the wiring task lands.
       this.tutorial = new TutorialController(
-        this.editor,
+        {
+          setWorkspace: (_ws) => { /* Task 15 will wire this */ },
+          getWorkspace: () => ({ v: WORKSPACE_VERSION, tabs: [], activeTabId: '' }),
+        },
         this.tutorialPanelApi,
         (id) => setUrlForLesson(id),
       );
