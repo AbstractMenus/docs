@@ -81,12 +81,21 @@ export interface EditorApi {
   getValue(): string;
   setValue(text: string): void;
   destroy(): void;
+
+  // Multi-tab API
+  activeTabId(): string;
+  setActiveTab(id: string): void;
+  addTab(id: string, content: string): void;
+  removeTab(id: string, fallbackActiveId: string): void;
+  getTabContent(id: string): string;
+  updateTabContent(id: string, content: string): void;
 }
 
 export interface CreateEditorOptions {
   parent: HTMLElement;
   initialContent?: string;
-  onChange?: (text: string) => void;
+  initialTabId?: string;
+  onChange?: (text: string, tabId: string) => void;
   extensions?: Extension[];
 }
 
@@ -115,26 +124,77 @@ export function createEditor(opts: CreateEditorOptions): EditorApi {
     EditorView.lineWrapping,
     EditorView.updateListener.of((u) => {
       if (u.docChanged && opts.onChange) {
-        opts.onChange(u.state.doc.toString());
+        opts.onChange(u.state.doc.toString(), activeId);
       }
     }),
   ];
 
-  const state = EditorState.create({
-    doc: opts.initialContent ?? '',
-    extensions: [...baseExtensions, ...(opts.extensions ?? [])],
-  });
+  const sharedExtensions = [...baseExtensions, ...(opts.extensions ?? [])];
+  const states = new Map<string, EditorState>();
+  let activeId = opts.initialTabId ?? 'default';
 
-  const view = new EditorView({ state, parent: opts.parent });
+  states.set(activeId, EditorState.create({
+    doc: opts.initialContent ?? '',
+    extensions: sharedExtensions,
+  }));
+
+  const view = new EditorView({ state: states.get(activeId)!, parent: opts.parent });
+
+  // Persist the live state back into the map every change so a tab swap
+  // does not lose unsaved typing.
+  function syncActive(): void {
+    states.set(activeId, view.state);
+  }
 
   return {
     view,
     getValue: () => view.state.doc.toString(),
     setValue: (text) => {
-      view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: text },
-      });
+      view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: text } });
+      syncActive();
     },
     destroy: () => view.destroy(),
+
+    activeTabId: () => activeId,
+
+    setActiveTab: (id) => {
+      if (id === activeId) return;
+      syncActive();
+      const s = states.get(id);
+      if (!s) throw new Error(`[Editor] no state for tab ${id}`);
+      activeId = id;
+      view.setState(s);
+    },
+
+    addTab: (id, content) => {
+      if (states.has(id)) return;
+      states.set(id, EditorState.create({ doc: content, extensions: sharedExtensions }));
+    },
+
+    removeTab: (id, fallbackActiveId) => {
+      states.delete(id);
+      if (id === activeId) {
+        const s = states.get(fallbackActiveId);
+        if (!s) throw new Error(`[Editor] removeTab: fallback ${fallbackActiveId} missing`);
+        activeId = fallbackActiveId;
+        view.setState(s);
+      }
+    },
+
+    getTabContent: (id) => {
+      if (id === activeId) return view.state.doc.toString();
+      const s = states.get(id);
+      if (!s) throw new Error(`[Editor] no state for tab ${id}`);
+      return s.doc.toString();
+    },
+
+    updateTabContent: (id, content) => {
+      if (id === activeId) {
+        view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: content } });
+        syncActive();
+        return;
+      }
+      states.set(id, EditorState.create({ doc: content, extensions: sharedExtensions }));
+    },
   };
 }

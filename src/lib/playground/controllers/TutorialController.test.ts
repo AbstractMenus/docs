@@ -13,11 +13,18 @@ import type { Lesson } from '../tutorial/types';
 
 function fakeEditor(initial = ''): EditorApi & { __doc: string } {
   let doc = initial;
+  // Multi-tab API is unused by TutorialController - stub it to satisfy the type.
   return {
     view: {} as EditorApi['view'],
     getValue: () => doc,
     setValue: (t: string) => { doc = t; },
     destroy: () => {},
+    activeTabId: () => 'default',
+    setActiveTab: () => {},
+    addTab: () => {},
+    removeTab: () => {},
+    getTabContent: () => doc,
+    updateTabContent: (_id: string, t: string) => { doc = t; },
     get __doc() { return doc; },
   };
 }
