@@ -178,13 +178,26 @@ export class PlaygroundApp {
     this.workspace = this.pickInitialWorkspace();
     const active = this.activeTab();
 
+    // Feed the in-editor linter a snapshot of the workspace so include
+    // resolution matches what the validation panel sees. Without this, every
+    // `include "other.conf"` line in the active tab lights up as
+    // "include not resolved", contradicting the panel which resolves it
+    // against the sibling tab.
+    const lintWorkspace = () => {
+      const asts = new Map<string, Node>();
+      for (const tab of this.workspace.tabs) {
+        asts.set(tab.name, parse(tokenizeText(tab.content), tab.content).ast);
+      }
+      return { asts, activeName: this.activeTab().name };
+    };
+
     this.editor = createEditor({
       parent: this.dom.editorHost,
       initialContent: active.content,
       initialTabId: active.id,
       extensions: [
         ...hoconLanguage(),
-        hoconLinter(),
+        hoconLinter(lintWorkspace),
         hoverDocs(),
         autocompletion({ override: [includeCompletion, catalogSource] }),
         EditorView.updateListener.of((u) => {

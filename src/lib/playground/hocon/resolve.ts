@@ -93,18 +93,6 @@ function handleInclude(
     ? opts.lookupInclude(target, stack)
     : undefined;
   if (!resolved || resolved.kind !== 'object') {
-    // Diagnostic: enable in DevTools with `__pgDebugIncludes = true` then
-    // retrigger an analysis (type any char). Helps narrow down whether the
-    // failure is at extractIncludeTarget, lookup, or workspace state level.
-    if (typeof console !== 'undefined' && (globalThis as { __pgDebugIncludes?: boolean }).__pgDebugIncludes) {
-      console.warn('[playground] include not resolved:', {
-        target,
-        rawNode: inc.raw,
-        hasLookup: !!opts.lookupInclude,
-        resolvedKind: resolved ? resolved.kind : 'undefined',
-        stackKnown: stack,
-      });
-    }
     warnings.push({
       severity: 'warning',
       code: 'parser.include-not-resolved',

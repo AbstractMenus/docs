@@ -41,4 +41,23 @@ describe('lesson 21 include resolution', () => {
     // resolved should pick up size + title from menu, defaults from extras.
     expect(r.resolved).toMatchObject({ title: 'Shop', size: 3 });
   });
+
+  test('lesson 21 starter alone produces no include warnings', () => {
+    // The reported bug: opening lesson 21 (no edits) shows include warnings
+    // sourced from the intro markdown's example fence. The intro is rendered
+    // through highlightHocon (tokenizer only) and never feeds the workspace
+    // analysis, so the workspace pipeline must produce zero include
+    // diagnostics for the unmodified lesson.
+    const menuContent = lesson21.starter;
+    const defaultsContent = lesson21.extraFiles![0].content;
+    const map = new Map<string, Node>([
+      ['menu.conf', parse(tokenizeText(menuContent), menuContent).ast],
+      ['defaults.conf', parse(tokenizeText(defaultsContent), defaultsContent).ast],
+    ]);
+    const r = resolveWorkspace(map, 'menu.conf');
+    const includeWarnings = r.warnings.filter((w) =>
+      w.code === 'parser.include-not-resolved' || w.code === 'parser.include-cycle',
+    );
+    expect(includeWarnings).toEqual([]);
+  });
 });

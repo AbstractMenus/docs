@@ -5,7 +5,21 @@ import { tokenizeText } from '../hocon/tokenize';
 import { parse } from '../hocon/parser';
 import { resolve } from '../hocon/resolve';
 import { validateUnknownKeys } from '../hocon/unknown-keys';
-import type { Diagnostic } from '../hocon/types';
+import type { Diagnostic, Node } from '../hocon/types';
+
+/**
+ * Thunk the host wires in so the in-editor linter can resolve cross-file
+ * includes the same way the workspace-level analysis does. Without it the
+ * linter only sees the active doc, so any `include "x.conf"` line lights up
+ * as "include not resolved" even when `x.conf` lives in another tab. The
+ * thunk returns:
+ *   - a Map of tab name -> parsed AST (so `lookupInclude(target)` can hit it)
+ *   - the active tab's name (seeds includeStack for cycle detection)
+ *
+ * Returning `null` (no host wired) keeps the linter purely single-file:
+ * include warnings are filtered out so they don't lie about workspace state.
+ */
+export type WorkspaceLookup = () => { asts: Map<string, Node>; activeName: string } | null;
 
 /**
  * Per-editor toggle for the warning subset of diagnostics. Stored as a
@@ -48,16 +62,29 @@ export function setWarningSquigglesEnabled(view: EditorView, enabled: boolean): 
   forceLinting(view);
 }
 
-export function hoconLinter() {
+export function hoconLinter(workspace?: WorkspaceLookup) {
   return [
     warningSquigglesField,
     linter(
       (view) => {
         const text = view.state.doc.toString();
         const r = parse(tokenizeText(text), text);
-        const res = resolve(r.ast);
+        const ws = workspace?.() ?? null;
+        const res = ws
+          ? resolve(r.ast, {
+              lookupInclude: (target) => ws.asts.get(target),
+              includeStack: [ws.activeName],
+            })
+          : resolve(r.ast);
+        // Without a workspace lookup the linter can't honestly say whether an
+        // include resolves; drop those codes so we don't surface stale
+        // warnings (the workspace-level analysis owns that judgement).
+        const includeCodes = new Set(['parser.include-not-resolved', 'parser.include-cycle']);
+        const resolveWarnings = ws
+          ? res.warnings
+          : res.warnings.filter((d) => !includeCodes.has(d.code));
         const unknown = validateUnknownKeys(r.ast);
-        const all = [...r.diagnostics, ...res.warnings, ...unknown];
+        const all = [...r.diagnostics, ...resolveWarnings, ...unknown];
         const showWarnings = view.state.facet(warningSquigglesFacet);
         const filtered = showWarnings ? all : all.filter((d) => d.severity !== 'warning');
         return filtered.map((d) => toCm(view, d, text.length));
