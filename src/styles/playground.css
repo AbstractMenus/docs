@@ -988,7 +988,7 @@ html, body {
   min-width: 0;
   overflow-x: auto;
 }
-.pg-tab {
+.pg-filetab {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -1000,15 +1000,15 @@ html, body {
   color: var(--pg-fg-muted);
   background: transparent;
 }
-.pg-tab.is-active {
+.pg-filetab.is-active {
   background: var(--pg-bg);
   color: var(--pg-fg);
 }
-.pg-tab__name {
+.pg-filetab__name {
   white-space: nowrap;
 }
-.pg-tab__kebab,
-.pg-tab__close,
+.pg-filetab__kebab,
+.pg-filetab__close,
 .pg-tabbar__add {
   background: transparent;
   border: 0;
@@ -1019,13 +1019,13 @@ html, body {
   font-size: 0.9rem;
   line-height: 1;
 }
-.pg-tab__kebab:hover,
-.pg-tab__close:hover,
+.pg-filetab__kebab:hover,
+.pg-filetab__close:hover,
 .pg-tabbar__add:hover {
   opacity: 1;
 }
-.pg-tab.has-errors::after,
-.pg-tab.has-warnings::after {
+.pg-filetab.has-errors::after,
+.pg-filetab.has-warnings::after {
   content: '';
   display: inline-block;
   width: 6px;
@@ -1033,15 +1033,15 @@ html, body {
   border-radius: 50%;
   margin-left: 0.25rem;
 }
-.pg-tab.has-errors::after {
+.pg-filetab.has-errors::after {
   background: #f85149;
 }
-.pg-tab.has-warnings::after {
+.pg-filetab.has-warnings::after {
   background: #d29922;
 }
-:root[data-theme="light"] .pg-tab.has-errors::after { background: #cf222e; }
-:root[data-theme="light"] .pg-tab.has-warnings::after { background: #9a6700; }
-.pg-tab__menu {
+:root[data-theme="light"] .pg-filetab.has-errors::after { background: #cf222e; }
+:root[data-theme="light"] .pg-filetab.has-warnings::after { background: #9a6700; }
+.pg-filetab__menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -1053,7 +1053,7 @@ html, body {
   min-width: 8rem;
   padding: 0.2rem 0;
 }
-.pg-tab__menu-item {
+.pg-filetab__menu-item {
   display: block;
   width: 100%;
   padding: 0.4rem 0.75rem;
@@ -1065,10 +1065,10 @@ html, body {
   font-size: 0.8rem;
   color: var(--pg-fg);
 }
-.pg-tab__menu-item:hover {
+.pg-filetab__menu-item:hover {
   background: var(--pg-bg-elev-2);
 }
-.pg-tab__rename-input {
+.pg-filetab__rename-input {
   background: var(--pg-bg);
   border: 1px solid var(--pg-accent);
   border-radius: 3px;

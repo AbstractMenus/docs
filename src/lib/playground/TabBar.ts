@@ -68,20 +68,20 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
 
     for (const tab of tabs) {
       const el = document.createElement('div');
-      el.className = 'pg-tab';
+      el.className = 'pg-filetab';
       if (tab.id === activeId) el.classList.add('is-active');
       if (tab.errors > 0) el.classList.add('has-errors');
       else if (tab.warnings > 0) el.classList.add('has-warnings');
       el.dataset.tabId = tab.id;
 
       const name = document.createElement('span');
-      name.className = 'pg-tab__name';
+      name.className = 'pg-filetab__name';
       name.dataset.tabName = '';
       name.textContent = tab.name;
       el.appendChild(name);
 
       const kebab = document.createElement('button');
-      kebab.className = 'pg-tab__kebab';
+      kebab.className = 'pg-filetab__kebab';
       kebab.dataset.tabKebab = '';
       kebab.type = 'button';
       kebab.setAttribute('aria-label', t('tab.menu.aria'));
@@ -94,7 +94,7 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
 
       if (!single) {
         const close = document.createElement('button');
-        close.className = 'pg-tab__close';
+        close.className = 'pg-filetab__close';
         close.dataset.tabClose = '';
         close.type = 'button';
         close.setAttribute('aria-label', t('tab.close.aria'));
@@ -110,9 +110,9 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
 
       if (openMenuFor === tab.id) {
         const menu = document.createElement('div');
-        menu.className = 'pg-tab__menu';
+        menu.className = 'pg-filetab__menu';
         const renameItem = document.createElement('button');
-        renameItem.className = 'pg-tab__menu-item';
+        renameItem.className = 'pg-filetab__menu-item';
         renameItem.dataset.tabRename = '';
         renameItem.type = 'button';
         renameItem.textContent = t('tab.menu.rename');
@@ -164,7 +164,7 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
     input.type = 'text';
     input.value = tab.name;
     input.maxLength = 64;
-    input.className = 'pg-tab__rename-input';
+    input.className = 'pg-filetab__rename-input';
     nameEl.replaceWith(input);
     input.focus();
     input.select();
