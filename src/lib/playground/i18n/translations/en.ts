@@ -30,6 +30,8 @@ export const en = {
   'tab.close.aria': 'Close tab',
   'tab.menu.aria': 'Tab options',
   'tab.menu.rename': 'Rename',
+  'tab.rename.error.empty': 'Name cannot be empty',
+  'tab.rename.error.duplicate': 'Name already taken',
 
   // Empty states
   'empty.errors': 'No errors.',
@@ -66,6 +68,8 @@ export const en = {
   // Toasts
   'toast.linkCopied': 'Link copied',
   'toast.copyFailed': 'Copy failed',
+  'share.too-long':
+    'Share URL is too long (${length} chars, max ${max}). Trim some content and try again.',
 
   // Resolved JSON description
   'json.desc':

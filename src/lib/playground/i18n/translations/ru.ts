@@ -24,6 +24,8 @@ export const ru: Partial<Dict> = {
   'tab.close.aria': 'Закрыть вкладку',
   'tab.menu.aria': 'Действия',
   'tab.menu.rename': 'Переименовать',
+  'tab.rename.error.empty': 'Имя не может быть пустым',
+  'tab.rename.error.duplicate': 'Такое имя уже есть',
 
   'empty.errors': 'Ошибок нет.',
   'empty.warnings':
@@ -57,6 +59,8 @@ export const ru: Partial<Dict> = {
 
   'toast.linkCopied': 'Ссылка скопирована',
   'toast.copyFailed': 'Не удалось скопировать',
+  'share.too-long':
+    'Ссылка для шаринга слишком длинная (${length} символов, максимум ${max}). Сократи содержимое и попробуй ещё раз.',
 
   'json.desc':
     'Так AbstractMenus видит ваш конфиг после раскрытия подстановок, точечных ключей и наложений. Используйте, чтобы убедиться, что ${vars} разворачиваются правильно и вложенные объекты схлопываются как нужно.',

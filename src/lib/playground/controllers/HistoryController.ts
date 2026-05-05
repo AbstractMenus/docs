@@ -3,16 +3,18 @@ import type { HistoryDropdownApi } from '../HistoryDropdown';
 import type { Workspace } from '../files/types';
 import { WORKSPACE_VERSION, DEFAULT_TAB_NAME } from '../files/types';
 import { showToast } from '../Toast';
-import { encodeShare } from '../sharing/share-url';
+import { buildShareUrl, MAX_SHARE_URL_LEN } from '../sharing/share-url';
 import { loadHistory, saveSnapshot, type HistoryEntry } from '../sharing/history';
 import { t } from '../i18n';
 
 const SNAPSHOT_DEBOUNCE_MS = 5000;
 
 /**
- * Optional hooks the host can supply to give the controller a workspace
- * view + a way to restore one. Until Task 15 wires the real WorkspaceHost,
- * PlaygroundApp passes stubs that round-trip the single-buffer editor.
+ * Hooks the host (PlaygroundApp) supplies so the controller can read +
+ * replace the live workspace. Both are technically optional - the
+ * controller falls back to a synthetic single-tab workspace built from the
+ * editor buffer when neither is wired - but in production both should be
+ * present.
  */
 export interface HistoryControllerHost {
   getWorkspace?: () => Workspace;
@@ -50,7 +52,7 @@ export class HistoryController {
   /**
    * Read the active workspace from the host, or fall back to a synthetic
    * single-tab workspace built from the editor buffer. The fallback path
-   * disappears once Task 15 lands a real WorkspaceHost everywhere.
+   * exists for safety; the production wiring always supplies a real host.
    */
   private currentWorkspace(): Workspace {
     if (this.host.getWorkspace) return this.host.getWorkspace();
@@ -64,8 +66,8 @@ export class HistoryController {
 
   /**
    * Restore a snapshot entry. With a real WorkspaceHost we hand the full
-   * tab list back; without one we drop everything but the first tab into
-   * the editor (Task 15 finishes the multi-file restore path).
+   * tab list back; without one we drop the first tab into the editor (so
+   * the legacy single-buffer path still works for tests / harnesses).
    */
   private applyEntry(entry: HistoryEntry): void {
     if (this.host.setWorkspace && entry.tabs.length > 0) {
@@ -75,7 +77,6 @@ export class HistoryController {
         activeTabId: entry.tabs[0].id,
       });
     } else if (entry.tabs[0]) {
-      // TODO(Task 15): restore the full tab list, not just the main file.
       this.editor.setValue(entry.tabs[0].content);
     }
     this.closePopover();
@@ -104,17 +105,26 @@ export class HistoryController {
     const btn = this.root.querySelector<HTMLButtonElement>('[data-action="share"]');
     if (!btn) return;
     btn.addEventListener('click', async () => {
-      const text = this.editor.getValue();
-      const enc = encodeShare(text);
-      const url = `${window.location.origin}${window.location.pathname}#config=${enc}`;
-      history.replaceState(null, '', `#config=${enc}`);
+      const ws = this.currentWorkspace();
+      const result = buildShareUrl(ws);
+      if (!result.ok) {
+        showToast(t('share.too-long', { length: result.length, max: MAX_SHARE_URL_LEN }));
+        return;
+      }
+      const { url } = result;
+      // Sync the hash so a reload re-decodes the workspace. We strip the
+      // origin+pathname back to just the `#config=...` fragment because
+      // history.replaceState only accepts same-document URLs and we don't
+      // want to perturb the path.
+      const hashIdx = url.indexOf('#');
+      if (hashIdx >= 0) history.replaceState(null, '', url.slice(hashIdx));
       try {
         await navigator.clipboard.writeText(url);
         showToast(t('toast.linkCopied'));
       } catch {
         showToast(t('toast.copyFailed'));
       }
-      saveSnapshot(this.currentWorkspace());
+      saveSnapshot(ws);
       this.dropdown?.update(loadHistory());
     });
   }

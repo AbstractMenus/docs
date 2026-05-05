@@ -9,28 +9,33 @@ import { hoconLanguage } from './cm/hocon-language';
 import { hoconLinter } from './cm/hocon-lint';
 import { snippetCompletions } from './cm/snippets';
 import { createCatalogSource } from './cm/catalog-source';
+import { createIncludeCompletion } from './cm/include-completion';
 import { hoverDocs } from './cm/hover-docs';
 import { formatHocon } from './cm/format';
 import { tokenizeText } from './hocon/tokenize';
 import { parse } from './hocon/parser';
-import { resolve } from './hocon/resolve';
+import { resolveWorkspace } from './files/resolve-multi';
 import { validateUnknownKeys } from './hocon/unknown-keys';
+import type { Diagnostic, Node } from './hocon/types';
 import { createValidationPanel, type ValidationPanelApi } from './ValidationPanel';
 import { createResolvedJsonPanel, type ResolvedJsonPanelApi } from './ResolvedJsonPanel';
 import { createHistoryDropdown, type HistoryDropdownApi } from './HistoryDropdown';
-import { decodeShare } from './sharing/share-url';
-import { loadHistory } from './sharing/history';
+import { createTabBar, type TabBarApi, type TabBarItem, type RenameResult } from './TabBar';
+import { decodeWorkspace } from './sharing/share-url';
 import { createTutorialPanel, type TutorialPanelApi } from './TutorialPanel';
 import { TutorialController } from './controllers/TutorialController';
-import { WORKSPACE_VERSION } from './files/types';
+import type { Workspace, TabFile } from './files/types';
+import { makeDefaultWorkspace, newTabFile, loadWorkspace, saveWorkspace } from './files/workspace';
 import { HistoryController } from './controllers/HistoryController';
 import { ToolbarController } from './controllers/ToolbarController';
+import { showToast } from './Toast';
 import type { PlaygroundMode, TabId } from './types';
 import { initLang, t, pluralForm, getLang, setLang, availableLangs } from './i18n';
 import { hydrateI18n } from './i18n/dom';
 
 const SCOPE_SHORTCUT = 'Ctrl+space';
 const ANALYSIS_DEBOUNCE_MS = 300;
+const SAVE_DEBOUNCE_MS = 200;
 
 const DEFAULT_CONTENT = `# Welcome to the AbstractMenus HOCON Playground.
 # Edit below to see live validation and resolved JSON on the right.
@@ -51,6 +56,7 @@ items = [
 interface DomRefs {
   root: HTMLElement;
   editorHost: HTMLElement;
+  tabbarHost: HTMLElement | null;
   status: HTMLElement | null;
   scopeHint: HTMLElement | null;
   errorsPanel: HTMLElement | null;
@@ -66,6 +72,7 @@ interface DomRefs {
  * Top-level playground orchestrator. Owns:
  *  - DOM resolution (cached refs)
  *  - the editor and the tabbed right-pane (panels)
+ *  - the multi-file workspace + tab bar
  *  - the debounced analysis pipeline (parse / resolve / validate -> panels)
  *  - mode switching (because it cross-cuts toolbar + tutorial controller)
  *
@@ -86,20 +93,32 @@ export class PlaygroundApp {
   private resolvedPanel: ResolvedJsonPanelApi | null = null;
   private historyDropdown: HistoryDropdownApi | null = null;
   private tutorialPanelApi: TutorialPanelApi | null = null;
+  private tabBar: TabBarApi | null = null;
 
   private tutorial: TutorialController | null = null;
   private history: HistoryController | null = null;
 
   private analysisTimer: ReturnType<typeof setTimeout> | undefined;
+  private saveTimer: ReturnType<typeof setTimeout> | undefined;
 
   /**
-   * In-flight document for editor mode. Captured when switching to tutorial
-   * mode so toggling back doesn't silently overwrite the user's edits with
-   * the lesson's content. Initialized to the first content shown in the
-   * editor (default template, share hash, or last history snapshot) so the
-   * first switch tutorial -> editor restores the right thing.
+   * Source of truth for the editor's multi-file state. Initialized from the
+   * URL hash (#config=) / localStorage / DEFAULT_CONTENT in setupEditor.
+   * Replaced wholesale via replaceWorkspace() when a tutorial lesson loads,
+   * a history snapshot is restored, or the user clicks Reset.
    */
-  private editorDraft: string | null = null;
+  private workspace: Workspace = makeDefaultWorkspace('');
+
+  /**
+   * Snapshot of the editor-mode workspace captured when the user switches
+   * to tutorial mode. Restored on the way back so toggling between modes
+   * doesn't clobber the user's edits.
+   */
+  private editorWorkspaceSnapshot: Workspace | null = null;
+
+  /** Per-tab diagnostics (keyed by tab name). Drives the tab-bar status dots. */
+  private diagnosticsByFile = new Map<string, Diagnostic[]>();
+
   private currentMode: PlaygroundMode = 'editor';
 
   constructor(root: HTMLElement) {
@@ -111,6 +130,7 @@ export class PlaygroundApp {
    *  - setupPanels constructs right-pane API objects that setupAnalysis wires
    *    its callbacks into.
    *  - setupEditor must run before any controller that touches `this.editor`.
+   *  - setupTabBar runs after setupEditor so the workspace is populated.
    *  - bindModeSwitch must attach before applyInitialUrlMode triggers
    *    switchMode().
    */
@@ -120,6 +140,7 @@ export class PlaygroundApp {
     hydrateI18n(this.dom.root);
     this.setupPanels();
     this.setupEditor();
+    this.setupTabBar();
     this.setupAnalysis();
     this.setupControllers();
     this.bindModeSwitch();
@@ -146,20 +167,26 @@ export class PlaygroundApp {
   private setupEditor(): void {
     const SNIPPETS = snippetCompletions();
     const catalogSource = createCatalogSource({ fallbackSnippets: SNIPPETS });
-    const initialContent = this.pickInitialContent();
-    // Seed the editor-mode draft so a tutorial->editor switch (without prior
-    // editor edits) restores what the user originally saw, not "" or
-    // DEFAULT_CONTENT.
-    this.editorDraft = initialContent;
+    // Bind the include-completion source to a thunk so it always sees the
+    // current workspace (tab adds / renames / removes don't require us to
+    // tear down the CM extension).
+    const includeCompletion = createIncludeCompletion(() => ({
+      tabs: this.workspace.tabs.map((t) => t.name),
+      current: this.activeTab().name,
+    }));
+
+    this.workspace = this.pickInitialWorkspace();
+    const active = this.activeTab();
 
     this.editor = createEditor({
       parent: this.dom.editorHost,
-      initialContent,
+      initialContent: active.content,
+      initialTabId: active.id,
       extensions: [
         ...hoconLanguage(),
         hoconLinter(),
         hoverDocs(),
-        autocompletion({ override: [catalogSource] }),
+        autocompletion({ override: [includeCompletion, catalogSource] }),
         EditorView.updateListener.of((u) => {
           if (u.selectionSet || u.docChanged) this.updateScopeHint(u.state);
         }),
@@ -176,23 +203,121 @@ export class PlaygroundApp {
           },
         ]),
       ],
-      onChange: () => {
+      onChange: (text, tabId) => {
+        const tab = this.workspace.tabs.find((t) => t.id === tabId);
+        if (tab) tab.content = text;
+        this.scheduleSave();
         this.scheduleAnalysis();
         this.history?.scheduleSnapshot();
         this.tutorial?.refresh();
       },
     });
+
+    // Seed CM states for non-active tabs so switching to one doesn't throw.
+    for (const tab of this.workspace.tabs) {
+      if (tab.id !== active.id) this.editor.addTab(tab.id, tab.content);
+    }
   }
 
-  private pickInitialContent(): string {
+  private pickInitialWorkspace(): Workspace {
     const m = /^#config=(.+)$/.exec(window.location.hash);
     if (m) {
-      const decoded = decodeShare(m[1]);
-      if (decoded !== null) return decoded;
+      const decoded = decodeWorkspace(m[1]);
+      if (decoded) return decoded;
     }
-    const history = loadHistory();
-    if (history.length > 0 && history[0].tabs[0]) return history[0].tabs[0].content;
-    return DEFAULT_CONTENT;
+    return loadWorkspace(DEFAULT_CONTENT);
+  }
+
+  private activeTab(): TabFile {
+    return this.workspace.tabs.find((t) => t.id === this.workspace.activeTabId) ?? this.workspace.tabs[0];
+  }
+
+  private scheduleSave(): void {
+    if (this.saveTimer) clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => saveWorkspace(this.workspace), SAVE_DEBOUNCE_MS);
+  }
+
+  // ---------- Tab bar ----------
+
+  private setupTabBar(): void {
+    if (!this.dom.tabbarHost) return;
+    this.tabBar = createTabBar({
+      host: this.dom.tabbarHost,
+      tabs: this.tabBarItems(),
+      activeId: this.workspace.activeTabId,
+      onSelect: (id) => this.switchTab(id),
+      onCreate: () => this.createTab(),
+      onClose: (id) => this.closeTab(id),
+      onRename: (id, name) => this.renameTab(id, name),
+    });
+  }
+
+  private tabBarItems(): TabBarItem[] {
+    return this.workspace.tabs.map((t) => {
+      const diags = this.diagnosticsByFile.get(t.name) ?? [];
+      return {
+        id: t.id,
+        name: t.name,
+        errors: diags.filter((d) => d.severity === 'error').length,
+        warnings: diags.filter((d) => d.severity === 'warning').length,
+      };
+    });
+  }
+
+  private switchTab(id: string): void {
+    if (id === this.workspace.activeTabId) return;
+    if (!this.workspace.tabs.find((t) => t.id === id)) return;
+    this.workspace.activeTabId = id;
+    this.editor.setActiveTab(id);
+    this.tabBar?.update(this.tabBarItems(), id);
+    this.scheduleAnalysis();
+    this.scheduleSave();
+  }
+
+  private createTab(): void {
+    const used = new Set(this.workspace.tabs.map((t) => t.name));
+    let n = 1;
+    while (used.has(`NewMenu (${n}).conf`)) n++;
+    const tab = newTabFile(`NewMenu (${n}).conf`, '');
+    this.workspace.tabs.push(tab);
+    this.editor.addTab(tab.id, '');
+    this.switchTab(tab.id);
+  }
+
+  private closeTab(id: string): void {
+    if (this.workspace.tabs.length <= 1) return;
+    const idx = this.workspace.tabs.findIndex((t) => t.id === id);
+    if (idx < 0) return;
+    const wasActive = id === this.workspace.activeTabId;
+    this.workspace.tabs.splice(idx, 1);
+    let fallback = this.workspace.activeTabId;
+    if (wasActive) {
+      fallback = this.workspace.tabs[Math.max(0, idx - 1)].id;
+      this.workspace.activeTabId = fallback;
+    }
+    this.editor.removeTab(id, fallback);
+    this.tabBar?.update(this.tabBarItems(), this.workspace.activeTabId);
+    this.scheduleAnalysis();
+    this.scheduleSave();
+  }
+
+  private renameTab(id: string, newName: string): RenameResult {
+    const trimmed = newName.trim();
+    if (!trimmed) {
+      showToast(t('tab.rename.error.empty'));
+      return { ok: false, error: 'empty' };
+    }
+    if (this.workspace.tabs.some((tab) => tab.id !== id && tab.name === trimmed)) {
+      showToast(t('tab.rename.error.duplicate'));
+      return { ok: false, error: 'duplicate' };
+    }
+    const tab = this.workspace.tabs.find((t) => t.id === id);
+    if (!tab) return { ok: false, error: 'empty' };
+    tab.name = trimmed;
+    this.tabBar?.update(this.tabBarItems(), this.workspace.activeTabId);
+    this.scheduleAnalysis();
+    this.scheduleSave();
+    return { ok: true };
   }
 
   // ---------- Analysis (parse/resolve/validate -> panels) ----------
@@ -201,10 +326,15 @@ export class PlaygroundApp {
     this.scheduleAnalysis();
     this.updateScopeHint(this.editor.view.state);
 
-    // Task 15 will read `_file` to switch tabs before jumping; for now we
-    // ignore it so single-file behavior is preserved while the multi-file
-    // pipeline is being wired up.
-    const jumpTo = (_file: string, line: number, column: number) => this.jumpTo(line, column);
+    // Cross-tab jump: switch the active tab if the diagnostic came from a
+    // different file, then jump to the location.
+    const jumpTo = (file: string, line: number, column: number) => {
+      if (file) {
+        const tab = this.workspace.tabs.find((t) => t.name === file);
+        if (tab && tab.id !== this.workspace.activeTabId) this.switchTab(tab.id);
+      }
+      this.jumpTo(line, column);
+    };
     this.validation.errors?.onJump(jumpTo);
     this.validation.warnings?.onJump(jumpTo);
 
@@ -222,13 +352,34 @@ export class PlaygroundApp {
   }
 
   private runAnalysis(): void {
-    const text = this.editor.getValue();
-    const r = parse(tokenizeText(text), text);
-    const res = resolve(r.ast);
-    const unknown = validateUnknownKeys(r.ast);
-    const all = [...r.diagnostics, ...res.warnings, ...unknown];
-    const errors = all.filter((d) => d.severity === 'error');
-    const warnings = all.filter((d) => d.severity === 'warning');
+    const parsedAsts = new Map<string, Node>();
+    const allDiagnostics: Diagnostic[] = [];
+
+    for (const tab of this.workspace.tabs) {
+      const r = parse(tokenizeText(tab.content), tab.content);
+      parsedAsts.set(tab.name, r.ast);
+      const unknown = validateUnknownKeys(r.ast);
+      for (const d of [...r.diagnostics, ...unknown]) {
+        allDiagnostics.push({ ...d, file: d.file ?? tab.name });
+      }
+    }
+
+    const active = this.activeTab();
+    const res = resolveWorkspace(parsedAsts, active.name);
+    for (const w of res.warnings) {
+      allDiagnostics.push({ ...w, file: w.file ?? active.name });
+    }
+
+    this.diagnosticsByFile.clear();
+    for (const d of allDiagnostics) {
+      const key = d.file ?? '';
+      const list = this.diagnosticsByFile.get(key) ?? [];
+      list.push(d);
+      this.diagnosticsByFile.set(key, list);
+    }
+
+    const errors = allDiagnostics.filter((d) => d.severity === 'error');
+    const warnings = allDiagnostics.filter((d) => d.severity === 'warning');
 
     this.validation.errors?.update(errors);
     this.validation.warnings?.update(warnings);
@@ -236,6 +387,7 @@ export class PlaygroundApp {
 
     setTabCount(this.dom.errorsCount, errors.length, 'has-error');
     setTabCount(this.dom.warningsCount, warnings.length, 'has-warning');
+    this.tabBar?.update(this.tabBarItems(), this.workspace.activeTabId);
 
     if (this.dom.status) {
       const s = this.dom.status;
@@ -279,20 +431,24 @@ export class PlaygroundApp {
 
   private setupControllers(): void {
     if (this.tutorialPanelApi) {
-      // TODO(Task 15): wire a real WorkspaceHost that drives the editor +
-      // tab bar. The temporary stub keeps the build green while leaving
-      // tutorial mode functionally broken (lesson content does not reach
-      // the editor) until the wiring task lands.
       this.tutorial = new TutorialController(
         {
-          setWorkspace: (_ws) => { /* Task 15 will wire this */ },
-          getWorkspace: () => ({ v: WORKSPACE_VERSION, tabs: [], activeTabId: '' }),
+          setWorkspace: (ws) => this.replaceWorkspace(ws),
+          getWorkspace: () => this.workspace,
         },
         this.tutorialPanelApi,
         (id) => setUrlForLesson(id),
       );
     }
-    this.history = new HistoryController(this.dom.root, this.editor, this.historyDropdown);
+    this.history = new HistoryController(
+      this.dom.root,
+      this.editor,
+      this.historyDropdown,
+      {
+        getWorkspace: () => this.workspace,
+        setWorkspace: (ws) => this.replaceWorkspace(ws),
+      },
+    );
     new ToolbarController(this.dom.root, this.editor, {
       onResetEditor: () => this.resetEditorToDefault(),
     });
@@ -301,13 +457,47 @@ export class PlaygroundApp {
   }
 
   /**
+   * Replace the entire workspace - editor CM states, active tab, and the
+   * tab bar - in one shot. Used by tutorial lesson loads, history restore,
+   * the Reset button, and the editor<->tutorial mode swap.
+   *
+   * Adds CM states for any new tab id, switches active before removing old
+   * ids (so the editor never points at a removed state), then drops orphans.
+   */
+  private replaceWorkspace(ws: Workspace): void {
+    const oldIds = this.workspace.tabs.map((t) => t.id);
+    this.workspace = ws;
+
+    // 1. Make sure every new tab id has a CM state, with up-to-date content.
+    for (const tab of ws.tabs) {
+      this.editor.addTab(tab.id, tab.content);
+      this.editor.updateTabContent(tab.id, tab.content);
+    }
+
+    // 2. Switch active. addTab() above is a no-op if the id was already in
+    //    the editor, so we know the target state exists.
+    this.editor.setActiveTab(ws.activeTabId);
+
+    // 3. Drop CM states for tabs that disappeared.
+    for (const oid of oldIds) {
+      if (!ws.tabs.find((t) => t.id === oid)) {
+        this.editor.removeTab(oid, ws.activeTabId);
+      }
+    }
+
+    this.tabBar?.update(this.tabBarItems(), ws.activeTabId);
+    this.scheduleAnalysis();
+    this.scheduleSave();
+  }
+
+  /**
    * Replace the editor content with the canonical default template, drop
    * the editor draft, and clear any share hash so the URL no longer points
    * at someone else's snippet. Confirmation lives in the toolbar callback.
    */
   private resetEditorToDefault(): void {
-    this.editorDraft = DEFAULT_CONTENT;
-    this.editor.setValue(DEFAULT_CONTENT);
+    const ws = makeDefaultWorkspace(DEFAULT_CONTENT);
+    this.replaceWorkspace(ws);
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     this.editor.view.focus();
   }
@@ -339,8 +529,8 @@ export class PlaygroundApp {
    * diverge from programmatic init.
    *
    * Each mode owns its own document buffer:
-   *  - Switching FROM editor: snapshot editor.getValue() into editorDraft.
-   *  - Switching TO editor:   restore editorDraft into the editor.
+   *  - Switching FROM editor: snapshot the workspace into editorWorkspaceSnapshot.
+   *  - Switching TO editor:   restore that snapshot via replaceWorkspace.
    *  - Tutorial side is symmetric and lives in TutorialController.
    *
    * No-op when the requested mode equals the current one (avoids losing a
@@ -355,8 +545,8 @@ export class PlaygroundApp {
       b.setAttribute('aria-selected', String(isActive));
     }
     if (mode === 'tutorial') {
-      // Snapshot editor content before tutorial overwrites the doc.
-      this.editorDraft = this.editor.getValue();
+      // Snapshot editor workspace before tutorial replaces it.
+      this.editorWorkspaceSnapshot = cloneWorkspace(this.workspace);
       this.panels.showTab('tutorial');
       this.panels.activate('tutorial');
       const lessonId = new URL(window.location.href).searchParams.get('lesson');
@@ -364,9 +554,10 @@ export class PlaygroundApp {
       setUrlForMode('tutorial');
     } else {
       // Let TutorialController snapshot its lesson draft, then restore the
-      // editor draft (or DEFAULT_CONTENT if there's somehow nothing saved).
+      // editor workspace (or default if there's somehow nothing saved).
       this.tutorial?.leave();
-      this.editor.setValue(this.editorDraft ?? DEFAULT_CONTENT);
+      const restore = this.editorWorkspaceSnapshot ?? makeDefaultWorkspace(DEFAULT_CONTENT);
+      this.replaceWorkspace(restore);
       this.panels.hideTab('tutorial');
       this.panels.activate('errors' as TabId);
       setUrlForMode('editor');
@@ -426,12 +617,23 @@ function formatCount(kind: 'errors' | 'warnings', n: number): string {
   return t(kind === 'errors' ? 'status.errors' : 'status.warnings', { count: n, plural });
 }
 
+/**
+ * Deep-ish clone of a workspace. We need a fresh tab list so subsequent
+ * mutations to `this.workspace.tabs[i].content` don't leak into the
+ * snapshot. structuredClone would also work, but tabs hold only POD so a
+ * targeted spread is faster and avoids the need for happy-dom support.
+ */
+function cloneWorkspace(ws: Workspace): Workspace {
+  return { v: ws.v, activeTabId: ws.activeTabId, tabs: ws.tabs.map((t) => ({ ...t })) };
+}
+
 function resolveDom(root: HTMLElement): DomRefs {
   const editorHost = root.querySelector<HTMLElement>('[data-pg-editor]');
   if (!editorHost) throw new Error('[playground] editor host not found');
   return {
     root,
     editorHost,
+    tabbarHost: root.querySelector<HTMLElement>('[data-pg-tabbar]'),
     status: root.querySelector<HTMLElement>('[data-pg-status]'),
     scopeHint: root.querySelector<HTMLElement>('[data-pg-scope-hint]'),
     errorsPanel: root.querySelector<HTMLElement>('[data-panel="errors"]'),
