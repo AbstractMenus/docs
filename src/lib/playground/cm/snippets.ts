@@ -13,6 +13,11 @@ export const hoconSnippets: SnippetDef[] = [
     template: 'title = "${1:My Menu}"\nsize = ${2:3}\n\nactivators {\n  command ${3:open} {\n    command = "${3:open}"\n  }\n}\n\nitems = [\n  ${0}\n]\n',
   },
   {
+    label: 'include',
+    info: 'Include another HOCON file (tab)',
+    template: 'include "${1:file.conf}"',
+  },
+  {
     label: 'item',
     info: 'Item entry',
     template: '{\n  slot = ${1:0}\n  material = ${2:STONE}\n  name = "${3:Item Name}"\n  lore = [\n    "${4:Description}"\n  ]\n  ${0}\n}',

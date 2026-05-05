@@ -986,7 +986,11 @@ html, body {
   display: flex;
   flex: 1;
   min-width: 0;
-  overflow-x: auto;
+  /* Note: not overflow-x: auto - that forces overflow-y to compute as auto
+     (per CSS spec) and clips the absolute-positioned .pg-filetab__menu kebab
+     dropdown which uses top: 100%. With Phase 1's 2-5 tabs horizontal
+     overflow is unlikely; revisit if many-tabs scrolling becomes a concern. */
+  overflow: visible;
 }
 .pg-filetab {
   display: inline-flex;
