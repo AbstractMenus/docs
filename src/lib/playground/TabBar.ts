@@ -48,12 +48,19 @@ export interface TabBarApi {
 export function createTabBar(opts: TabBarOptions): TabBarApi {
   let { tabs, activeId } = opts;
   let openMenuFor: string | null = null;
+  // Tracks an in-flight rename. Cleared whenever the underlying tab disappears
+  // (closed externally) so that a stray blur from the orphaned input becomes a
+  // no-op instead of firing onRename for a tab that no longer exists.
+  let editing: { id: string; input: HTMLInputElement } | null = null;
 
   const root = document.createElement('div');
   root.className = 'pg-tabbar';
   opts.host.appendChild(root);
 
   function render(): void {
+    if (editing && !tabs.find((t) => t.id === editing!.id)) {
+      editing = null;
+    }
     root.innerHTML = '';
     const list = document.createElement('div');
     list.className = 'pg-tabbar__list';
@@ -156,16 +163,22 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
     const input = document.createElement('input');
     input.type = 'text';
     input.value = tab.name;
+    input.maxLength = 64;
     input.className = 'pg-tab__rename-input';
     nameEl.replaceWith(input);
     input.focus();
     input.select();
+    editing = { id, input };
 
     let settled = false;
     function commit(): void {
       if (settled) return;
+      // If the tab was closed externally mid-rename, render() already cleared
+      // `editing`; a stray blur arriving after that must not fire onRename.
+      if (!editing || editing.id !== id) return;
       settled = true;
       const newName = input.value;
+      editing = null;
       const result = opts.onRename?.(id, newName);
       if (result && !result.ok) {
         // Caller emits its own toast; we just re-render with the original name.
@@ -178,7 +191,9 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
     }
     function cancel(): void {
       if (settled) return;
+      if (!editing || editing.id !== id) return;
       settled = true;
+      editing = null;
       render();
     }
 
@@ -207,6 +222,9 @@ export function createTabBar(opts: TabBarOptions): TabBarApi {
     update(newTabs, newActiveId) {
       tabs = newTabs;
       activeId = newActiveId;
+      if (editing && !tabs.find((t) => t.id === editing!.id)) {
+        editing = null;
+      }
       render();
     },
     startRename,

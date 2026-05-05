@@ -120,6 +120,41 @@ describe('TabBar', () => {
     expect(host.querySelector('[data-tab-id="a"] [data-tab-name]')!.textContent).toBe('menu.conf');
   });
 
+  test('rename does not fire onRename if tab was removed via update mid-edit', () => {
+    const onRename = vi.fn();
+    const bar = createTabBar({
+      host,
+      tabs: [
+        { id: 'a', name: 'menu.conf', errors: 0, warnings: 0 },
+        { id: 'b', name: 'x.conf', errors: 0, warnings: 0 },
+      ],
+      activeId: 'a',
+      onRename,
+    });
+    bar.startRename('a');
+    // Simulate external close: 'a' is gone
+    bar.update([{ id: 'b', name: 'x.conf', errors: 0, warnings: 0 }], 'b');
+    // No input around anymore, but if any leftover blur fires, onRename must NOT be called
+    // for the removed tab
+    expect(onRename).not.toHaveBeenCalled();
+    bar.destroy();
+  });
+
+  test('rename input has maxLength guard', () => {
+    const bar = createTabBar({
+      host,
+      tabs: [
+        { id: 'a', name: 'menu.conf', errors: 0, warnings: 0 },
+        { id: 'b', name: 'x.conf', errors: 0, warnings: 0 },
+      ],
+      activeId: 'a',
+    });
+    bar.startRename('a');
+    const input = host.querySelector('input') as HTMLInputElement;
+    expect(input.maxLength).toBe(64);
+    bar.destroy();
+  });
+
   test('badge classes reflect errors / warnings', () => {
     createTabBar({
       host,
