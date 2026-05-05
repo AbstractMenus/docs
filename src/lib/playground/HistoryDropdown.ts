@@ -1,7 +1,8 @@
 import type { HistoryEntry } from './sharing/history';
+import { entryPreview } from './sharing/history';
 import { t } from './i18n';
 
-type SelectListener = (content: string) => void;
+type SelectListener = (entry: HistoryEntry) => void;
 
 export interface HistoryDropdownApi {
   update(entries: HistoryEntry[]): void;
@@ -26,16 +27,27 @@ export function createHistoryDropdown(host: HTMLElement): HistoryDropdownApi {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'pg-history-item';
+
       const preview = document.createElement('span');
       preview.className = 'pg-history-preview';
-      preview.textContent = e.preview || t('history.empty');
+      preview.textContent = entryPreview(e) || t('history.empty');
+      btn.appendChild(preview);
+
+      const extra = e.tabs.length - 1;
+      if (extra > 0) {
+        const badge = document.createElement('span');
+        badge.className = 'pg-history-extra';
+        badge.textContent = ` +${extra} more files`;
+        btn.appendChild(badge);
+      }
+
       const ts = document.createElement('span');
       ts.className = 'pg-history-ts';
-      ts.textContent = formatRelative(e.ts);
-      btn.appendChild(preview);
+      ts.textContent = formatRelative(e.timestamp);
       btn.appendChild(ts);
+
       btn.addEventListener('click', () => {
-        for (const fn of listeners) fn(e.content);
+        for (const fn of listeners) fn(e);
       });
       li.appendChild(btn);
       list.appendChild(li);

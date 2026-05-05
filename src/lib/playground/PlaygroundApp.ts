@@ -191,7 +191,7 @@ export class PlaygroundApp {
       if (decoded !== null) return decoded;
     }
     const history = loadHistory();
-    if (history.length > 0) return history[0].content;
+    if (history.length > 0 && history[0].tabs[0]) return history[0].tabs[0].content;
     return DEFAULT_CONTENT;
   }
 
